@@ -22,9 +22,7 @@ const SESSION_SECRET = process.env.SESSION_SECRET || "vitro-session-" + Math.ran
 const PUBLIC_DIR = new URL("./site/public", import.meta.url).pathname;
 const ADMIN_DIR = new URL("./site/admin", import.meta.url).pathname;
 
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ extended: true, limit: "50mb" }));
-
+app.use(express.json({ limit: "25mb" }));
 
 async function ensureDirs() {
   try {
@@ -142,7 +140,7 @@ app.post("/api/site", requireSessionApi, async (req, res) => {
     if (!data || typeof data !== "object") return res.status(400).json({ error: "Missing data" });
     // Guardrail: images should be uploaded as files, not base64 in JSON
     const size = Buffer.byteLength(JSON.stringify(data), "utf8");
-    if (size > 2_000_000) return res.status(413).json({ error: "Payload too large" });
+    if (size > 18_000_000) return res.status(413).json({ error: "Payload too large (reduce images or text)" });
     const saved = await writeSiteData(data);
     return res.json({ ok: true, data: saved });
   } catch (e) {
