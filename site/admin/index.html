@@ -796,6 +796,13 @@
                         <div class="text-xs text-gray-500 uppercase font-bold">Status</div>
                         <div class="text-emerald font-bold"><i class="fas fa-circle text-xs mr-2"></i>Admin</div>
                     </div>
+                    <div class="bg-black/30 p-2 px-4 rounded-lg border border-white/10 text-right" title="Αποθήκευση στον server (Render Disk)">
+                        <div class="text-xs text-gray-500 uppercase font-bold">Αποθήκευση</div>
+                        <div id="save-indicator" class="text-amber font-bold"><i class="fas fa-clock text-xs mr-2"></i>Όχι ακόμα</div>
+                    </div>
+                    <button onclick="manualSaveNow(event)" class="bg-amber/20 border border-amber/50 text-amber hover:bg-amber hover:text-lead px-4 py-2 rounded-lg font-bold transition">
+                        <i class="fas fa-save mr-2"></i> Αποθήκευση τώρα
+                    </button>
                     <button onclick="adminLogout(event)" class="bg-ruby/20 border border-ruby/50 text-ruby hover:bg-ruby hover:text-white px-4 py-2 rounded-lg font-bold transition">
                         <i class="fas fa-sign-out-alt mr-2"></i> Έξοδος
                     </button>
@@ -1248,6 +1255,7 @@
         async function saveToServer() {
             const payload = { products, blogPosts, staticImages, globalTexts, globalGraphics, analytics, isMaintenance, lastAiDate };
             try {
+                updateSaveIndicator('saving');
                 const r = await fetch('/api/site', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1255,9 +1263,17 @@
                     body: JSON.stringify({ data: payload })
                 });
                 const j = await r.json().catch(() => ({}));
-                if (!r.ok || !j?.ok) console.warn('Server save failed:', j);
+                if (!r.ok || !j?.ok) {
+                    console.warn('Server save failed:', j);
+                    updateSaveIndicator('error');
+                    return false;
+                }
+                updateSaveIndicator('saved');
+                return true;
             } catch (e) {
                 console.warn('Server save error:', e);
+                updateSaveIndicator('error');
+                return false;
             }
         }
 
@@ -1265,6 +1281,35 @@
             clearTimeout(__serverSaveTimer);
             __serverSaveTimer = setTimeout(saveToServer, 700);
         }
+
+        function updateSaveIndicator(state) {
+            const el = document.getElementById('save-indicator');
+            if (!el) return;
+            if (state === 'saving') {
+                el.className = 'text-amber font-bold';
+                el.innerHTML = '<i class="fas fa-spinner fa-spin text-xs mr-2"></i>Αποθήκευση…';
+            } else if (state === 'saved') {
+                el.className = 'text-emerald font-bold';
+                el.innerHTML = '<i class="fas fa-check text-xs mr-2"></i>Αποθηκεύτηκε';
+            } else if (state === 'error') {
+                el.className = 'text-ruby font-bold';
+                el.innerHTML = '<i class="fas fa-exclamation-triangle text-xs mr-2"></i>Σφάλμα';
+            } else {
+                el.className = 'text-amber font-bold';
+                el.innerHTML = '<i class="fas fa-clock text-xs mr-2"></i>Όχι ακόμα';
+            }
+        }
+
+        window.manualSaveNow = async function(ev) {
+            try { ev?.preventDefault?.(); } catch(e) {}
+            const ok = await saveToServer();
+            showToast(ok ? 'Αποθηκεύτηκε στον server.' : 'Αποτυχία αποθήκευσης. Δοκίμασε ξανά.');
+        };
+
+        // Safety net: if a control changes and we forgot to call scheduleServerSave(),
+        // this will still trigger a debounced save.
+        document.addEventListener('input', () => { if (isAdmin) scheduleServerSave(); }, true);
+        document.addEventListener('change', () => { if (isAdmin) scheduleServerSave(); }, true);
 
         async function uploadImageToServer(file) {
             const fd = new FormData();
