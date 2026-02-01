@@ -1993,9 +1993,32 @@ if (!response.ok) {
             }
         }
 
-        window.onload = function() {
+        // --- SERVER SYNC (public) ---
+        // Pull the latest content saved from the admin panel so everyone sees the same site.
+        async function loadPublicFromServer() {
+            try {
+                const r = await fetch('/api/site');
+                const j = await r.json();
+                if (j?.ok && j?.data) {
+                    const d = j.data;
+                    if (Array.isArray(d.products)) products = d.products;
+                    if (Array.isArray(d.blogPosts)) blogPosts = d.blogPosts;
+                    if (d.staticImages && typeof d.staticImages === 'object') staticImages = d.staticImages;
+                    if (d.globalTexts && typeof d.globalTexts === 'object') globalTexts = d.globalTexts;
+                    if (d.globalGraphics && typeof d.globalGraphics === 'object') globalGraphics = d.globalGraphics;
+                    if (typeof d.isMaintenance === 'boolean') isMaintenance = d.isMaintenance;
+                }
+            } catch (e) {
+                console.warn('Public server sync failed:', e);
+            }
+        }
+
+        window.onload = async function() {
+            await loadPublicFromServer();
             applyStaticImages();
             applyGlobalSettings();
+            try { renderProducts(); } catch(e) {}
+            try { renderBlogList(); } catch(e) {}
             initDragAndDrop();
             initEmptyLinks();
             

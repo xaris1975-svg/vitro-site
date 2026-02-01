@@ -1154,6 +1154,7 @@
             // Overwrite staticImages and persist so the admin panel sees them too
             staticImages = { ...staticImages, ...imgs };
             localStorage.setItem('vitro_static_images', JSON.stringify(staticImages));
+            scheduleServerSave();
             applyStaticImages();
         }
 
@@ -1179,6 +1180,7 @@
             staticImages = { ...pack };
             localStorage.setItem('vitro_static_images', JSON.stringify(staticImages));
             localStorage.setItem('vitro_assets_version', DEFAULT_ASSETS_VERSION);
+            scheduleServerSave();
             applyStaticImages();
             showToast('Έγινε επαναφορά φωτογραφιών.');
         };
@@ -1204,8 +1206,74 @@
         }
 
         // --- AUTH & ANALYTICS INIT ---
-        let isAdmin = localStorage.getItem('vitro_isAdmin') === 'true';
+        // /admin is protected server-side, so we are always in admin mode here.
+        let isAdmin = true;
+        // (Fallback) will be overridden by server data if present.
         let isMaintenance = localStorage.getItem('vitro_maintenance') === 'true';
+
+        // --- SERVER SAVE/LOAD (Render Disk) ---
+        // Without this, edits live only in your browser and disappear for everyone else.
+        let __serverSaveTimer = null;
+
+        async function loadFromServer() {
+            try {
+                const r = await fetch('/api/site', { credentials: 'include' });
+                const j = await r.json();
+                if (j?.ok && j?.data) {
+                    const d = j.data;
+                    if (Array.isArray(d.products)) products = d.products;
+                    if (Array.isArray(d.blogPosts)) blogPosts = d.blogPosts;
+                    if (d.staticImages && typeof d.staticImages === 'object') staticImages = d.staticImages;
+                    if (d.globalTexts && typeof d.globalTexts === 'object') globalTexts = d.globalTexts;
+                    if (d.globalGraphics && typeof d.globalGraphics === 'object') globalGraphics = d.globalGraphics;
+                    if (typeof d.isMaintenance === 'boolean') isMaintenance = d.isMaintenance;
+                    if (typeof d.lastAiDate === 'number') lastAiDate = d.lastAiDate;
+
+                    // Keep legacy localStorage in sync (harmless, helps transitions)
+                    try {
+                        localStorage.setItem('vitro_products', JSON.stringify(products));
+                        localStorage.setItem('vitro_blog', JSON.stringify(blogPosts));
+                        localStorage.setItem('vitro_static_images', JSON.stringify(staticImages));
+                        localStorage.setItem('vitro_texts', JSON.stringify(globalTexts));
+                        localStorage.setItem('vitro_graphics', JSON.stringify(globalGraphics));
+                        localStorage.setItem('vitro_maintenance', isMaintenance ? 'true' : 'false');
+                        localStorage.setItem('vitro_last_ai_date', String(lastAiDate || 0));
+                    } catch(e) {}
+                }
+            } catch (e) {
+                console.warn('Server load failed:', e);
+            }
+        }
+
+        async function saveToServer() {
+            const payload = { products, blogPosts, staticImages, globalTexts, globalGraphics, analytics, isMaintenance, lastAiDate };
+            try {
+                const r = await fetch('/api/site', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ data: payload })
+                });
+                const j = await r.json().catch(() => ({}));
+                if (!r.ok || !j?.ok) console.warn('Server save failed:', j);
+            } catch (e) {
+                console.warn('Server save error:', e);
+            }
+        }
+
+        function scheduleServerSave() {
+            clearTimeout(__serverSaveTimer);
+            __serverSaveTimer = setTimeout(saveToServer, 700);
+        }
+
+        async function uploadImageToServer(file) {
+            const fd = new FormData();
+            fd.append('file', file);
+            const r = await fetch('/api/upload', { method: 'POST', body: fd, credentials: 'include' });
+            const j = await r.json().catch(() => ({}));
+            if (!r.ok || !j?.ok || !j?.url) throw new Error(j?.error || 'Upload failed');
+            return j.url;
+        }
         
         // Init Analytics Counters
         let analytics = JSON.parse(localStorage.getItem('vitro_analytics')) || {
@@ -1299,62 +1367,54 @@
             this.classList.remove('drag-over');
         }
 
-        function handleFileSelect(file, element) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const result = e.target.result;
-                
-                // Safe check for quota
-                try {
-                    // Static ID Check
-                    const id = element.id || element.dataset.id;
-                    
-                    if (element.classList.contains('admin-editable-bg') || (id && id.endsWith('-bg'))) {
-                        element.style.backgroundImage = `url('${result}')`;
-                        if (id) {
-                             staticImages[id] = result;
-                             localStorage.setItem('vitro_static_images', JSON.stringify(staticImages));
-                        }
-                    } else {
-                        element.src = result;
-                         // Specific static images
-                        if (id && (id.startsWith('img-service') || id.startsWith('img-about') || id.startsWith('img-workshops'))) {
-                            staticImages[id] = result;
-                            localStorage.setItem('vitro_static_images', JSON.stringify(staticImages));
-                            showToast('Η εικόνα αποθηκεύτηκε!');
-                            return;
-                        }
-                    }
+        async function handleFileSelect(file, element) {
+            try {
+                // Upload to server so EVERYONE sees it (not just your browser)
+                const url = await uploadImageToServer(file);
+                const id = element.id || element.dataset.id;
 
-                    // Dynamic Data Attributes Check
-                    if (element.dataset.type === 'product') {
-                        const prodId = parseInt(element.dataset.id);
-                        const prod = products.find(p => p.id === prodId);
-                        if (prod) { 
-                            prod.image = result; 
-                            saveProducts(); 
-                            renderProducts(); // Re-render to ensure persistence visual
-                            showToast('Προϊόν ενημερώθηκε!'); 
-                        }
-                    } else if (element.dataset.type === 'blog') {
-                        const postId = parseInt(element.dataset.id);
-                        const post = blogPosts.find(p => p.id === postId);
-                        if (post) { 
-                            post.image = result; 
-                            saveBlogPosts(); 
-                            renderBlogList(); // Re-render
-                            showToast('Άρθρο ενημερώθηκε!'); 
-                        }
+                if (element.classList.contains('admin-editable-bg') || (id && id.endsWith('-bg'))) {
+                    element.style.backgroundImage = `url('${url}')`;
+                    if (id) {
+                        staticImages[id] = url;
+                        localStorage.setItem('vitro_static_images', JSON.stringify(staticImages));
+                        scheduleServerSave();
                     }
-                } catch (err) {
-                    if (err.name === 'QuotaExceededError') {
-                        showToast('Σφάλμα: Η μνήμη του browser γέμισε. Η εικόνα είναι πολύ μεγάλη.');
-                    } else {
-                        console.error(err);
+                } else {
+                    element.src = url;
+                    if (id && (id.startsWith('img-service') || id.startsWith('img-about') || id.startsWith('img-workshops'))) {
+                        staticImages[id] = url;
+                        localStorage.setItem('vitro_static_images', JSON.stringify(staticImages));
+                        scheduleServerSave();
+                        showToast('Η εικόνα αποθηκεύτηκε!');
+                        return;
                     }
                 }
-            };
-            reader.readAsDataURL(file);
+
+                // Dynamic Data Attributes Check
+                if (element.dataset.type === 'product') {
+                    const prodId = parseInt(element.dataset.id);
+                    const prod = products.find(p => p.id === prodId);
+                    if (prod) {
+                        prod.image = url;
+                        saveProducts();
+                        renderProducts();
+                        showToast('Προϊόν ενημερώθηκε!');
+                    }
+                } else if (element.dataset.type === 'blog') {
+                    const postId = parseInt(element.dataset.id);
+                    const post = blogPosts.find(p => p.id === postId);
+                    if (post) {
+                        post.image = url;
+                        saveBlogPosts();
+                        renderBlogList();
+                        showToast('Άρθρο ενημερώθηκε!');
+                    }
+                }
+            } catch (e) {
+                console.error(e);
+                showToast('Σφάλμα upload εικόνας. Δοκιμάστε μικρότερο αρχείο.');
+            }
         }
 
         // --- BACKUP & RESTORE ---
@@ -1437,6 +1497,7 @@
         function toggleMaintenanceMode() {
             isMaintenance = document.getElementById('maintenance-toggle').checked;
             localStorage.setItem('vitro_maintenance', isMaintenance);
+            scheduleServerSave();
             const statusText = document.getElementById('maintenance-status-text');
             
             if (isMaintenance) {
@@ -1724,6 +1785,7 @@ if (!response.ok) {
             globalGraphics.spinSpeed = getVal('admin-spin-speed');
             localStorage.setItem('vitro_texts', JSON.stringify(globalTexts));
             localStorage.setItem('vitro_graphics', JSON.stringify(globalGraphics));
+            scheduleServerSave();
             showToast('Οι ρυθμίσεις αποθηκεύτηκαν!');
         }
 
@@ -1842,8 +1904,16 @@ if (!response.ok) {
         }
 
         // --- DATA PERSISTENCE HELPERS ---
-        function saveProducts() { localStorage.setItem('vitro_products', JSON.stringify(products)); updateAdminTables(); }
-        function saveBlogPosts() { localStorage.setItem('vitro_blog', JSON.stringify(blogPosts)); updateAdminTables(); }
+        function saveProducts() {
+            localStorage.setItem('vitro_products', JSON.stringify(products));
+            updateAdminTables();
+            scheduleServerSave();
+        }
+        function saveBlogPosts() {
+            localStorage.setItem('vitro_blog', JSON.stringify(blogPosts));
+            updateAdminTables();
+            scheduleServerSave();
+        }
 
         // --- MODAL LOGIC ---
         function openModal() { document.getElementById('contact-modal').classList.remove('hidden'); }
@@ -2337,9 +2407,15 @@ if (!response.ok) {
             }
         }
 
-        window.onload = function() {
+        window.onload = async function() {
+            // Load latest server data FIRST so the admin edits the real public site.
+            await loadFromServer();
+
             applyStaticImages();
             applyGlobalSettings();
+            try { renderProducts(); } catch(e) {}
+            try { renderBlogList(); } catch(e) {}
+            try { updateAdminTables(); } catch(e) {}
             initDragAndDrop();
             initEmptyLinks();
             
