@@ -1134,7 +1134,7 @@
                     document.getElementById('view-catalog').classList.add('hidden');
                     document.getElementById('view-blog').classList.add('hidden');
                     document.getElementById('view-blog-single').classList.add('hidden');
-                    document.getElementById('view-admin-dashboard').classList.add('hidden');
+                    document.getElementById('view-admin-dashboard')?.classList.add('hidden');
                     document.getElementById('main-nav').classList.add('hidden'); // Hide menu
                     
                     document.getElementById('view-maintenance').classList.remove('hidden');
@@ -1555,21 +1555,19 @@ if (!response.ok) {
         }
 
         function hideAllViews() {
-  const ids = [
-    'view-landing',
-    'view-catalog',
-    'view-blog',
-    'view-blog-single',
-    'view-admin-dashboard',
-    'view-maintenance',
-  ];
-
-  ids.forEach((id) => {
-    const el = document.getElementById(id);
-    if (el) el.classList.add('hidden');
-  });
-}
-
+            const ids = [
+                'view-landing',
+                'view-catalog',
+                'view-blog',
+                'view-blog-single',
+                'view-admin-dashboard',
+                'view-maintenance',
+            ];
+            ids.forEach((id) => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+        }
         function saveViewState(viewId) { localStorage.setItem('vitro_active_view', viewId); }
 
         function navigateToSection(e, sectionId) {
@@ -1622,16 +1620,9 @@ if (!response.ok) {
         }
 
         function showAdminDashboard(e) {
-            if(e) e.preventDefault();
-            if (!isAdmin) { openAdminLogin(); return; }
-            hideAllViews();
-            document.getElementById('view-admin-dashboard').classList.remove('hidden');
-            saveViewState('view-admin-dashboard');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            updateAdminTables();
-            updateStats();
-            applyGlobalSettings();
-            checkMaintenance(); // Ensure banner state correct
+            if (e) e.preventDefault();
+            // Admin lives at the server-protected /admin route
+            window.location.href = '/admin/';
         }
 
         // --- ADMIN DASHBOARD ---

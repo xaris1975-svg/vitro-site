@@ -10,6 +10,9 @@ const ADMIN_USER = process.env.ADMIN_USER || "admin";
 const ADMIN_PASS = process.env.ADMIN_PASS || "change-me";
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
 
+const PUBLIC_DIR = new URL("./site/public", import.meta.url).pathname;
+const ADMIN_DIR = new URL("./site/admin", import.meta.url).pathname;
+
 app.use(express.json({ limit: "1mb" }));
 
 function requireAdmin(req, res, next) {
@@ -22,10 +25,15 @@ function requireAdmin(req, res, next) {
 }
 
 // Public site
-app.use("/", express.static(new URL("./site/public", import.meta.url).pathname, { redirect: false }));
+app.use("/", express.static(PUBLIC_DIR, { redirect: false }));
 
-app.use("/admin", requireAdmin, express.static(new URL("./site/admin", import.meta.url).pathname, { redirect: false }));
+// Admin site (basic auth)
+app.get("/admin", requireAdmin, (req, res) => {
+  res.sendFile(ADMIN_DIR + "/index.html");
+});
+app.use("/admin", requireAdmin, express.static(ADMIN_DIR, { redirect: false }));
 
+/**
  * Gemini proxy endpoints (admin-only)
  * Docs: https://ai.google.dev/api (models & generateContent)
  */
