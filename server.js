@@ -1,6 +1,5 @@
-
 import express from "express";
-import basicAuth from "basic-auth";
+import session from "express-session";
 import fetch from "node-fetch";
 
 const app = express();
@@ -10,34 +9,76 @@ const ADMIN_USER = process.env.ADMIN_USER || "admin";
 const ADMIN_PASS = process.env.ADMIN_PASS || "change-me";
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
 
+const SESSION_SECRET = process.env.SESSION_SECRET || "vitro-session-" + Math.random().toString(36).slice(2);
+
 const PUBLIC_DIR = new URL("./site/public", import.meta.url).pathname;
 const ADMIN_DIR = new URL("./site/admin", import.meta.url).pathname;
 
 app.use(express.json({ limit: "1mb" }));
 
-function requireAdmin(req, res, next) {
-  const creds = basicAuth(req);
-  if (!creds || creds.name !== ADMIN_USER || creds.pass !== ADMIN_PASS) {
-    res.set("WWW-Authenticate", 'Basic realm="Admin Area"');
-    return res.status(401).send("Auth required");
-  }
-  next();
+app.set("trust proxy", 1);
+
+// Sessions (cookie-based login). No Basic Auth popups, no Safari loops.
+app.use(
+  session({
+    secret: SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 1000 * 60 * 60 * 12, // 12h
+    },
+  })
+);
+
+function isAuthed(req) {
+  return Boolean(req.session && req.session.authed);
+}
+
+function requireSession(req, res, next) {
+  if (isAuthed(req)) return next();
+  return res.redirect("/admin/login.html");
+}
+
+function requireSessionApi(req, res, next) {
+  if (isAuthed(req)) return next();
+  return res.status(401).json({ error: "Unauthorized" });
 }
 
 // Public site
 app.use("/", express.static(PUBLIC_DIR, { redirect: false }));
 
-// Admin site (basic auth)
-app.get("/admin", requireAdmin, (req, res) => {
-  res.sendFile(ADMIN_DIR + "/index.html");
+// Admin entry: always show login page (no auth popups)
+app.get("/admin", (req, res) => res.redirect("/admin/login.html"));
+app.get("/admin/", (req, res) => res.redirect("/admin/login.html"));
+app.get("/admin/login.html", (req, res) => res.sendFile(ADMIN_DIR + "/login.html"));
+
+// Login / logout API
+app.post("/api/login", (req, res) => {
+  const { username, password } = req.body || {};
+  if (username === ADMIN_USER && password === ADMIN_PASS) {
+    req.session.authed = true;
+    return res.json({ ok: true });
+  }
+  return res.status(401).json({ error: "Λάθος username ή password." });
 });
-app.use("/admin", requireAdmin, express.static(ADMIN_DIR, { redirect: false }));
+
+app.post("/api/logout", (req, res) => {
+  req.session.destroy(() => {
+    res.json({ ok: true });
+  });
+});
+
+// Protect all admin assets/pages except login.html
+app.use("/admin", requireSession, express.static(ADMIN_DIR, { redirect: false }));
 
 /**
  * Gemini proxy endpoints (admin-only)
  * Docs: https://ai.google.dev/api (models & generateContent)
  */
-app.get("/api/gemini/models", requireAdmin, async (req, res) => {
+app.get("/api/gemini/models", requireSessionApi, async (req, res) => {
   if (!GEMINI_API_KEY) return res.status(500).json({ error: "Missing GEMINI_API_KEY on server." });
   const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(GEMINI_API_KEY)}`;
   const r = await fetch(url);
@@ -46,7 +87,7 @@ app.get("/api/gemini/models", requireAdmin, async (req, res) => {
   res.type("json").send(txt);
 });
 
-app.post("/api/gemini/generate", requireAdmin, async (req, res) => {
+app.post("/api/gemini/generate", requireSessionApi, async (req, res) => {
   try {
     if (!GEMINI_API_KEY) return res.status(500).json({ error: "Missing GEMINI_API_KEY on server." });
     const model = req.body?.model || "gemini-2.5-flash";
@@ -70,5 +111,5 @@ app.post("/api/gemini/generate", requireAdmin, async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
   console.log(`Public: http://localhost:${PORT}/`);
-  console.log(`Admin:  http://localhost:${PORT}/admin (Basic Auth)`);
+  console.log(`Admin login:  http://localhost:${PORT}/admin/login.html`);
 });
