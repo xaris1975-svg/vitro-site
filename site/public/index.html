@@ -1555,13 +1555,21 @@ if (!response.ok) {
         }
 
         function hideAllViews() {
-            document.getElementById('view-landing').classList.add('hidden');
-            document.getElementById('view-catalog').classList.add('hidden');
-            document.getElementById('view-blog').classList.add('hidden');
-            document.getElementById('view-blog-single').classList.add('hidden');
-            document.getElementById('view-admin-dashboard').classList.add('hidden');
-            document.getElementById('view-maintenance').classList.add('hidden'); // Ensure hidden
-        }
+  const ids = [
+    'view-landing',
+    'view-catalog',
+    'view-blog',
+    'view-blog-single',
+    'view-admin-dashboard',
+    'view-maintenance',
+  ];
+
+  ids.forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('hidden');
+  });
+}
+
         function saveViewState(viewId) { localStorage.setItem('vitro_active_view', viewId); }
 
         function navigateToSection(e, sectionId) {
