@@ -22,12 +22,10 @@ function requireAdmin(req, res, next) {
 }
 
 // Public site
-app.use("/", express.static(new URL("./site/public", import.meta.url).pathname));
+app.use("/", express.static(new URL("./site/public", import.meta.url).pathname, { redirect: false }));
 
-// Admin site (basic auth)
-app.use("/admin", requireAdmin, express.static(new URL("./site/admin", import.meta.url).pathname));
+app.use("/admin", requireAdmin, express.static(new URL("./site/admin", import.meta.url).pathname, { redirect: false }));
 
-/**
  * Gemini proxy endpoints (admin-only)
  * Docs: https://ai.google.dev/api (models & generateContent)
  */
