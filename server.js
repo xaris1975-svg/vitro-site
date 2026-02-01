@@ -22,7 +22,9 @@ const SESSION_SECRET = process.env.SESSION_SECRET || "vitro-session-" + Math.ran
 const PUBLIC_DIR = new URL("./site/public", import.meta.url).pathname;
 const ADMIN_DIR = new URL("./site/admin", import.meta.url).pathname;
 
-app.use(express.json({ limit: "5mb" }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+
 
 async function ensureDirs() {
   try {
