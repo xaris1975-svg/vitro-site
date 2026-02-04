@@ -256,36 +256,16 @@
                 <h2 class="text-2xl font-serif font-bold text-white">Φόρμα Προσφοράς</h2>
                 <p class="text-gray-400 text-sm mt-2">Συμπληρώστε τα στοιχεία σας και θα επικοινωνήσουμε άμεσα.</p>
             </div>
-            <form id="contactFormModal">
-    <div class="space-y-4">
-        <div>
-            <label class="block text-gray-400 text-xs uppercase font-bold mb-1">Ονοματεπώνυμο</label>
-            <input id="contactNameModal" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="π.χ. Γιάννης Παπαδόπουλος">
-        </div>
-        <div>
-            <label class="block text-gray-400 text-xs uppercase font-bold mb-1">Email</label>
-            <input id="contactEmailModal" type="email" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="email@example.com">
-        </div>
-        <div>
-            <label class="block text-gray-400 text-xs uppercase font-bold mb-1">Τηλέφωνο</label>
-            <input id="contactPhoneModal" type="tel" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="+30 69XX XXX XXX">
-        </div>
-        <div>
-            <label class="block text-gray-400 text-xs uppercase font-bold mb-1">Ενδιαφέρομαι για</label>
-            <select id="contactInterestModal" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition">
-                <option>Αρχιτεκτονικό Βιτρό</option>
-                <option>Custom Κόσμημα</option>
-                <option>Επισκευή / Συντήρηση</option>
-                <option>Άλλο</option>
-            </select>
-        </div>
-        <div>
-            <label class="block text-gray-400 text-xs uppercase font-bold mb-1">Μήνυμα</label>
-            <textarea id="contactMessageModal" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition h-24" placeholder="Περιγράψτε τι χρειάζεστε..."></textarea>
-        </div>
-        <button type="submit" class="w-full bg-amber text-lead font-bold py-3 rounded-lg hover:bg-white transition duration-300">Αποστολή Αιτήματος</button>
-    </div>
-</form>
+            <form onsubmit="event.preventDefault(); showToast('Το αίτημά σας εστάλη επιτυχώς!'); closeModal();">
+                <div class="space-y-4">
+                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Ονοματεπώνυμο</label><input type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="π.χ. Γιάννης Παπαδόπουλος"></div>
+                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Email</label><input type="email" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="email@example.com"></div>
+                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Τηλέφωνο</label><input type="tel" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="+30 69XX XXX XXX"></div>
+                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Ενδιαφέρομαι για</label><select class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition"><option>Αρχιτεκτονικό Βιτρό</option><option>Custom Κόσμημα</option><option>Επισκευή / Συντήρηση</option><option>Άλλο</option></select></div>
+                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Μήνυμα</label><textarea class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition h-24" placeholder="Περιγράψτε τι χρειάζεστε..."></textarea></div>
+                    <button type="submit" class="w-full bg-amber text-lead font-bold py-3 rounded-lg hover:bg-white transition duration-300">Αποστολή Αιτήματος</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -696,37 +676,16 @@
                         </div>
                     </div>
                     <div class="glass-card p-8 rounded-2xl">
-                        <form id="contactFormSection">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div>
-            <label class="block text-gray-400 text-sm mb-2">Όνομα</label>
-            <input id="contactNameSection" type="text" required class="w-full bg-black/30 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="Το όνομά σας">
-        </div>
-        <div>
-            <label class="block text-gray-400 text-sm mb-2">Email</label>
-            <input id="contactEmailSection" type="email" required class="w-full bg-black/30 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="email@example.com">
-        </div>
-    </div>
-    <div class="mb-6">
-        <label class="block text-gray-400 text-sm mb-2">Τηλέφωνο</label>
-        <input id="contactPhoneSection" type="tel" class="w-full bg-black/30 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="+30 69XX XXX XXX">
-    </div>
-    <div class="mb-6">
-        <label class="block text-gray-400 text-sm mb-2">Θέμα</label>
-        <select id="contactSubjectSection" class="w-full bg-black/30 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-amber transition">
-            <option>Γενική Ερώτηση</option>
-            <option>Παραγγελία Βιτρό</option>
-            <option>Κοσμήματα</option>
-            <option>Επισκευή</option>
-            <option>Συμμετοχή σε Workshop</option>
-        </select>
-    </div>
-    <div class="mb-6">
-        <label class="block text-gray-400 text-sm mb-2">Μήνυμα</label>
-        <textarea id="contactMessageSection" required class="w-full bg-black/30 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-amber transition h-32" placeholder="Πώς μπορούμε να βοηθήσουμε;"></textarea>
-    </div>
-    <button type="submit" class="w-full bg-amber text-lead font-bold py-4 rounded-lg hover:bg-white transition duration-300">Αποστολή Μηνύματος</button>
-</form>
+                        <form onsubmit="event.preventDefault(); showToast('Το μήνυμά σας εστάλη! Θα επικοινωνήσουμε σύντομα.');">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div><label class="block text-gray-400 text-sm mb-2">Όνομα</label><input type="text" class="w-full bg-black/30 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="Το όνομά σας"></div>
+                                <div><label class="block text-gray-400 text-sm mb-2">Email</label><input type="email" class="w-full bg-black/30 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="email@example.com"></div>
+                            </div>
+                            <div class="mb-6"><label class="block text-gray-400 text-sm mb-2">Τηλέφωνο</label><input type="tel" class="w-full bg-black/30 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="+30 69XX XXX XXX"></div>
+                            <div class="mb-6"><label class="block text-gray-400 text-sm mb-2">Θέμα</label><select class="w-full bg-black/30 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-amber transition"><option>Γενική Ερώτηση</option><option>Παραγγελία Βιτρό</option><option>Κοσμήματα</option><option>Επισκευή</option><option>Συμμετοχή σε Workshop</option></select></div>
+                            <div class="mb-6"><label class="block text-gray-400 text-sm mb-2">Μήνυμα</label><textarea class="w-full bg-black/30 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-amber transition h-32" placeholder="Πώς μπορούμε να βοηθήσουμε;"></textarea></div>
+                            <button type="submit" class="w-full bg-amber text-lead font-bold py-4 rounded-lg hover:bg-white transition duration-300">Αποστολή Μηνύματος</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -813,102 +772,6 @@
                 setTimeout(() => { toast.classList.add('hidden'); }, 3000); // Wait 3s then hide
             }, 3000);
         }
-
-// --- CONTACT FORMS (REAL SEND) ---
-// Στέλνει δεδομένα στο backend endpoint: POST /api/contact
-async function sendContactToServer(payload) {
-    const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-    });
-
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok || data?.ok !== true) {
-        const msg = data?.error || data?.message || `Σφάλμα αποστολής (${res.status})`;
-        throw new Error(msg);
-    }
-    return data;
-}
-
-function bindContactForm(formId, collectFieldsFn, afterSuccessFn) {
-    const form = document.getElementById(formId);
-    if (!form) return;
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const btn = form.querySelector('button[type="submit"]');
-        const original = btn ? btn.innerText : null;
-        if (btn) { btn.disabled = true; btn.innerText = 'Αποστολή...'; }
-
-        try {
-            const fields = collectFieldsFn();
-            const name = (fields.name || '').trim();
-            const email = (fields.email || '').trim();
-            const message = (fields.message || '').trim();
-
-            if (!name || !email || !message) {
-                showToast('Συμπλήρωσε όνομα, email και μήνυμα.');
-                return;
-            }
-
-            // Χτίζουμε ένα “πλούσιο” μήνυμα, ώστε να μην χάνουμε τηλέφωνο/θέμα κλπ.
-            const metaLines = [];
-            if (fields.phone) metaLines.push(`Τηλέφωνο: ${fields.phone}`);
-            if (fields.subject) metaLines.push(`Θέμα: ${fields.subject}`);
-            if (fields.interest) metaLines.push(`Ενδιαφέρομαι για: ${fields.interest}`);
-
-            const fullMessage = metaLines.length
-                ? `${message}\n\n---\n${metaLines.join('\n')}`
-                : message;
-
-            await sendContactToServer({ name, email, message: fullMessage });
-
-            showToast('Το μήνυμά σας στάλθηκε επιτυχώς ✅');
-
-            // Clear fields
-            form.reset();
-
-            if (typeof afterSuccessFn === 'function') afterSuccessFn();
-        } catch (err) {
-            console.error(err);
-            showToast(err?.message || 'Αποτυχία αποστολής.');
-        } finally {
-            if (btn) { btn.disabled = false; btn.innerText = original; }
-        }
-    });
-}
-
-function initContactForms() {
-    // Modal form
-    bindContactForm(
-        'contactFormModal',
-        () => ({
-            name: document.getElementById('contactNameModal')?.value || '',
-            email: document.getElementById('contactEmailModal')?.value || '',
-            phone: document.getElementById('contactPhoneModal')?.value || '',
-            interest: document.getElementById('contactInterestModal')?.value || '',
-            message: document.getElementById('contactMessageModal')?.value || ''
-        }),
-        () => { try { closeModal(); } catch(e) {} }
-    );
-
-    // Contact section form
-    bindContactForm(
-        'contactFormSection',
-        () => ({
-            name: document.getElementById('contactNameSection')?.value || '',
-            email: document.getElementById('contactEmailSection')?.value || '',
-            phone: document.getElementById('contactPhoneSection')?.value || '',
-            subject: document.getElementById('contactSubjectSection')?.value || '',
-            message: document.getElementById('contactMessageSection')?.value || ''
-        })
-    );
-}
-
-document.addEventListener('DOMContentLoaded', initContactForms);
-
 
 // --- THEME PRESETS (optional, zero-impact unless used) ---
         // Keeps the current visuals unchanged by default.
@@ -2134,7 +1997,8 @@ if (!response.ok) {
         // Pull the latest content saved from the admin panel so everyone sees the same site.
         async function loadPublicFromServer() {
             try {
-                const r = await fetch('/api/site');
+                // Cache-bust to avoid any weird browser/proxy caching.
+                const r = await fetch(`/api/site?ts=${Date.now()}`, { cache: 'no-store' });
                 const j = await r.json();
                 if (j?.ok && j?.data) {
                     const d = j.data;
