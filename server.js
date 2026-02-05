@@ -4,6 +4,7 @@ import fetch from "node-fetch";
 import multer from "multer";
 import path from "path";
 import fsp from "fs/promises";
+import nodemailer from "nodemailer";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,12 +13,32 @@ const ADMIN_USER = process.env.ADMIN_USER || "admin";
 const ADMIN_PASS = process.env.ADMIN_PASS || "change-me";
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
 
+// ====== EMAIL (Brevo SMTP) ======
+const SMTP_USER = process.env.BREVO_SMTP_USER || "";
+const SMTP_PASS = process.env.BREVO_SMTP_PASS || "";
+const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL || ""; // your Gmail (or any inbox)
+const CONTACT_FROM_EMAIL = process.env.CONTACT_FROM_EMAIL || "info@vitrocanvas.gr"; // sender shown
+const CONTACT_FROM_NAME = process.env.CONTACT_FROM_NAME || "VitroCanvas";
+const CONTACT_SUBJECT_PREFIX = process.env.CONTACT_SUBJECT_PREFIX || "Νέο αίτημα από";
+
+// Create mail transporter only if SMTP creds exist
+const mailer =
+  SMTP_USER && SMTP_PASS
+    ? nodemailer.createTransport({
+        host: "smtp-relay.brevo.com",
+        port: 587,
+        secure: false,
+        auth: { user: SMTP_USER, pass: SMTP_PASS },
+      })
+    : null;
+
 // Persistent data directory (Render Disk should be mounted here)
 const DATA_DIR = process.env.DATA_DIR || "/var/data";
 const SITE_DATA_PATH = path.join(DATA_DIR, "site-data.json");
 const UPLOADS_DIR = path.join(DATA_DIR, "uploads");
 
-const SESSION_SECRET = process.env.SESSION_SECRET || "vitro-session-" + Math.random().toString(36).slice(2);
+const SESSION_SECRET =
+  process.env.SESSION_SECRET || "vitro-session-" + Math.random().toString(36).slice(2);
 
 const PUBLIC_DIR = new URL("./site/public", import.meta.url).pathname;
 const ADMIN_DIR = new URL("./site/admin", import.meta.url).pathname;
@@ -131,8 +152,6 @@ app.use("/admin", requireSession, express.static(ADMIN_DIR, { redirect: false })
  */
 app.get("/api/site", async (req, res) => {
   const data = await readSiteData();
-  // Avoid stale caches.
-  res.setHeader("Cache-Control", "no-store");
   return res.json({ ok: true, data: data || null });
 });
 
@@ -182,6 +201,52 @@ app.post("/api/upload", requireSessionApi, upload.single("file"), (req, res) => 
   if (!req.file) return res.status(400).json({ error: "No file uploaded" });
   const url = `/uploads/${encodeURIComponent(req.file.filename)}`;
   return res.json({ ok: true, url });
+});
+
+/**
+ * CONTACT FORM (PUBLIC)
+ * This endpoint is called by the public site's contact/quote form.
+ * It sends an email notification to CONTACT_TO_EMAIL via Brevo SMTP.
+ */
+app.post("/api/contact", async (req, res) => {
+  try {
+    const { name, email, phone, interest, message } = req.body || {};
+
+    if (!name || !email || !message) {
+      return res.status(400).json({ ok: false, error: "missing_fields" });
+    }
+
+    if (!CONTACT_TO_EMAIL) {
+      return res.status(500).json({ ok: false, error: "missing_CONTACT_TO_EMAIL" });
+    }
+
+    if (!mailer) {
+      return res.status(500).json({ ok: false, error: "smtp_not_configured" });
+    }
+
+    await mailer.sendMail({
+      from: `${CONTACT_FROM_NAME} <${CONTACT_FROM_EMAIL}>`,
+      to: CONTACT_TO_EMAIL,
+      replyTo: email,
+      subject: `${CONTACT_SUBJECT_PREFIX} ${name}`,
+      text:
+`ΝΕΟ ΑΙΤΗΜΑ ΑΠΟ ΦΟΡΜΑ
+
+Όνομα: ${name}
+Email: ${email}
+Τηλέφωνο: ${phone || "-"}
+Ενδιαφέρεται για: ${interest || "-"}
+
+Μήνυμα:
+${message}
+`,
+    });
+
+    return res.json({ ok: true });
+  } catch (e) {
+    console.error("CONTACT ERROR:", e);
+    return res.status(500).json({ ok: false, error: String(e?.message || e) });
+  }
 });
 
 /**
