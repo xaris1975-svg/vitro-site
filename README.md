@@ -1,24 +1,12 @@
-# VITRO site (production-ish split)
+# Vitro site (Node/Express on Render)
 
-## What you get
-- Public site: / (no admin UI, lighter)
-- Admin site: /admin (protected with Basic Auth)
-- Gemini AI calls go through the server so the API key is not exposed.
+- Public: /  (site/public/index.html)
+- Admin: /admin/login.html -> /admin/index.html
+- Data persist: DATA_DIR (default /var/data) (Render Disk)
+- API: GET /api/site (public), POST /api/site (admin-only)
 
-## Run locally
-1) Install Node.js 18+
-2) In this folder:
-   npm install
-3) Set environment variables (Mac/Linux):
-   export ADMIN_USER="admin"
-   export ADMIN_PASS="your-strong-password"
-   export GEMINI_API_KEY="YOUR_GEMINI_KEY"
-4) Start:
-   npm start
-5) Open:
-   http://localhost:3000/
-   http://localhost:3000/admin
-
-## Deploy
-Deploy this Node app to any host that supports Node (Render, Fly.io, Railway, VPS).
-Then point your domain to it.
+Env:
+- ADMIN_USER / ADMIN_PASS
+- (optional) SESSION_SECRET
+- (optional) GEMINI_API_KEY
+- (optional contact form) SMTP_HOST SMTP_PORT SMTP_USER SMTP_PASS CONTACT_TO_EMAIL
