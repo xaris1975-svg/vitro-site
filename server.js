@@ -131,10 +131,17 @@ app.use("/uploads", express.static(UPLOADS_DIR, { redirect: false }));
 // Serve uploaded assets publicly
 
 // Admin entry: always show login page (no auth popups)
-app.get("/admin", (req, res) => res.redirect("/admin/login.html"));
-app.get("/admin/", (req, res) => res.redirect("/admin/login.html"));
-app.get("/admin/login.html", (req, res) => res.sendFile(path.join(ADMIN_DIR, "login.html")));
-
+app.get("/admin", (req, res) => {
+  return res.redirect(isAuthed(req) ? "/admin/index.html" : "/admin/login.html");
+});
+app.get("/admin/", (req, res) => {
+  return res.redirect(isAuthed(req) ? "/admin/index.html" : "/admin/login.html");
+});
+app.get("/admin/login.html", (req, res) => {
+  // If already logged in, go straight to the dashboard
+  if (isAuthed(req)) return res.redirect("/admin/index.html");
+  return res.sendFile(path.join(ADMIN_DIR, "login.html"));
+});
 // Login / logout API
 app.post("/api/login", (req, res) => {
   const { username, password } = req.body || {};

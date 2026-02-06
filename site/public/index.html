@@ -1097,6 +1097,20 @@
                 // body should be the JSON payload you would send to Gemini
                 return await serverGenerateContent({ model, body });
             }
+            if (!key) throw new Error('Λείπει Gemini API key.');
+            const m = model || 'models/gemini-1.5-flash';
+            const url = `https://generativelanguage.googleapis.com/v1beta/${m}:generateContent?key=${encodeURIComponent(key)}`;
+            const resp = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            if (!resp.ok) {
+                const err = await resp.json().catch(() => ({}));
+                throw new Error(err?.error?.message || `Σφάλμα Google (generate): ${resp.status}`);
+            }
+            return await resp.json();
+        }
             const resp = await callGeminiGenerate({ key, model, body: body });
             if (!resp.ok) {
                 const err = await resp.json().catch(() => ({}));
@@ -1213,8 +1227,9 @@
         }
 
         // --- AUTH & ANALYTICS INIT ---
-        // /admin is protected server-side, so we are always in admin mode here.
-        let isAdmin = true;
+        // Admin mode only when the page is served under /admin (server-protected).
+        const __IS_ADMIN_PATH = window.location.pathname.startsWith('/admin');
+        let isAdmin = __IS_ADMIN_PATH;
         // (Fallback) will be overridden by server data if present.
         let isMaintenance = localStorage.getItem('vitro_maintenance') === 'true';
 
@@ -1835,12 +1850,10 @@ if (!response.ok) {
         }
 
         // --- AUTH FUNCTIONS ---
-        function openAdminLogin() { 
-            document.getElementById('admin-login-modal').classList.remove('hidden'); 
-            if (isAdmin) {
-                document.getElementById('admin-login-form').classList.add('hidden');
-                document.getElementById('admin-logout-view').classList.remove('hidden');
-            } else {
+        function openAdminLogin() {
+            // Admin lives at /admin (server session). Public page should not unlock admin locally.
+            window.location.href = '/admin/login.html';
+        } else {
                 document.getElementById('admin-login-form').classList.remove('hidden');
                 document.getElementById('admin-logout-view').classList.add('hidden');
                 setTimeout(() => document.getElementById('admin-password').focus(), 100);
@@ -1849,22 +1862,9 @@ if (!response.ok) {
         function closeAdminLogin() { document.getElementById('admin-login-modal').classList.add('hidden'); }
 
         function attemptAdminLogin() {
-            const pass = document.getElementById('admin-password').value;
-            if (pass === '1111') {
-                isAdmin = true;
-                localStorage.setItem('vitro_isAdmin', 'true'); 
-                document.getElementById('nav-admin-link').classList.remove('hidden');
-                document.getElementById('nav-logout-link').classList.remove('hidden');
-                document.getElementById('mobile-nav-admin-link').classList.remove('hidden');
-                document.getElementById('mobile-nav-logout-link').classList.remove('hidden');
-                document.body.classList.add('admin-mode');
-                enableImageDropZones();
-                checkMaintenance(); // Refresh maintenance view
-                showToast('Καλωσήρθατε! Το Drag & Drop ενεργοποιήθηκε.');
-                closeAdminLogin();
-                document.getElementById('admin-password').value = ''; 
-                showAdminDashboard(null);
-            } else {
+            // Legacy local-password login removed. Use the real login page.
+            window.location.href = '/admin/login.html';
+        } else {
                 showToast('Λάθος κωδικός!');
                 document.getElementById('admin-password').value = '';
             }
@@ -1879,22 +1879,12 @@ if (!response.ok) {
             enableImageDropZones();
         }
 
-        function adminLogout(e) {
+        async function adminLogout(e) {
             if(e) e.preventDefault();
-            isAdmin = false;
-            localStorage.removeItem('vitro_isAdmin'); 
-            localStorage.removeItem('vitro_active_view');
-            document.getElementById('nav-admin-link').classList.add('hidden');
-            document.getElementById('nav-logout-link').classList.add('hidden');
-            document.getElementById('mobile-nav-admin-link').classList.add('hidden');
-            document.getElementById('mobile-nav-logout-link').classList.add('hidden');
-            document.body.classList.remove('admin-mode');
-            showToast('Αποσυνδεθήκατε.');
-            closeAdminLogin();
-            
-            // Check maintenance again - if active, user will see under construction
-            checkMaintenance();
-            if(!isMaintenance) showLanding(true);
+            try { await fetch('/api/logout', { method: 'POST', credentials: 'include' }); } catch(e2) {}
+            // Clear local view state so public loads cleanly
+            try { localStorage.removeItem('vitro_active_view'); } catch(e3) {}
+            window.location.href = '/';
         }
 
         // --- PLACEHOLDER LINKS ---
@@ -2468,18 +2458,24 @@ if (!response.ok) {
             checkMaintenance();
 
             // Then check view state if maintenance is not blocking (or if admin)
-            const lastView = localStorage.getItem('vitro_active_view');
-            
-            // If in maintenance and not admin, force maintenance view regardless of stored view
-            if (isMaintenance && !isAdmin) {
-                // checkMaintenance already handles hiding views and showing maintenance
+            if (__IS_ADMIN_PATH) {
+                // /admin should open the dashboard, not the public landing.
+                try { localStorage.setItem('vitro_active_view', 'view-admin-dashboard'); } catch(e) {}
+                try { showAdminDashboard(null); } catch(e) {}
             } else {
-                if (lastView) {
-                    if (lastView === 'view-admin-dashboard' && isAdmin) showAdminDashboard(null);
-                    else if (lastView === 'view-catalog') showCatalog(null);
-                    else if (lastView === 'view-blog') showBlog(null);
-                    else showLanding(false);
-                } else showLanding();
+                const lastView = localStorage.getItem('vitro_active_view');
+
+                // If in maintenance and not admin, force maintenance view regardless of stored view
+                if (isMaintenance && !isAdmin) {
+                    // checkMaintenance already handles hiding views and showing maintenance
+                } else {
+                    if (lastView) {
+                        if (lastView === 'view-admin-dashboard' && isAdmin) showAdminDashboard(null);
+                        else if (lastView === 'view-catalog') showCatalog(null);
+                        else if (lastView === 'view-blog') showBlog(null);
+                        else showLanding(false);
+                    } else showLanding();
+                }
             }
             
             checkWeeklyAI();
