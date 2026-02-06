@@ -1213,8 +1213,23 @@
         }
 
         // --- AUTH & ANALYTICS INIT ---
-        // /admin is protected server-side, so we are always in admin mode here.
-        let isAdmin = true;
+        // Public domain safety lock: never allow "admin mode" on vitrocanvas.gr (or www).
+        const __HOST = (location.hostname || "").toLowerCase();
+        const __PUBLIC_LOCK = (__HOST === "vitrocanvas.gr" || __HOST === "www.vitrocanvas.gr");
+
+        // Admin mode can exist only outside the public domain.
+        // (Keeps backward compatibility via localStorage on non-public hosts.)
+        let isAdmin = (!__PUBLIC_LOCK) && (localStorage.getItem('vitro_isAdmin') === 'true');
+
+        // If we are on the public domain, force a silent logout and clear any leftovers.
+        if (__PUBLIC_LOCK) {
+            try {
+                localStorage.removeItem('vitro_isAdmin');
+                localStorage.removeItem('vitro_active_view');
+            } catch (e) {}
+            // Best-effort server logout (clears session cookie on this domain if it exists).
+            fetch('/api/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
+        }
         // (Fallback) will be overridden by server data if present.
         let isMaintenance = localStorage.getItem('vitro_maintenance') === 'true';
 
@@ -1836,6 +1851,11 @@ if (!response.ok) {
 
         // --- AUTH FUNCTIONS ---
         function openAdminLogin() { 
+            if (__PUBLIC_LOCK) {
+                // Public visitors should never see the admin login on the main domain.
+                showToast('Η διαχείριση είναι διαθέσιμη μόνο από το /admin.');
+                return;
+            }
             document.getElementById('admin-login-modal').classList.remove('hidden'); 
             if (isAdmin) {
                 document.getElementById('admin-login-form').classList.add('hidden');
@@ -1849,6 +1869,11 @@ if (!response.ok) {
         function closeAdminLogin() { document.getElementById('admin-login-modal').classList.add('hidden'); }
 
         function attemptAdminLogin() {
+            if (__PUBLIC_LOCK) {
+                // Safety: do not allow login from the public domain.
+                showToast('Η διαχείριση είναι διαθέσιμη μόνο από το /admin.');
+                return;
+            }
             const pass = document.getElementById('admin-password').value;
             if (pass === '1111') {
                 isAdmin = true;
@@ -2073,6 +2098,11 @@ if (!response.ok) {
 
         function showAdminDashboard(e) {
             if(e) e.preventDefault();
+            if (__PUBLIC_LOCK) {
+                // Public domain: force users back to the landing view.
+                showLanding(true);
+                return;
+            }
             if (!isAdmin) { openAdminLogin(); return; }
             hideAllViews();
             document.getElementById('view-admin-dashboard')?.classList.remove('hidden');
