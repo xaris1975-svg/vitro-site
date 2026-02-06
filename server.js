@@ -123,8 +123,6 @@ function requireSessionApi(req, res, next) {
 }
 
 // Public site
-app.use("/", express.static(PUBLIC_DIR, { redirect: false }));
-
 // Uploaded assets (served publicly)
 app.use("/uploads", express.static(UPLOADS_DIR, { redirect: false }));
 
@@ -154,6 +152,9 @@ app.post("/api/logout", (req, res) => {
 // Protect all admin assets/pages except login.html
 app.use("/admin", requireSession, express.static(ADMIN_DIR, { redirect: false }));
 
+
+// Public site
+app.use("/", express.static(PUBLIC_DIR, { redirect: false }));
 /**
  * CMS Site Data
  * - GET is public (the website loads content from the server)
