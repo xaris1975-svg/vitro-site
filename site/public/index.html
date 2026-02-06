@@ -374,7 +374,7 @@
             <div class="max-w-7xl mx-auto px-4 text-center">
                 <p class="text-gray-500 text-sm">
                     &copy; 2024 VITRO CANVAS. All rights reserved. | Created by Harris Eleftheriou
-                    <span onclick="openAdminLogin()" class="cursor-pointer opacity-0 hover:opacity-100 ml-2 transition-opacity" title="Admin Login"><i class="fas fa-key text-gray-700"></i></span>
+                    <a href="/admin/login.html" class="cursor-pointer opacity-0 hover:opacity-100 ml-2 transition-opacity" title="Admin Login" aria-label="Admin Login"><i class="fas fa-key text-gray-700"></i></a>
                 </p>
             </div>
         </footer>
@@ -1057,7 +1057,7 @@
             <p class="text-gray-500 text-sm">
                 &copy; 2024 VITRO CANVAS. All rights reserved. | Created by Harris Eleftheriou
                 <!-- HIDDEN ADMIN TRIGGER -->
-                <span onclick="openAdminLogin()" class="cursor-pointer opacity-0 hover:opacity-100 ml-2 transition-opacity" title="Admin Login"><i class="fas fa-key text-gray-700"></i></span>
+                <a href="/admin/login.html" class="cursor-pointer opacity-0 hover:opacity-100 ml-2 transition-opacity" title="Admin Login" aria-label="Admin Login"><i class="fas fa-key text-gray-700"></i></a>
             </p>
         </div>
     </footer>
@@ -1213,10 +1213,36 @@
         }
 
         // --- AUTH & ANALYTICS INIT ---
-        // /admin is protected server-side, so we are always in admin mode here.
-        // Public site: admin mode is NOT allowed here. Admin lives under /admin/*.
+        // Public page must NEVER assume admin.
+        // Admin mode is enabled only when the server session says so.
         let isAdmin = false;
-        try { localStorage.removeItem('vitro_isAdmin'); localStorage.removeItem('vitro_active_view'); } catch(e) {}
+        try { localStorage.removeItem('vitro_isAdmin'); } catch(e) {}
+
+        async function refreshAdminState() {
+            try {
+                const r = await fetch('/api/me', { credentials: 'include' });
+                const j = await r.json().catch(() => ({}));
+                isAdmin = !!j.authenticated;
+            } catch (e) {
+                isAdmin = false;
+            }
+
+            // Toggle admin UI affordances safely (elements may not exist in some templates)
+            const idsToShowWhenAdmin = [
+                'nav-admin-link','nav-logout-link',
+                'mobile-nav-admin-link','mobile-nav-logout-link'
+            ];
+            idsToShowWhenAdmin.forEach((id) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                if (isAdmin) el.classList.remove('hidden');
+                else el.classList.add('hidden');
+            });
+
+            try {
+                document.body.classList.toggle('admin-mode', isAdmin);
+            } catch(e2) {}
+        }
         // (Fallback) will be overridden by server data if present.
         let isMaintenance = localStorage.getItem('vitro_maintenance') === 'true';
 
@@ -1672,10 +1698,18 @@ if (!response.ok) {
                 // Update UI
                 const dateEl = document.getElementById('next-ai-date');
                 if(dateEl && lastAiDate === 0) dateEl.innerText = "Άμεσα";
-                
-                checkWeeklyAI(); 
+            // If we came from the login page, jump straight into the admin dashboard.
+            try {
+                const params = new URLSearchParams(window.location.search || '');
+                if (params.get('admin') === '1' && isAdmin) {
+                    showAdminDashboard(null);
+                    // Clean the URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            } catch(e) {}
 
-            } catch (error) {
+            checkWeeklyAI();
+} catch (error) {
                 console.error(error);
                 let msg = error.message;
                 if (msg === 'Failed to fetch') {
@@ -1838,16 +1872,13 @@ if (!response.ok) {
 
         // --- AUTH FUNCTIONS ---
         function openAdminLogin() {
-            // Hidden key in footer: go to the real admin login page (server-side session).
             window.location.href = '/admin/login.html';
         }
         function closeAdminLogin() { /* legacy no-op */ }
 
         function attemptAdminLogin() {
-            // Legacy inline login removed. Use the real admin login page.
             window.location.href = '/admin/login.html';
         }
-
         }
 
         if (isAdmin) {
@@ -1860,21 +1891,16 @@ if (!response.ok) {
         }
 
         function adminLogout(e) {
-            if(e) e.preventDefault();
-            isAdmin = false;
-            localStorage.removeItem('vitro_isAdmin'); 
-            localStorage.removeItem('vitro_active_view');
-            document.getElementById('nav-admin-link').classList.add('hidden');
-            document.getElementById('nav-logout-link').classList.add('hidden');
-            document.getElementById('mobile-nav-admin-link').classList.add('hidden');
-            document.getElementById('mobile-nav-logout-link').classList.add('hidden');
-            document.body.classList.remove('admin-mode');
-            showToast('Αποσυνδεθήκατε.');
-            closeAdminLogin();
-            
-            // Check maintenance again - if active, user will see under construction
-            checkMaintenance();
-            if(!isMaintenance) showLanding(true);
+            if (e) e.preventDefault();
+            fetch('/api/logout', { method: 'POST', credentials: 'include' })
+              .catch(() => {})
+              .finally(() => {
+                try {
+                  localStorage.removeItem('vitro_isAdmin');
+                  localStorage.removeItem('vitro_active_view');
+                } catch(e2) {}
+                window.location.href = '/';
+              });
         }
 
         // --- PLACEHOLDER LINKS ---
@@ -2433,6 +2459,9 @@ if (!response.ok) {
         }
 
         window.onload = async function() {
+            // Determine admin mode from server session
+            await refreshAdminState();
+
             // Load latest server data FIRST so the admin edits the real public site.
             await loadFromServer();
 
