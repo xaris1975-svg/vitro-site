@@ -60,7 +60,7 @@ form.addEventListener('submit', async (e) => {
     });
     const data = await r.json().catch(() => ({}));
     if (!r.ok) return showError(data.error || 'Αποτυχία σύνδεσης.');
-    window.location.href = '/admin/index.html';
+    window.location.href = '/?admin=1';
   } catch (e2) {
     showError('Κάτι πήγε στραβά. Δοκίμασε ξανά.');
   }
