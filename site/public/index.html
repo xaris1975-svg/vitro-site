@@ -1213,8 +1213,8 @@
         }
 
         // --- AUTH & ANALYTICS INIT ---
-        // /admin is protected server-side, so we are always in admin mode here.
-        let isAdmin = true;
+        // /admin is protected server-side. Only treat /admin/* as admin mode.
+        let isAdmin = (window.location.pathname === '/admin' || window.location.pathname.startsWith('/admin/'));
         // (Fallback) will be overridden by server data if present.
         let isMaintenance = localStorage.getItem('vitro_maintenance') === 'true';
 
