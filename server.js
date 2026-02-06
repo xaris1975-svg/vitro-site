@@ -122,12 +122,6 @@ function requireSessionApi(req, res, next) {
   return res.status(401).json({ error: "Unauthorized" });
 }
 
-// Who am I (session check) - used by the public page to decide if admin tools should appear
-app.get("/api/me", (req, res) => {
-  return res.json({ authenticated: isAuthed(req) });
-});
-
-
 // Public site
 app.use("/", express.static(PUBLIC_DIR, { redirect: false }));
 
