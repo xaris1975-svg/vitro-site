@@ -1213,8 +1213,18 @@
         }
 
         // --- AUTH & ANALYTICS INIT ---
-        // /admin is protected server-side, so we are always in admin mode here.
-        let isAdmin = true;
+        // Admin mode is enabled ONLY on /admin/* pages.
+        // Those pages are protected server-side (session cookie), so reaching them means you're logged in.
+        const __IS_ADMIN_PATH = (window.location && window.location.pathname || '').startsWith('/admin');
+        let isAdmin = __IS_ADMIN_PATH;
+        try {
+            // Clean up legacy flags so the public homepage never "sticks" in admin mode.
+            if (!isAdmin) {
+                localStorage.removeItem('vitro_isAdmin');
+                localStorage.removeItem('vitro_active_view');
+            }
+        } catch(e) {}
+        if (!isAdmin) document.body.classList.remove('admin-mode');
         // (Fallback) will be overridden by server data if present.
         let isMaintenance = localStorage.getItem('vitro_maintenance') === 'true';
 
@@ -1835,39 +1845,18 @@ if (!response.ok) {
         }
 
         // --- AUTH FUNCTIONS ---
-        function openAdminLogin() { 
-            document.getElementById('admin-login-modal').classList.remove('hidden'); 
-            if (isAdmin) {
-                document.getElementById('admin-login-form').classList.add('hidden');
-                document.getElementById('admin-logout-view').classList.remove('hidden');
-            } else {
-                document.getElementById('admin-login-form').classList.remove('hidden');
-                document.getElementById('admin-logout-view').classList.add('hidden');
-                setTimeout(() => document.getElementById('admin-password').focus(), 100);
-            }
+        function openAdminLogin() {
+            // No inline password modal anymore.
+            // Public users: go to the real admin login (server-side session).
+            // Admin users: stay inside /admin/ anyway.
+            window.location.href = '/admin/login.html';
         }
-        function closeAdminLogin() { document.getElementById('admin-login-modal').classList.add('hidden'); }
+        function closeAdminLogin() { /* legacy no-op */ }
 
         function attemptAdminLogin() {
-            const pass = document.getElementById('admin-password').value;
-            if (pass === '1111') {
-                isAdmin = true;
-                localStorage.setItem('vitro_isAdmin', 'true'); 
-                document.getElementById('nav-admin-link').classList.remove('hidden');
-                document.getElementById('nav-logout-link').classList.remove('hidden');
-                document.getElementById('mobile-nav-admin-link').classList.remove('hidden');
-                document.getElementById('mobile-nav-logout-link').classList.remove('hidden');
-                document.body.classList.add('admin-mode');
-                enableImageDropZones();
-                checkMaintenance(); // Refresh maintenance view
-                showToast('Καλωσήρθατε! Το Drag & Drop ενεργοποιήθηκε.');
-                closeAdminLogin();
-                document.getElementById('admin-password').value = ''; 
-                showAdminDashboard(null);
-            } else {
-                showToast('Λάθος κωδικός!');
-                document.getElementById('admin-password').value = '';
-            }
+            // Legacy: redirect to /admin login (session-based).
+            window.location.href = '/admin/login.html';
+        }
         }
 
         if (isAdmin) {
@@ -1880,21 +1869,17 @@ if (!response.ok) {
         }
 
         function adminLogout(e) {
-            if(e) e.preventDefault();
-            isAdmin = false;
-            localStorage.removeItem('vitro_isAdmin'); 
-            localStorage.removeItem('vitro_active_view');
-            document.getElementById('nav-admin-link').classList.add('hidden');
-            document.getElementById('nav-logout-link').classList.add('hidden');
-            document.getElementById('mobile-nav-admin-link').classList.add('hidden');
-            document.getElementById('mobile-nav-logout-link').classList.add('hidden');
-            document.body.classList.remove('admin-mode');
-            showToast('Αποσυνδεθήκατε.');
-            closeAdminLogin();
-            
-            // Check maintenance again - if active, user will see under construction
-            checkMaintenance();
-            if(!isMaintenance) showLanding(true);
+            if (e) e.preventDefault();
+            // Server-side logout (destroys session cookie)
+            fetch('/api/logout', { method: 'POST', credentials: 'include' })
+              .catch(() => {})
+              .finally(() => {
+                try {
+                  localStorage.removeItem('vitro_isAdmin');
+                  localStorage.removeItem('vitro_active_view');
+                } catch(e2) {}
+                window.location.href = '/admin/login.html';
+              });
         }
 
         // --- PLACEHOLDER LINKS ---
