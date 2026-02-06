@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin | Vitro Canvas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-zinc-950 text-zinc-100 flex items-center justify-center p-6">
+  <div class="w-full max-w-lg bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 shadow-xl">
+    <h1 class="text-2xl font-semibold mb-2">Admin ✅</h1>
+    <p class="text-sm text-zinc-300 mb-6">
+      Από εδώ ελέγχεις ότι το login/session δουλεύει και κάνεις αποσύνδεση.
+    </p>
+
+    <div class="grid gap-3">
+      <a href="/" class="inline-flex items-center justify-center rounded-xl bg-white text-black px-4 py-3 font-medium hover:opacity-90">
+        Άνοιξε το site
+      </a>
+
+      <button id="check" class="inline-flex items-center justify-center rounded-xl border border-zinc-700 px-4 py-3 font-medium hover:bg-zinc-800">
+        Έλεγχος /api/site
+      </button>
+
+      <button id="logout" class="inline-flex items-center justify-center rounded-xl border border-red-700 text-red-200 px-4 py-3 font-medium hover:bg-red-950/40">
+        Αποσύνδεση
+      </button>
+    </div>
+
+    <pre id="out" class="mt-4 text-xs bg-black/40 border border-zinc-800 rounded-xl p-3 whitespace-pre-wrap"></pre>
+  </div>
+
+<script>
+  const out = document.getElementById('out');
+  document.getElementById('check').addEventListener('click', async () => {
+    out.textContent = 'Ελέγχω...';
+    try {
+      const r = await fetch('/api/site', { cache: 'no-store' });
+      const j = await r.json().catch(()=> ({}));
+      out.textContent = r.ok
+        ? 'OK: /api/site απαντάει\n\n' + JSON.stringify(j, null, 2)
+        : 'Σφάλμα: ' + r.status + '\n' + JSON.stringify(j, null, 2);
+    } catch (e) {
+      out.textContent = 'Σφάλμα: ' + (e && e.message ? e.message : String(e));
+    }
+  });
+
+  document.getElementById('logout').addEventListener('click', async () => {
+    out.textContent = 'Αποσύνδεση...';
+    try { await fetch('/api/logout', { method: 'POST' }); } finally {
+      window.location.href = '/admin/login.html';
+    }
+  });
+</script>
+</body>
+</html>
