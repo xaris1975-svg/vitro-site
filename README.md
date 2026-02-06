@@ -22,3 +22,6 @@
 ## Deploy
 Deploy this Node app to any host that supports Node (Render, Fly.io, Railway, VPS).
 Then point your domain to it.
+
+
+Extra env (optional): COOKIE_DOMAIN=.vitrocanvas.gr

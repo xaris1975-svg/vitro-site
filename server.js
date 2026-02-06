@@ -47,6 +47,8 @@ const DATA_DIR = process.env.DATA_DIR || "/var/data";
 const SITE_DATA_PATH = path.join(DATA_DIR, "site-data.json");
 const UPLOADS_DIR = path.join(DATA_DIR, "uploads");
 
+const COOKIE_DOMAIN = process.env.COOKIE_DOMAIN || undefined;
+
 const SESSION_SECRET =
   process.env.SESSION_SECRET || "vitro-session-" + Math.random().toString(36).slice(2);
 
@@ -104,6 +106,7 @@ app.use(
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
       maxAge: 1000 * 60 * 60 * 12, // 12h
+      domain: COOKIE_DOMAIN,
     },
   })
 );
@@ -126,9 +129,6 @@ function requireSessionApi(req, res, next) {
 app.use("/", express.static(PUBLIC_DIR, { redirect: false }));
 
 // Uploaded assets (served publicly)
-app.use("/uploads", express.static(UPLOADS_DIR, { redirect: false }));
-
-// Serve uploaded assets publicly
 app.use("/uploads", express.static(UPLOADS_DIR, { redirect: false }));
 
 // Admin entry: always show login page (no auth popups)
