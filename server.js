@@ -7,6 +7,11 @@ import fsp from "fs/promises";
 import nodemailer from "nodemailer";
 
 const app = express();
+
+// Render/Reverse-proxy: make secure cookies work behind HTTPS termination
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
 const PORT = process.env.PORT || 3000;
 
 const ADMIN_USER = process.env.ADMIN_USER || "admin";
@@ -99,6 +104,7 @@ app.use(
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    proxy: true,
     cookie: {
       httpOnly: true,
       sameSite: "lax",
@@ -122,40 +128,44 @@ function requireSessionApi(req, res, next) {
   return res.status(401).json({ error: "Unauthorized" });
 }
 
-// ====== BUILD MARKER (helps verify deploy in Render logs) ======
-console.log("[vitro] server build: admin-order+login-save 2026-02-06");
+// Avoid caching admin pages (prevents weird back/forward behavior)
+app.use("/admin", (req, res, next) => {
+  res.setHeader("Cache-Control", "no-store");
+  next();
+});
 
-// Admin entry
+
+// Public site
+
+// Uploaded assets (served publicly)
+app.use("/uploads", express.static(UPLOADS_DIR, { redirect: false }));
+
+// Serve uploaded assets publicly
+
+// Admin entry: always show login page (no auth popups)
 app.get("/admin", (req, res) => {
-  return res.redirect(isAuthed(req) ? "/admin/index.html" : "/admin/login.html");
+  if (isAuthed(req)) return res.redirect("/admin/index.html");
+  return res.redirect("/admin/login.html");
 });
 app.get("/admin/", (req, res) => {
-  return res.redirect(isAuthed(req) ? "/admin/index.html" : "/admin/login.html");
+  if (isAuthed(req)) return res.redirect("/admin/index.html");
+  return res.redirect("/admin/login.html");
 });
-
-// Admin login page (public)
 app.get("/admin/login.html", (req, res) => res.sendFile(path.join(ADMIN_DIR, "login.html")));
 
 // Login / logout API
 app.post("/api/login", (req, res) => {
   const { username, password } = req.body || {};
-  if (username !== ADMIN_USER || password !== ADMIN_PASS) {
-    return res.status(401).json({ error: "Λάθος username ή password." });
-  }
+  const ok = username === ADMIN_USER && password === ADMIN_PASS;
+  if (!ok) return res.status(401).json({ error: "Λάθος στοιχεία σύνδεσης." });
 
-  // Make sure the session is actually persisted BEFORE we respond
+  // Make sure the session cookie is actually written before the browser navigates.
   req.session.regenerate((err) => {
-    if (err) {
-      console.warn("[warn] session regenerate failed:", err?.message || err);
-      return res.status(500).json({ error: "Σφάλμα σύνδεσης (session)." });
-    }
+    if (err) return res.status(500).json({ error: "Session error." });
     req.session.authed = true;
     req.session.save((err2) => {
-      if (err2) {
-        console.warn("[warn] session save failed:", err2?.message || err2);
-        return res.status(500).json({ error: "Σφάλμα σύνδεσης (save)." });
-      }
-      return res.json({ ok: true, redirect: "/admin/index.html" });
+      if (err2) return res.status(500).json({ error: "Session save error." });
+      return res.json({ ok: true });
     });
   });
 });
@@ -166,13 +176,10 @@ app.post("/api/logout", (req, res) => {
   });
 });
 
-// Protect admin pages/assets (everything under /admin except login.html)
+// Protect all admin assets/pages except login.html
 app.use("/admin", requireSession, express.static(ADMIN_DIR, { redirect: false }));
 
-// Uploaded assets (served publicly)
-app.use("/uploads", express.static(UPLOADS_DIR, { redirect: false }));
-
-// Public site (MUST be after /admin, so /admin/* never gets served from public by mistake)
+// Public site (must come AFTER /admin routes to avoid accidental admin collisions)
 app.use("/", express.static(PUBLIC_DIR, { redirect: false }));
 
 /**
@@ -314,6 +321,7 @@ app.post("/api/gemini/generate", requireSessionApi, async (req, res) => {
 });
 
 app.listen(PORT, () => {
+  console.log("[vitro] build: adminfix2 trust-proxy+admin-first 2026-02-06");
   console.log(`Server running on http://localhost:${PORT}`);
   console.log(`Public: http://localhost:${PORT}/`);
   console.log(`Admin login:  http://localhost:${PORT}/admin/login.html`);
