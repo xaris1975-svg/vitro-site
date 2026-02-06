@@ -5,6 +5,11 @@ import multer from "multer";
 import path from "path";
 import fsp from "fs/promises";
 import nodemailer from "nodemailer";
+import { fileURLToPath } from "url";
+
+// --- ΡΥΘΜΙΣΗ PATHS (Διόρθωση για Render/Linux) ---
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,35 +19,28 @@ const ADMIN_PASS = process.env.ADMIN_PASS || "change-me";
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
 
 // ====== EMAIL (SMTP) ======
-/**
- * Sends contact-form emails via SMTP.
- * If you use Gmail: SMTP_HOST=smtp.gmail.com, SMTP_PORT=587, SMTP_USER=your@gmail.com, SMTP_PASS=App Password (no spaces)
- */
 const SMTP_HOST = process.env.SMTP_HOST || "";
 const SMTP_PORT = Number(process.env.SMTP_PORT || "587");
 const SMTP_USER = process.env.SMTP_USER || "";
 const SMTP_PASS = process.env.SMTP_PASS || "";
 
-const CONTACT_TO_EMAIL = process.env.CONTACT_TO || process.env.CONTACT_TO_EMAIL || ""; // where you receive form emails
-const CONTACT_FROM_EMAIL = process.env.CONTACT_FROM_EMAIL || SMTP_USER; // shown as From:
+const CONTACT_TO_EMAIL = process.env.CONTACT_TO || process.env.CONTACT_TO_EMAIL || ""; 
+const CONTACT_FROM_EMAIL = process.env.CONTACT_FROM_EMAIL || SMTP_USER; 
 const CONTACT_FROM_NAME = process.env.CONTACT_FROM_NAME || "VitroCanvas";
 const CONTACT_SUBJECT_PREFIX = process.env.CONTACT_SUBJECT_PREFIX || "Νέο αίτημα από";
 
-// Create mail transporter only if SMTP creds exist
 const mailer =
   SMTP_HOST && SMTP_USER && SMTP_PASS
     ? nodemailer.createTransport({
         host: SMTP_HOST,
         port: SMTP_PORT,
-        secure: SMTP_PORT === 465, // 465 = SSL, 587 = STARTTLS
+        secure: SMTP_PORT === 465,
         auth: { user: SMTP_USER, pass: SMTP_PASS },
         requireTLS: SMTP_PORT === 587,
         tls: { servername: SMTP_HOST },
       })
     : null;
 
-
-// Persistent data directory (Render Disk should be mounted here)
 const DATA_DIR = process.env.DATA_DIR || "/var/data";
 const SITE_DATA_PATH = path.join(DATA_DIR, "site-data.json");
 const UPLOADS_DIR = path.join(DATA_DIR, "uploads");
@@ -50,8 +48,9 @@ const UPLOADS_DIR = path.join(DATA_DIR, "uploads");
 const SESSION_SECRET =
   process.env.SESSION_SECRET || "vitro-session-" + Math.random().toString(36).slice(2);
 
-const PUBLIC_DIR = new URL("./site/public", import.meta.url).pathname;
-const ADMIN_DIR = new URL("./site/admin", import.meta.url).pathname;
+// --- ΟΡΙΣΜΟΣ ΦΑΚΕΛΩΝ ---
+const PUBLIC_DIR = path.join(__dirname, "public");
+const ADMIN_DIR = path.join(__dirname, "admin");
 
 app.use(express.json({ limit: "25mb" }));
 
@@ -74,10 +73,7 @@ async function readSiteData() {
 }
 
 async function writeSiteData(data) {
-  const payload = {
-    ...data,
-    _meta: { savedAt: new Date().toISOString() },
-  };
+  const payload = { ...data, _meta: { savedAt: new Date().toISOString() } };
   try {
     await fsp.mkdir(DATA_DIR, { recursive: true });
     await fsp.writeFile(SITE_DATA_PATH, JSON.stringify(payload, null, 2), "utf8");
@@ -88,14 +84,9 @@ async function writeSiteData(data) {
   return payload;
 }
 
-// Kick off directory creation (non-blocking)
 ensureDirs();
-
 app.set("trust proxy", 1);
-
-// Sessions (cookie-based login). No Basic Auth popups, no Safari loops.
-app.use(
-  session({
+app.use(session({
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
@@ -105,37 +96,31 @@ app.use(
       secure: process.env.NODE_ENV === "production",
       maxAge: 1000 * 60 * 60 * 12, // 12h
     },
-  })
-);
+}));
 
-function isAuthed(req) {
-  return Boolean(req.session && req.session.authed);
-}
-
+function isAuthed(req) { return Boolean(req.session && req.session.authed); }
 function requireSession(req, res, next) {
   if (isAuthed(req)) return next();
   return res.redirect("/admin/login.html");
 }
-
 function requireSessionApi(req, res, next) {
   if (isAuthed(req)) return next();
   return res.status(401).json({ error: "Unauthorized" });
 }
 
-// Public site
-app.use("/", express.static(PUBLIC_DIR, { redirect: false }));
+// --- ΚΥΡΙΑ ΔΙΟΡΘΩΣΗ: Root Path ---
+app.get("/", (req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, "index.html"));
+});
 
-// Uploaded assets (served publicly)
+app.use("/", express.static(PUBLIC_DIR, { redirect: false }));
 app.use("/uploads", express.static(UPLOADS_DIR, { redirect: false }));
 
-// Serve uploaded assets publicly
-
-// Admin entry: always show login page (no auth popups)
+// Admin Routes
 app.get("/admin", (req, res) => res.redirect("/admin/login.html"));
 app.get("/admin/", (req, res) => res.redirect("/admin/login.html"));
 app.get("/admin/login.html", (req, res) => res.sendFile(path.join(ADMIN_DIR, "login.html")));
 
-// Login / logout API
 app.post("/api/login", (req, res) => {
   const { username, password } = req.body || {};
   if (username === ADMIN_USER && password === ADMIN_PASS) {
@@ -145,20 +130,10 @@ app.post("/api/login", (req, res) => {
   return res.status(401).json({ error: "Λάθος username ή password." });
 });
 
-app.post("/api/logout", (req, res) => {
-  req.session.destroy(() => {
-    res.json({ ok: true });
-  });
-});
+app.post("/api/logout", (req, res) => { req.session.destroy(() => { res.json({ ok: true }); }); });
 
-// Protect all admin assets/pages except login.html
 app.use("/admin", requireSession, express.static(ADMIN_DIR, { redirect: false }));
 
-/**
- * CMS Site Data
- * - GET is public (the website loads content from the server)
- * - POST is admin-only (admin saves content to Render Disk)
- */
 app.get("/api/site", async (req, res) => {
   const data = await readSiteData();
   return res.json({ ok: true, data: data || null });
@@ -168,9 +143,8 @@ app.post("/api/site", requireSessionApi, async (req, res) => {
   try {
     const data = req.body?.data;
     if (!data || typeof data !== "object") return res.status(400).json({ error: "Missing data" });
-    // Guardrail: images should be uploaded as files, not base64 in JSON
     const size = Buffer.byteLength(JSON.stringify(data), "utf8");
-    if (size > 18_000_000) return res.status(413).json({ error: "Payload too large (reduce images or text)" });
+    if (size > 18_000_000) return res.status(413).json({ error: "Payload too large" });
     const saved = await writeSiteData(data);
     return res.json({ ok: true, data: saved });
   } catch (e) {
@@ -178,22 +152,13 @@ app.post("/api/site", requireSessionApi, async (req, res) => {
   }
 });
 
-// Image upload (admin-only). Returns {url} under /uploads/...
 const upload = multer({
   storage: multer.diskStorage({
     destination: async (req, file, cb) => {
-      try {
-        await ensureDirs();
-        cb(null, UPLOADS_DIR);
-      } catch (e) {
-        cb(e);
-      }
+      try { await ensureDirs(); cb(null, UPLOADS_DIR); } catch (e) { cb(e); }
     },
     filename: (req, file, cb) => {
-      const safeBase = (file.originalname || "upload")
-        .toLowerCase()
-        .replace(/[^a-z0-9._-]/g, "-")
-        .slice(0, 80);
+      const safeBase = (file.originalname || "upload").toLowerCase().replace(/[^a-z0-9._-]/g, "-").slice(0, 80);
       const ext = path.extname(safeBase) || ".bin";
       const name = path.basename(safeBase, ext) || "file";
       cb(null, `${Date.now()}-${Math.random().toString(16).slice(2)}-${name}${ext}`);
@@ -212,45 +177,19 @@ app.post("/api/upload", requireSessionApi, upload.single("file"), (req, res) => 
   return res.json({ ok: true, url });
 });
 
-/**
- * CONTACT FORM (PUBLIC)
- * This endpoint is called by the public site's contact/quote form.
- * It sends an email notification to CONTACT_TO_EMAIL via Brevo SMTP.
- */
 app.post("/api/contact", async (req, res) => {
   try {
     const { name, email, phone, interest, message } = req.body || {};
-
-    if (!name || !email || !message) {
-      return res.status(400).json({ ok: false, error: "missing_fields" });
-    }
-
-    if (!CONTACT_TO_EMAIL) {
-      return res.status(500).json({ ok: false, error: "missing_CONTACT_TO_EMAIL" });
-    }
-
-    if (!mailer) {
-      return res.status(500).json({ ok: false, error: "smtp_not_configured" });
-    }
+    if (!name || !email || !message) return res.status(400).json({ ok: false, error: "missing_fields" });
+    if (!CONTACT_TO_EMAIL || !mailer) return res.status(500).json({ ok: false, error: "smtp_not_configured" });
 
     await mailer.sendMail({
       from: `${CONTACT_FROM_NAME} <${CONTACT_FROM_EMAIL}>`,
       to: CONTACT_TO_EMAIL,
       replyTo: email,
       subject: `${CONTACT_SUBJECT_PREFIX} ${name}`,
-      text:
-`ΝΕΟ ΑΙΤΗΜΑ ΑΠΟ ΦΟΡΜΑ
-
-Όνομα: ${name}
-Email: ${email}
-Τηλέφωνο: ${phone || "-"}
-Ενδιαφέρεται για: ${interest || "-"}
-
-Μήνυμα:
-${message}
-`,
+      text: `ΝΕΟ ΑΙΤΗΜΑ ΑΠΟ ΦΟΡΜΑ\nΌνομα: ${name}\nEmail: ${email}\nΤηλέφωνο: ${phone || "-"}\nΕνδιαφέρεται για: ${interest || "-"}\n\nΜήνυμα:\n${message}\n`,
     });
-
     return res.json({ ok: true });
   } catch (e) {
     console.error("CONTACT ERROR:", e);
@@ -258,12 +197,9 @@ ${message}
   }
 });
 
-/**
- * Gemini proxy endpoints (admin-only)
- * Docs: https://ai.google.dev/api (models & generateContent)
- */
+// Gemini Endpoints
 app.get("/api/gemini/models", requireSessionApi, async (req, res) => {
-  if (!GEMINI_API_KEY) return res.status(500).json({ error: "Missing GEMINI_API_KEY on server." });
+  if (!GEMINI_API_KEY) return res.status(500).json({ error: "Missing GEMINI_API_KEY" });
   const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(GEMINI_API_KEY)}`;
   const r = await fetch(url);
   const txt = await r.text();
@@ -273,7 +209,7 @@ app.get("/api/gemini/models", requireSessionApi, async (req, res) => {
 
 app.post("/api/gemini/generate", requireSessionApi, async (req, res) => {
   try {
-    if (!GEMINI_API_KEY) return res.status(500).json({ error: "Missing GEMINI_API_KEY on server." });
+    if (!GEMINI_API_KEY) return res.status(500).json({ error: "Missing GEMINI_API_KEY" });
     const model = req.body?.model || "gemini-2.5-flash";
     const body = req.body?.body;
     if (!body) return res.status(400).json({ error: "Missing body payload." });
@@ -294,6 +230,4 @@ app.post("/api/gemini/generate", requireSessionApi, async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
-  console.log(`Public: http://localhost:${PORT}/`);
-  console.log(`Admin login:  http://localhost:${PORT}/admin/login.html`);
 });
