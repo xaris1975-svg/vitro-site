@@ -55,13 +55,12 @@ form.addEventListener('submit', async (e) => {
   try {
     const r = await fetch('/api/login', {
       method: 'POST',
-      credentials: 'include',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ username, password })
     });
     const data = await r.json().catch(() => ({}));
     if (!r.ok) return showError(data.error || 'Αποτυχία σύνδεσης.');
-    window.location.href = (data && data.redirect) ? data.redirect : '/admin/index.html';
+    window.location.href = '/admin/index.html';
   } catch (e2) {
     showError('Κάτι πήγε στραβά. Δοκίμασε ξανά.');
   }
