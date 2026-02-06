@@ -123,6 +123,52 @@ function requireSessionApi(req, res, next) {
 }
 
 // Public site
+
+// Auto-logout ONLY on the public domain(s) (vitrocanvas.gr) so regular visitors can never keep an admin session there.
+// Admin keeps working normally via: https://vitro-site.onrender.com/admin/login.html
+const PUBLIC_LOGOUT_HOSTS = new Set(
+  (process.env.PUBLIC_LOGOUT_HOSTS || "vitrocanvas.gr,www.vitrocanvas.gr")
+    .split(",")
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean)
+);
+
+function requestHost(req) {
+  const raw = String(req.headers.host || "");
+  return raw.split(":")[0].toLowerCase();
+}
+
+function isPublicHost(req) {
+  return PUBLIC_LOGOUT_HOSTS.has(requestHost(req));
+}
+
+function wantsHtml(req) {
+  const accept = String(req.headers.accept || "");
+  return accept.includes("text/html") || accept.includes("application/xhtml+xml");
+}
+
+app.use((req, res, next) => {
+  // Only on the public domain(s).
+  if (!isPublicHost(req)) return next();
+
+  // If there is an active admin session cookie on the public domain, kill it.
+  if (!isAuthed(req)) return next();
+
+  // Kill it immediately on any admin route, and also on normal page loads.
+  const shouldKill = req.path.startsWith("/admin") || wantsHtml(req);
+  if (!shouldKill) return next();
+
+  req.session.destroy(() => {
+    res.clearCookie("connect.sid", {
+      path: "/",
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+    });
+    next();
+  });
+});
+
 app.use("/", express.static(PUBLIC_DIR, { redirect: false }));
 
 // Uploaded assets (served publicly)
@@ -147,6 +193,12 @@ app.post("/api/login", (req, res) => {
 
 app.post("/api/logout", (req, res) => {
   req.session.destroy(() => {
+    res.clearCookie("connect.sid", {
+      path: "/",
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+    });
     res.json({ ok: true });
   });
 });
