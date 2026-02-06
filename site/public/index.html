@@ -316,7 +316,8 @@
             <form onsubmit="event.preventDefault(); handleAddProduct();">
                 <input type="hidden" id="prod-id"> <!-- Hidden ID field for edits -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Όνομα Προϊόντος</label><input id="prod-name" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition"></div>
+                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Όνομα Προϊόντος (EL)</label><input id="prod-name" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition"></div>
+                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Product Name (EN)</label><input id="prod-name-en" type="text" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="English name"></div>
                     <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Τιμή (€)</label><input id="prod-price" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="π.χ. 120.00"></div>
                     <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Κατηγορία</label><select id="prod-category" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition"><option value="stained-glass">Αρχιτεκτονικό Βιτρό</option><option value="jewelry">Κοσμήματα</option><option value="decor">Διακόσμηση</option></select></div>
                     <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Διαθεσιμότητα</label><select id="prod-stock" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition"><option value="in-stock">Άμεσα Διαθέσιμο</option><option value="made-to-order">Κατόπιν Παραγγελίας</option><option value="sold">Πωλήθηκε</option></select></div>
@@ -324,7 +325,8 @@
                     <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Έκπτωση (%)</label><input id="prod-discount" type="number" min="0" max="100" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="0"></div>
                     
                     <div class="col-span-1 md:col-span-2"><label class="block text-gray-400 text-xs uppercase font-bold mb-1">URL Εικόνας</label><input id="prod-image" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="https://example.com/image.jpg"></div>
-                    <div class="col-span-1 md:col-span-2"><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Περιγραφή</label><textarea id="prod-desc" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition h-24"></textarea></div>
+                    <div class="col-span-1 md:col-span-2"><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Περιγραφή (EL)</label><textarea id="prod-desc" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition h-24"></textarea></div>
+                    <div class="col-span-1 md:col-span-2"><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Description (EN)</label><textarea id="prod-desc-en" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition h-24" placeholder="English description"></textarea></div>
                 </div>
                 <button type="submit" class="w-full bg-amber text-lead font-bold py-3 rounded-lg hover:bg-white transition duration-300">Αποθήκευση</button>
             </form>
@@ -341,13 +343,21 @@
                 <h2 class="text-2xl font-serif font-bold text-white">Νέο Άρθρο Blog</h2>
             </div>
             <form onsubmit="event.preventDefault(); handleAddBlogPost();">
+                <input type="hidden" id="blog-id">
                 <div class="space-y-4">
-                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Τίτλος Άρθρου</label><input id="blog-title" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition"></div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Ημερομηνία</label><input id="blog-date" type="text" placeholder="π.χ. 25 Μαρ 2026" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition"></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Τίτλος Άρθρου (EL)</label><input id="blog-title" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition"></div>
+                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Post Title (EN)</label><input id="blog-title-en" type="text" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition" placeholder="English title"></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Ημερομηνία (EL)</label><input id="blog-date" type="text" placeholder="π.χ. 25 Μαρ 2026" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition"></div>
+                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Date (EN)</label><input id="blog-date-en" type="text" placeholder="e.g. Mar 25, 2026" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition"></div>
                         <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">URL Εικόνας</label><input id="blog-image" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition" placeholder="https://..."></div>
                     </div>
-                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Περιεχόμενο (HTML επιτρέπεται)</label><textarea id="blog-content" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition h-48" placeholder="<p>Γράψτε το κείμενό σας εδώ...</p>"></textarea></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Περιεχόμενο (EL, HTML επιτρέπεται)</label><textarea id="blog-content" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition h-48" placeholder="<p>Γράψτε το κείμενό σας εδώ...</p>"></textarea></div>
+                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Content (EN, HTML allowed)</label><textarea id="blog-content-en" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition h-48" placeholder="<p>Write your text here...</p>"></textarea></div>
+                    </div>
                 </div>
                 <button type="submit" class="w-full bg-emerald text-white font-bold py-3 mt-6 rounded-lg hover:bg-emerald-700 transition duration-300">Δημοσίευση Άρθρου</button>
             </form>
@@ -404,11 +414,9 @@
                         <!-- Logout Link -->
                         <a href="javascript:void(0)" onclick="adminLogout(event)" id="nav-logout-link" class="hidden text-ruby hover:text-white px-2 py-2 rounded-md text-sm font-bold transition"><i class="fas fa-sign-out-alt"></i></a>
 
-                        <div class="flex items-center gap-1 border border-white/10 rounded-full px-2 py-1 bg-black/20">
-                            <button type="button" id="lang-el" class="lang-btn text-xs font-bold px-2 py-1 rounded-full text-white/80 hover:text-white transition" aria-label="Ελληνικά">EL</button>
-                            <span class="text-white/20 text-xs select-none">|</span>
-                            <button type="button" id="lang-en" class="lang-btn text-xs font-bold px-2 py-1 rounded-full text-white/80 hover:text-white transition" aria-label="English">EN</button>
-                        </div>
+                        <button type="button" id="lang-toggle" class="lang-flag-btn border border-white/10 bg-black/20 hover:bg-white/10 transition" aria-label="Γλώσσα" title="Language">
+                            <span id="lang-flag" class="lang-flag" aria-hidden="true">🇬🇷</span>
+                        </button>
 
                         
                         <button onclick="openModal()" class="mr-64 bg-amber text-lead hover:bg-white px-4 py-2 rounded-md text-sm font-bold transition shadow-lg border border-amber/20" id="nav-contact-btn">Επικοινωνία</button>
@@ -434,9 +442,11 @@
                 <a href="javascript:void(0)" onclick="showAdminDashboard(event); document.getElementById('mobile-menu').classList.add('hidden');" id="mobile-nav-admin-link" class="hidden block text-emerald px-3 py-2 rounded-md text-base font-bold">Πίνακας Ελέγχου</a>
                 <a href="javascript:void(0)" onclick="adminLogout(event); document.getElementById('mobile-menu').classList.add('hidden');" id="mobile-nav-logout-link" class="hidden block text-ruby px-3 py-2 rounded-md text-base font-bold">Έξοδος</a>
 
-                <div class="flex items-center gap-2 px-3 py-2">
-                    <button type="button" id="m-lang-el" class="lang-btn w-full text-left text-white/80 hover:text-white transition font-bold">EL</button>
-                    <button type="button" id="m-lang-en" class="lang-btn w-full text-left text-white/80 hover:text-white transition font-bold">EN</button>
+                <div class="flex items-center gap-3 px-3 py-2">
+                    <button type="button" id="m-lang-toggle" class="lang-flag-btn border border-white/10 bg-black/20 hover:bg-white/10 transition" aria-label="Γλώσσα" title="Language">
+                        <span id="m-lang-flag" class="lang-flag" aria-hidden="true">🇬🇷</span>
+                    </button>
+                    <span id="m-lang-caption" class="text-white/70 text-sm font-bold select-none">Ελληνικά</span>
                 </div>
 
                 <button onclick="openModal()" class="block w-full text-left text-amber px-3 py-2 rounded-md text-base font-medium" id="mnav-contact-btn">Επικοινωνία</button>
@@ -492,9 +502,7 @@
         
             <!-- NEW MARQUEE PROMO TEXT - Positioned here -->
             <div id="hero-promo-text" class="hidden absolute top-20 left-0 w-full z-30 bg-black/5 overflow-hidden py-1 border-b border-white/5 backdrop-blur-sm">
-                <div class="animate-marquee whitespace-nowrap text-ruby font-bold text-xs tracking-widest inline-block">
-                    🔥 LIMITED OFFERS: Ανακαλύψτε τις προσφορές μας και αποκτήστε μοναδικά έργα σε προνομιακές τιμές! &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 🔥 LIMITED OFFERS: Ανακαλύψτε τις προσφορές μας και αποκτήστε μοναδικά έργα σε προνομιακές τιμές! &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 🔥 LIMITED OFFERS: Ανακαλύψτε τις προσφορές μας και αποκτήστε μοναδικά έργα σε προνομιακές τιμές!
-                </div>
+                <div class="animate-marquee whitespace-nowrap text-ruby font-bold text-xs tracking-widest inline-block"><span id="promo-marquee"></span></div>
             </div>
 
             <div class="relative z-20 text-center px-4 mt-8">
@@ -748,7 +756,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center mb-10">
                 <div>
-                    <h2 class="text-3xl md:text-4xl font-bold text-white">Κατάλογος Προϊόντων</h2>
+                    <h2 id="catalog-title" class="text-3xl md:text-4xl font-bold text-white">Κατάλογος Προϊόντων</h2>
                     <div class="w-20 h-1 bg-amber mt-2"></div>
                 </div>
                 <!-- Admin Button (Shows in Dashboard instead) -->
@@ -767,9 +775,9 @@
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-end mb-16">
                 <div class="text-center w-full relative">
-                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Το Blog μας</h2>
+                    <h2 id="blog-section-title" class="text-3xl md:text-4xl font-bold text-white mb-4">Το Blog μας</h2>
                     <div class="w-24 h-1 bg-amber mx-auto"></div>
-                    <p class="text-gray-400 mt-4 font-serif italic">Ιστορία, τεχνικές και νέα από τον κόσμο του γυαλιού.</p>
+                    <p id="blog-section-sub" class="text-gray-400 mt-4 font-serif italic">Ιστορία, τεχνικές και νέα από τον κόσμο του γυαλιού.</p>
                 </div>
             </div>
 
@@ -1250,6 +1258,11 @@ let isAdmin = !__IS_PUBLIC_HOST && (localStorage.getItem('vitro_isAdmin') === 't
                     if (Array.isArray(d.blogPosts)) blogPosts = d.blogPosts;
                     if (d.staticImages && typeof d.staticImages === 'object') staticImages = d.staticImages;
                     if (d.globalTexts && typeof d.globalTexts === 'object') globalTexts = d.globalTexts;
+
+                    // Normalize bilingual fields in case older data exists on disk.
+                    try { products = window.VC_LANG.normalizeProducts(products); } catch(e) {}
+                    try { blogPosts = window.VC_LANG.normalizeBlogPosts(blogPosts); } catch(e) {}
+                    try { globalTexts = window.VC_LANG.normalizeGlobalTexts(globalTexts); } catch(e) {}
                     if (d.globalGraphics && typeof d.globalGraphics === 'object') globalGraphics = d.globalGraphics;
                     if (typeof d.isMaintenance === 'boolean') isMaintenance = d.isMaintenance;
                     if (typeof d.lastAiDate === 'number') lastAiDate = d.lastAiDate;
@@ -1805,7 +1818,7 @@ if (!response.ok) {
         }
 
         function applyGlobalSettings() {
-            if (globalTexts.heroTitle) { const elTitle = document.getElementById('editable-hero-title'); if (elTitle) elTitle.innerHTML = globalTexts.heroTitle; }
+            if (globalTexts.heroTitle) { const elTitle = document.getElementById('editable-hero-title'); if (elTitle) elTitle.innerHTML = (window.VC_LANG ? window.VC_LANG.pick(globalTexts.heroTitle) : globalTexts.heroTitle); }
             if (globalTexts.phone) { const phoneEls = document.querySelectorAll('.fa-phone-alt + div p, #editable-phone'); phoneEls.forEach(el => el.textContent = globalTexts.phone); }
             if (globalTexts.instagram) document.querySelectorAll('.link-instagram').forEach(el => el.href = globalTexts.instagram);
             if (globalTexts.facebook) document.querySelectorAll('.link-facebook').forEach(el => el.href = globalTexts.facebook);
@@ -1989,10 +2002,12 @@ if (!response.ok) {
             
             // Reset form
             document.getElementById('prod-name').value = '';
+            const __pne = document.getElementById('prod-name-en'); if (__pne) __pne.value = '';
             document.getElementById('prod-price').value = '';
             document.getElementById('prod-discount').value = ''; // Reset discount
             document.getElementById('prod-image').value = '';
             document.getElementById('prod-desc').value = '';
+            const __pde = document.getElementById('prod-desc-en'); if (__pde) __pde.value = '';
             idField.value = '';
 
             if (editMode && productId) {
@@ -2000,13 +2015,15 @@ if (!response.ok) {
                 if (prod) {
                     title.innerText = "Επεξεργασία Προϊόντος";
                     idField.value = prod.id;
-                    document.getElementById('prod-name').value = prod.name;
+                    document.getElementById('prod-name').value = (window.VC_LANG?window.VC_LANG.pickLang(prod.name,'el'):prod.name);
+                    const __pne2 = document.getElementById('prod-name-en'); if (__pne2) __pne2.value = (window.VC_LANG?window.VC_LANG.pickLang(prod.name,'en'):prod.name);
                     document.getElementById('prod-price').value = prod.price;
                     document.getElementById('prod-discount').value = prod.discount || 0;
                     document.getElementById('prod-category').value = prod.category;
                     document.getElementById('prod-stock').value = prod.stock;
                     document.getElementById('prod-image').value = prod.image;
-                    document.getElementById('prod-desc').value = prod.desc;
+                    document.getElementById('prod-desc').value = (window.VC_LANG?window.VC_LANG.pickLang(prod.desc,'el'):prod.desc);
+                    const __pde2 = document.getElementById('prod-desc-en'); if (__pde2) __pde2.value = (window.VC_LANG?window.VC_LANG.pickLang(prod.desc,'en'):prod.desc);
                 }
             } else {
                 title.innerText = "Νέο Προϊόν";
@@ -2014,7 +2031,42 @@ if (!response.ok) {
             modal.classList.remove('hidden'); 
         }
         function closeAddProductModal() { document.getElementById('add-product-modal').classList.add('hidden'); }
-        function openAddBlogModal() { document.getElementById('add-blog-modal').classList.remove('hidden'); }
+        function openAddBlogModal(editMode=false, blogId=null) {
+            document.getElementById('add-blog-modal').classList.remove('hidden');
+
+            const idEl = document.getElementById('blog-id');
+            const titleEl = document.getElementById('blog-title');
+            const titleEnEl = document.getElementById('blog-title-en');
+            const dateEl = document.getElementById('blog-date');
+            const dateEnEl = document.getElementById('blog-date-en');
+            const imageEl = document.getElementById('blog-image');
+            const contentEl = document.getElementById('blog-content');
+            const contentEnEl = document.getElementById('blog-content-en');
+
+            // Clear by default
+            if (idEl) idEl.value = '';
+            if (titleEl) titleEl.value = '';
+            if (titleEnEl) titleEnEl.value = '';
+            if (dateEl) dateEl.value = '';
+            if (dateEnEl) dateEnEl.value = '';
+            if (imageEl) imageEl.value = '';
+            if (contentEl) contentEl.value = '';
+            if (contentEnEl) contentEnEl.value = '';
+
+            if (editMode && blogId != null) {
+                const post = blogPosts.find(p => p.id === blogId);
+                if (!post) return;
+
+                if (idEl) idEl.value = String(post.id);
+                if (titleEl) titleEl.value = (window.VC_LANG ? window.VC_LANG.pickLang(post.title, 'el') : post.title);
+                if (titleEnEl) titleEnEl.value = (window.VC_LANG ? window.VC_LANG.pickLang(post.title, 'en') : post.title);
+                if (dateEl) dateEl.value = (window.VC_LANG ? window.VC_LANG.pickLang(post.date, 'el') : post.date);
+                if (dateEnEl) dateEnEl.value = (window.VC_LANG ? window.VC_LANG.pickLang(post.date, 'en') : post.date);
+                if (imageEl) imageEl.value = post.image || '';
+                if (contentEl) contentEl.value = (window.VC_LANG ? window.VC_LANG.pickLang(post.content, 'el') : post.content);
+                if (contentEnEl) contentEnEl.value = (window.VC_LANG ? window.VC_LANG.pickLang(post.content, 'en') : post.content);
+            }
+        }
         function closeAddBlogModal() { document.getElementById('add-blog-modal').classList.add('hidden'); }
 
         // --- NAVIGATION & TRACKING ---
@@ -2168,7 +2220,7 @@ if (!response.ok) {
                 prodTable.innerHTML += `
                     <tr class="border-b border-white/5 hover:bg-white/5 transition">
                         <td class="p-3"><img src="${p.image}" class="w-10 h-10 object-cover rounded"></td>
-                        <td class="p-3 font-bold text-white">${p.name}</td>
+                        <td class="p-3 font-bold text-white">${(window.VC_LANG?window.VC_LANG.pick(p.name):p.name)}</td>
                         <td class="p-3">€${p.price}</td>
                         <td class="p-3 text-red-400 font-bold">${p.discount > 0 ? '-' + p.discount + '%' : '-'}</td>
                         <td class="p-3 flex gap-2">
@@ -2185,9 +2237,9 @@ if (!response.ok) {
                 blogTable.innerHTML += `
                     <tr class="border-b border-white/5 hover:bg-white/5 transition">
                         <td class="p-3"><img src="${p.image}" class="w-10 h-10 object-cover rounded"></td>
-                        <td class="p-3 font-bold text-white">${p.title}</td>
-                        <td class="p-3">${p.date}</td>
-                        <td class="p-3"><button onclick="deleteBlogPost(${p.id})" class="text-ruby hover:text-red-400"><i class="fas fa-trash"></i></button></td>
+                        <td class="p-3 font-bold text-white">${(window.VC_LANG?window.VC_LANG.pick(p.title):p.title)}</td>
+                        <td class="p-3">${(window.VC_LANG?window.VC_LANG.pick(p.date):p.date)}</td>
+                        <td class="p-3 text-right"><button onclick="openAddBlogModal(true, ${p.id})" class="text-emerald hover:text-emerald-300 mr-3" title="Edit"><i class="fas fa-pen"></i></button><button onclick="deleteBlogPost(${p.id})" class="text-ruby hover:text-red-400" title="Delete"><i class="fas fa-trash"></i></button></td>
                     </tr>
                 `;
             });
@@ -2199,55 +2251,56 @@ if (!response.ok) {
         // --- DATA INIT ---
         let storedProducts = localStorage.getItem('vitro_products');
         let products = storedProducts ? JSON.parse(storedProducts) : [
-            {
-                id: 1,
-                name: "Κρεμαστό Φωτιστικό Tiffany",
-                price: "240.00",
-                discount: 0, // Default discount
-                category: "stained-glass",
-                stock: "made-to-order",
-                image: "https://images.unsplash.com/photo-1579965342575-16428a7c8d71?auto=format&fit=crop&w=600&q=80",
-                desc: "Χειροποίητο φωτιστικό οροφής με μοτίβο λουλουδιών."
-            },
-            {
-                id: 2,
-                name: "Καρδιά Suncatcher",
-                price: "45.00",
-                discount: 0,
-                category: "decor",
-                stock: "in-stock",
-                image: "https://images.unsplash.com/photo-1611082352219-4820875e533c?auto=format&fit=crop&w=600&q=80",
-                desc: "Διακοσμητικό για το παράθυρο σε σχήμα καρδιάς."
-            },
-            {
-                id: 3,
-                name: "Μενταγιόν Μπλε Γυαλί",
-                price: "35.00",
-                discount: 0,
-                category: "jewelry",
-                stock: "in-stock",
-                image: "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?auto=format&fit=crop&w=600&q=80",
-                desc: "Μοναδικό μενταγιόν από ανακυκλωμένο γυαλί βιτρό."
-            },
-            {
-                id: 4,
-                name: "Υπηρεσία Συντήρησης",
-                price: "Κατόπιν Εκτίμησης",
-                discount: 0,
-                category: "stained-glass",
-                stock: "made-to-order",
-                image: "https://images.unsplash.com/photo-1520699918507-3c3e05c46b90?auto=format&fit=crop&w=600&q=80",
-                desc: "Επαγγελματική αποκατάσταση και καθαρισμός παλαιών βιτρό."
-            }
+        {
+            id: 1,
+            name: { el: "Βιτρό Παράθυρο 'Αναγέννηση'", en: "Stained Glass Window 'Renaissance'" },
+            price: "€450",
+            desc: { el: "Χειροποίητο βιτρό παράθυρο με γεωμετρικά μοτίβα και έντονες αποχρώσεις. Ιδανικό για να δώσει χαρακτήρα σε κάθε χώρο.", en: "Handcrafted stained-glass window with geometric patterns and bold colors. Perfect for adding character to any space." },
+            category: "architectural",
+            image: "https://images.unsplash.com/photo-1617545474080-dfbfd7908c38?auto=format&fit=crop&w=900&q=80",
+            stock: "made-to-order"
+        },
+        {
+            id: 2,
+            name: { el: "Κρεμαστό Κόσμημα 'Ruby Bloom'", en: "Pendant 'Ruby Bloom'" },
+            price: "€65",
+            desc: { el: "Ένα μοναδικό κρεμαστό κόσμημα με κόκκινες και χρυσές λεπτομέρειες. Φτιαγμένο από γυαλί και ορείχαλκο.", en: "A unique pendant with red and gold details, crafted from glass and brass." },
+            category: "jewelry",
+            image: "https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?auto=format&fit=crop&w=900&q=80",
+            stock: "in-stock"
+        },
+        {
+            id: 3,
+            name: { el: "Φωτιστικό Tiffany 'Emerald Night'", en: "Tiffany Lamp 'Emerald Night'" },
+            price: "€320",
+            desc: { el: "Φωτιστικό τύπου Tiffany με σμαραγδί και μπλε τόνους. Δημιουργεί ζεστή ατμόσφαιρα και εντυπωσιάζει.", en: "Tiffany-style lamp in emerald and blue tones. Creates a warm atmosphere and stands out beautifully." },
+            category: "lighting",
+            image: "https://images.unsplash.com/photo-1565962212001-74a3d1b8e3f7?auto=format&fit=crop&w=900&q=80",
+            stock: "made-to-order"
+        },
+        {
+            id: 4,
+            name: { el: "Διακοσμητικό Πάνελ 'Αιγαίο'", en: "Decorative Panel 'Aegean'" },
+            price: "€180",
+            desc: { el: "Διακοσμητικό πάνελ εμπνευσμένο από τα χρώματα του Αιγαίου. Ταιριάζει σε τοίχο ή ως διαχωριστικό.", en: "A decorative panel inspired by the colors of the Aegean. Suitable for a wall display or as a room divider." },
+            category: "decor",
+            image: "https://images.unsplash.com/photo-1576502200916-3808e07386a5?auto=format&fit=crop&w=900&q=80",
+            stock: "in-stock"
+        }
         ];
-
         function renderProducts() {
             const grid = document.getElementById('catalog-grid');
             if(!grid) return;
             grid.innerHTML = ''; 
             products.forEach(prod => {
                 let stockColor = prod.stock === 'in-stock' ? 'text-emerald' : (prod.stock === 'sold' ? 'text-ruby' : 'text-amber');
-                let stockText = prod.stock === 'in-stock' ? 'Άμεσα Διαθέσιμο' : (prod.stock === 'sold' ? 'Εξαντλήθηκε' : 'Κατόπιν Παραγγελίας');
+                let stockText = (function(code){
+                const lang = (window.VC_LANG && window.VC_LANG.get) ? window.VC_LANG.get() : 'el';
+                const dict = (window.VC_I18N && (window.VC_I18N[lang] || window.VC_I18N.el)) || {};
+                if (code === 'in-stock') return dict.stock_in || 'Άμεσα Διαθέσιμο';
+                if (code === 'sold') return dict.stock_sold || 'Εξαντλήθηκε';
+                return dict.stock_made || 'Κατόπιν Παραγγελίας';
+            })(prod.stock);
                 
                 // PRICE CALCULATION LOGIC
                 let priceDisplay = `<span class="text-amber font-serif font-bold text-xl">€${prod.price}</span>`;
@@ -2283,12 +2336,12 @@ if (!response.ok) {
                     <div class="glass-card rounded-xl overflow-hidden group flex flex-col h-full relative">
                         ${discountBadge}
                         <div class="h-64 overflow-hidden relative">
-                            <img src="${prod.image}" alt="${prod.name}" onclick="handleImageClick(this, 'product', ${prod.id})" class="admin-editable-img w-full h-full object-cover group-hover:scale-110 transition duration-500" data-type="product" data-id="${prod.id}">
+                            <img src="${prod.image}" alt="${(window.VC_LANG?window.VC_LANG.pick(prod.name):prod.name)}" onclick="handleImageClick(this, 'product', ${prod.id})" class="admin-editable-img w-full h-full object-cover group-hover:scale-110 transition duration-500" data-type="product" data-id="${prod.id}">
                             <div class="absolute top-2 right-2 bg-black/70 px-2 py-1 rounded text-xs font-bold ${stockColor} pointer-events-none">${stockText}</div>
                         </div>
                         <div class="p-5 flex-grow flex flex-col">
-                            <h3 class="text-lg font-bold text-white mb-1">${prod.name}</h3>
-                            <p class="text-gray-400 text-xs mb-3 flex-grow">${prod.desc}</p>
+                            <h3 class="text-lg font-bold text-white mb-1">${(window.VC_LANG?window.VC_LANG.pick(prod.name):prod.name)}</h3>
+                            <p class="text-gray-400 text-xs mb-3 flex-grow">${(window.VC_LANG?window.VC_LANG.pick(prod.desc):prod.desc)}</p>
                             <div class="mt-auto flex items-center justify-between border-t border-white/10 pt-3">
                                 ${priceDisplay}
                                 <div class="flex items-center">
@@ -2393,16 +2446,17 @@ if (!response.ok) {
             const container = document.getElementById('blog-list-container');
             container.innerHTML = '';
             blogPosts.forEach(post => {
-                container.innerHTML += `<div class="glass-card p-8 rounded-2xl border-l-4 border-amber relative hover:bg-white/5 transition-all"><div class="flex flex-col md:flex-row gap-6"><div class="md:w-1/4 flex flex-col items-center md:items-start text-amber font-serif"><span class="text-gray-500 mt-1 text-sm font-sans">${post.date}</span><img src="${post.image}" alt="${post.title}" onclick="handleImageClick(this, 'blog', ${post.id})" class="admin-editable-img mt-4 rounded-lg w-full h-32 object-cover border border-white/10 shadow-lg" data-type="blog" data-id="${post.id}"></div><div class="md:w-3/4"><h3 class="text-2xl font-bold text-white mb-3 hover:text-amber transition cursor-pointer" onclick="openBlogPost(${post.id})">${post.title}</h3><div class="text-gray-300 leading-relaxed mb-4 line-clamp-6 text-sm md:text-base">${post.content}</div><button onclick="openBlogPost(${post.id})" class="text-amber text-sm font-bold hover:underline">Διαβάστε περισσότερα <i class="fas fa-arrow-right ml-1"></i></button></div></div></div>`;
+                container.innerHTML += `<div class="glass-card p-8 rounded-2xl border-l-4 border-amber relative hover:bg-white/5 transition-all"><div class="flex flex-col md:flex-row gap-6"><div class="md:w-1/4 flex flex-col items-center md:items-start text-amber font-serif"><span class="text-gray-500 mt-1 text-sm font-sans">${(window.VC_LANG?window.VC_LANG.pick(post.date):post.date)}</span><img src="${post.image}" alt="${(window.VC_LANG?window.VC_LANG.pick(post.title):post.title)}" onclick="handleImageClick(this, 'blog', ${post.id})" class="admin-editable-img mt-4 rounded-lg w-full h-32 object-cover border border-white/10 shadow-lg" data-type="blog" data-id="${post.id}"></div><div class="md:w-3/4"><h3 class="text-2xl font-bold text-white mb-3 hover:text-amber transition cursor-pointer" onclick="openBlogPost(${post.id})">${(window.VC_LANG?window.VC_LANG.pick(post.title):post.title)}</h3><div class="text-gray-300 leading-relaxed mb-4 line-clamp-6 text-sm md:text-base">${(window.VC_LANG?window.VC_LANG.pick(post.content):post.content)}</div><button onclick="openBlogPost(${post.id})" class="text-amber text-sm font-bold hover:underline">${(window.VC_I18N && window.VC_LANG ? ((window.VC_I18N[window.VC_LANG.get()]||window.VC_I18N.el).blog_read_more || 'Read more') : 'Διαβάστε περισσότερα')} <i class="fas fa-arrow-right ml-1"></i></button></div></div></div>`;
             });
             enableImageDropZones(); // Re-enable drag zones after render
         }
 
         function openBlogPost(id) {
+            window.__currentBlogId = id;
             const post = blogPosts.find(p => p.id === id);
             if (!post) return;
             const contentContainer = document.getElementById('blog-single-content');
-            contentContainer.innerHTML = `<div class="border-b border-white/10 pb-6 mb-6"><span class="text-amber font-serif text-sm tracking-widest">${post.date}</span><h1 class="text-3xl md:text-5xl font-bold text-white mt-2 font-serif">${post.title}</h1></div><img src="${post.image}" alt="${post.title}" class="w-full h-64 md:h-96 object-cover rounded-xl mb-8 border border-white/10 shadow-2xl"><div class="text-gray-300 leading-loose text-lg space-y-6">${post.content}</div>`;
+            contentContainer.innerHTML = `<div class="border-b border-white/10 pb-6 mb-6"><span class="text-amber font-serif text-sm tracking-widest">${(window.VC_LANG?window.VC_LANG.pick(post.date):post.date)}</span><h1 class="text-3xl md:text-5xl font-bold text-white mt-2 font-serif">${(window.VC_LANG?window.VC_LANG.pick(post.title):post.title)}</h1></div><img src="${post.image}" alt="${(window.VC_LANG?window.VC_LANG.pick(post.title):post.title)}" class="w-full h-64 md:h-96 object-cover rounded-xl mb-8 border border-white/10 shadow-2xl"><div class="text-gray-300 leading-loose text-lg space-y-6">${(window.VC_LANG?window.VC_LANG.pick(post.content):post.content)}</div>`;
             document.getElementById('view-blog').classList.add('hidden');
             document.getElementById('view-blog-single').classList.remove('hidden');
             saveViewState('view-blog-single');
@@ -2412,12 +2466,16 @@ if (!response.ok) {
         // Updated Handle Add/Edit Product
         function handleAddProduct() {
             const idField = document.getElementById('prod-id').value;
-            const name = document.getElementById('prod-name').value;
+            const nameEl = document.getElementById('prod-name').value;
+            const nameEn = (document.getElementById('prod-name-en')?.value || '').trim() || nameEl;
             const price = document.getElementById('prod-price').value;
             const category = document.getElementById('prod-category').value;
             const stock = document.getElementById('prod-stock').value;
             const image = document.getElementById('prod-image').value;
-            const desc = document.getElementById('prod-desc').value;
+            const descEl = document.getElementById('prod-desc').value;
+            const descEn = (document.getElementById('prod-desc-en')?.value || '').trim() || descEl;
+            const name = { el: nameEl, en: nameEn };
+            const desc = { el: descEl, en: descEn };
             const discount = document.getElementById('prod-discount').value || 0; // Get discount
 
             if (idField) {
@@ -2454,7 +2512,46 @@ if (!response.ok) {
             }
         }
 
-        function handleAddBlogPost() { /* ... existing add logic ... */ const title=document.getElementById('blog-title').value; const date=document.getElementById('blog-date').value; const image=document.getElementById('blog-image').value; const content=document.getElementById('blog-content').value; const newPost={id:Date.now(), title, date, image, content}; blogPosts.unshift(newPost); saveBlogPosts(); renderBlogList(); closeAddBlogModal(); showAdminDashboard(null); showToast('Το άρθρο δημοσιεύτηκε!'); }
+        function handleAddBlogPost() {
+            const idRaw = (document.getElementById('blog-id')?.value || '').trim();
+            const isEdit = Boolean(idRaw);
+
+            const titleEl = document.getElementById('blog-title').value;
+            const titleEn = (document.getElementById('blog-title-en')?.value || '').trim() || titleEl;
+
+            const dateEl = document.getElementById('blog-date').value;
+            const dateEn = (document.getElementById('blog-date-en')?.value || '').trim() || dateEl;
+
+            const image = document.getElementById('blog-image').value;
+
+            const contentEl = document.getElementById('blog-content').value;
+            const contentEn = (document.getElementById('blog-content-en')?.value || '').trim() || contentEl;
+
+            const payload = {
+                title: { el: titleEl, en: titleEn },
+                date: { el: dateEl, en: dateEn },
+                image,
+                content: { el: contentEl, en: contentEn }
+            };
+
+            if (isEdit) {
+                const id = Number(idRaw);
+                const idx = blogPosts.findIndex(p => p.id === id);
+                if (idx !== -1) {
+                    blogPosts[idx] = { ...blogPosts[idx], ...payload, id };
+                }
+                showToast('Το άρθρο ενημερώθηκε!');
+            } else {
+                const newPost = { id: Date.now(), ...payload };
+                blogPosts.unshift(newPost);
+                showToast('Το άρθρο δημοσιεύτηκε!');
+            }
+
+            saveBlogPosts();
+            renderBlogList();
+            closeAddBlogModal();
+            showAdminDashboard(null);
+        }
 
         function applyStaticImages() {
             for (const [id, url] of Object.entries(staticImages)) {
@@ -2473,6 +2570,11 @@ if (!response.ok) {
         window.onload = async function() {
             // Load latest server data FIRST so the admin edits the real public site.
             await loadFromServer();
+
+            // Normalize bilingual fields (products/blog/global texts) so language switching works everywhere.
+            try { products = window.VC_LANG.normalizeProducts(products); } catch(e) {}
+            try { blogPosts = window.VC_LANG.normalizeBlogPosts(blogPosts); } catch(e) {}
+            try { globalTexts = window.VC_LANG.normalizeGlobalTexts(globalTexts); } catch(e) {}
 
             applyStaticImages();
             applyGlobalSettings();
@@ -2568,11 +2670,83 @@ async function submitContactForm(form, opts = {}) {
 
 
 <script>
+/**
+ * VITRO CANVAS i18n (EL/EN)
+ * - UI strings via VC_I18N
+ * - Dynamic content (products/blog/global texts) supports bilingual fields: { el: "...", en: "..." }
+ * - Fallback: if EN is missing, EL is used (and vice versa).
+ */
 (function () {
   const STORE_KEY = 'vc_lang';
   const SUPPORTED = ['el', 'en'];
 
-  const I18N = {
+  function normalizeLang(lang) {
+    const l = String(lang || '').toLowerCase();
+    return SUPPORTED.includes(l) ? l : 'el';
+  }
+
+  function guessLang() {
+    // localStorage wins. If missing, use browser language.
+    const stored = (localStorage.getItem(STORE_KEY) || '').toLowerCase();
+    if (SUPPORTED.includes(stored)) return stored;
+    const nav = (navigator.language || 'el').toLowerCase();
+    return nav.startsWith('en') ? 'en' : 'el';
+  }
+
+  function pick(value, lang) {
+    if (value && typeof value === 'object' && (Object.prototype.hasOwnProperty.call(value, 'el') || Object.prototype.hasOwnProperty.call(value, 'en'))) {
+      const el = value.el ?? '';
+      const en = value.en ?? '';
+      return (lang === 'en' ? (en || el) : (el || en)) || '';
+    }
+    return (value ?? '') + '';
+  }
+
+  function ensureBilingual(value) {
+    if (value && typeof value === 'object' && (Object.prototype.hasOwnProperty.call(value, 'el') || Object.prototype.hasOwnProperty.call(value, 'en'))) {
+      return { el: pick(value, 'el'), en: pick(value, 'en') };
+    }
+    const s = (value ?? '') + '';
+    return { el: s, en: s };
+  }
+
+  function normalizeProducts(arr) {
+    if (!Array.isArray(arr)) return arr;
+    return arr.map(p => {
+      if (!p || typeof p !== 'object') return p;
+      return { ...p, name: ensureBilingual(p.name), desc: ensureBilingual(p.desc) };
+    });
+  }
+
+  function normalizeBlogPosts(arr) {
+    if (!Array.isArray(arr)) return arr;
+    return arr.map(b => {
+      if (!b || typeof b !== 'object') return b;
+      return { ...b, title: ensureBilingual(b.title), date: ensureBilingual(b.date), content: ensureBilingual(b.content) };
+    });
+  }
+
+  function normalizeGlobalTexts(obj) {
+    if (!obj || typeof obj !== 'object') return obj;
+    const out = { ...obj };
+    if (out.heroTitle !== undefined) out.heroTitle = ensureBilingual(out.heroTitle);
+    return out;
+  }
+
+  // Expose helpers for renderers/admin panels
+  window.VC_LANG = {
+    normalizeLang,
+    get: () => normalizeLang(localStorage.getItem(STORE_KEY) || guessLang()),
+    set: (lang) => localStorage.setItem(STORE_KEY, normalizeLang(lang)),
+    pick: (value) => pick(value, window.VC_LANG.get()),
+    pickLang: (value, lang) => pick(value, normalizeLang(lang)),
+    ensureBilingual,
+    normalizeProducts,
+    normalizeBlogPosts,
+    normalizeGlobalTexts
+  };
+
+  const VC_I18N = {
     el: {
       nav_home: 'Αρχική',
       nav_about: 'Το Εργαστήριο',
@@ -2583,6 +2757,16 @@ async function submitContactForm(form, opts = {}) {
 
       hero_collection: 'Δείτε τη Συλλογή',
       hero_quote: 'Ζητήστε Προσφορά',
+
+      promo_marquee: '🔥 ΠΡΟΣΦΟΡΕΣ: Ανακαλύψτε τις εκπτώσεις μας και αποκτήστε μοναδικά έργα σε προνομιακές τιμές!',
+      catalog_title: 'Κατάλογος Προϊόντων',
+      blog_section_title: 'Το Blog μας',
+      blog_section_sub: 'Ιστορία, τεχνικές και νέα από τον κόσμο του γυαλιού.',
+      blog_read_more: 'Διαβάστε περισσότερα',
+
+      stock_in: 'Άμεσα Διαθέσιμο',
+      stock_sold: 'Εξαντλήθηκε',
+      stock_made: 'Κατόπιν Παραγγελίας',
 
       modal_title: 'Φόρμα Προσφοράς',
       modal_sub: 'Συμπληρώστε τα στοιχεία σας και θα επικοινωνήσουμε άμεσα.',
@@ -2610,7 +2794,10 @@ async function submitContactForm(form, opts = {}) {
       c_opts: ['Γενική Ερώτηση', 'Παραγγελία Βιτρό', 'Κοσμήματα', 'Επισκευή', 'Συμμετοχή σε Workshop'],
       c_label_message: 'Μήνυμα',
       c_ph_message: 'Πώς μπορούμε να βοηθήσουμε;',
-      c_submit: 'Αποστολή Μηνύματος'
+      c_submit: 'Αποστολή Μηνύματος',
+
+      lang_caption: 'Ελληνικά',
+      lang_aria: 'Αλλαγή γλώσσας'
     },
     en: {
       nav_home: 'Home',
@@ -2622,6 +2809,16 @@ async function submitContactForm(form, opts = {}) {
 
       hero_collection: 'View Collection',
       hero_quote: 'Request a Quote',
+
+      promo_marquee: '🔥 LIMITED OFFERS: Discover our discounts and get unique pieces at special prices!',
+      catalog_title: 'Product Catalog',
+      blog_section_title: 'Our Blog',
+      blog_section_sub: 'Stories, techniques and news from the world of glass.',
+      blog_read_more: 'Read more',
+
+      stock_in: 'In Stock',
+      stock_sold: 'Sold out',
+      stock_made: 'Made to order',
 
       modal_title: 'Quote Form',
       modal_sub: 'Fill in your details and we’ll get back to you shortly.',
@@ -2649,22 +2846,23 @@ async function submitContactForm(form, opts = {}) {
       c_opts: ['General question', 'Stained glass order', 'Jewelry', 'Repair', 'Workshop participation'],
       c_label_message: 'Message',
       c_ph_message: 'How can we help?',
-      c_submit: 'Send message'
+      c_submit: 'Send message',
+
+      lang_caption: 'English',
+      lang_aria: 'Change language'
     }
   };
+  window.VC_I18N = VC_I18N;
+
+  function t(key) {
+    const lang = window.VC_LANG.get();
+    return (VC_I18N[lang] && VC_I18N[lang][key]) || (VC_I18N.el && VC_I18N.el[key]) || '';
+  }
 
   function byId(id) { return document.getElementById(id); }
-
-  function setText(id, value) {
-    const el = byId(id);
-    if (el) el.textContent = value;
-  }
-
-  function setPlaceholder(id, value) {
-    const el = byId(id);
-    if (el) el.setAttribute('placeholder', value);
-  }
-
+  function setText(id, value) { const el = byId(id); if (el) el.textContent = value; }
+  function setHTML(id, value) { const el = byId(id); if (el) el.innerHTML = value; }
+  function setPlaceholder(id, value) { const el = byId(id); if (el) el.setAttribute('placeholder', value); }
   function setSelectOptions(id, values) {
     const el = byId(id);
     if (!el) return;
@@ -2672,114 +2870,136 @@ async function submitContactForm(form, opts = {}) {
     values.forEach((v, i) => { if (opts[i]) opts[i].textContent = v; });
   }
 
-  function guessLang() {
-    const stored = (localStorage.getItem(STORE_KEY) || '').toLowerCase();
-    if (SUPPORTED.includes(stored)) return stored;
-    const nav = (navigator.language || 'el').toLowerCase();
-    return nav.startsWith('en') ? 'en' : 'el';
+  function updateFlagUI(lang) {
+    const isEn = lang === 'en';
+    const flag = isEn ? '🇬🇧' : '🇬🇷';
+    const caption = isEn ? VC_I18N.en.lang_caption : VC_I18N.el.lang_caption;
+
+    const btn = byId('lang-toggle');
+    const flagEl = byId('lang-flag');
+    if (flagEl) flagEl.textContent = flag;
+    if (btn) {
+      btn.setAttribute('aria-label', t('lang_aria') + ': ' + caption);
+      btn.setAttribute('title', caption);
+    }
+
+    const mBtn = byId('m-lang-toggle');
+    const mFlagEl = byId('m-lang-flag');
+    const mCap = byId('m-lang-caption');
+    if (mFlagEl) mFlagEl.textContent = flag;
+    if (mCap) mCap.textContent = caption;
+    if (mBtn) {
+      mBtn.setAttribute('aria-label', t('lang_aria') + ': ' + caption);
+      mBtn.setAttribute('title', caption);
+    }
   }
 
-  function setActiveButtons(lang) {
-    const pairs = [
-      ['lang-el', 'el'], ['lang-en', 'en'],
-      ['m-lang-el', 'el'], ['m-lang-en', 'en']
-    ];
-
-    pairs.forEach(([id, code]) => {
-      const b = byId(id);
-      if (!b) return;
-      const active = (lang === code);
-
-      // Desktop buttons
-      if (id === 'lang-el' || id === 'lang-en') {
-        b.classList.toggle('bg-amber', active);
-        b.classList.toggle('text-lead', active);
-        b.classList.toggle('text-white/80', !active);
-      } else {
-        // Mobile buttons (text highlight only)
-        b.classList.toggle('text-amber', active);
-        b.classList.toggle('text-white/80', !active);
-      }
-    });
+  function updatePromoMarquee() {
+    const el = byId('promo-marquee');
+    if (!el) return;
+    const base = t('promo_marquee');
+    const spacer = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    el.innerHTML = (base + spacer).repeat(6);
   }
 
   function apply(lang) {
-    const t = I18N[lang] || I18N.el;
-
-    document.documentElement.lang = lang;
+    const normalized = window.VC_LANG.normalizeLang(lang);
+    window.VC_LANG.set(normalized);
+    document.documentElement.lang = normalized;
 
     // Nav
-    setText('nav-home', t.nav_home);
-    setText('nav-about', t.nav_about);
-    setText('nav-products', t.nav_products);
-    setText('nav-blog', t.nav_blog);
-    setText('nav-workshops', t.nav_workshops);
-    setText('nav-contact-btn', t.nav_contact);
+    setText('nav-home', t('nav_home'));
+    setText('nav-about', t('nav_about'));
+    setText('nav-products', t('nav_products'));
+    setText('nav-blog', t('nav_blog'));
+    setText('nav-workshops', t('nav_workshops'));
+    setText('nav-contact-btn', t('nav_contact'));
 
-    // Mobile nav
-    setText('mnav-home', t.nav_home);
-    setText('mnav-about', t.nav_about);
-    setText('mnav-products', t.nav_products);
-    setText('mnav-blog', t.nav_blog);
-    setText('mnav-workshops', t.nav_workshops);
-    setText('mnav-contact-btn', t.nav_contact);
+    setText('mnav-home', t('nav_home'));
+    setText('mnav-about', t('nav_about'));
+    setText('mnav-products', t('nav_products'));
+    setText('mnav-blog', t('nav_blog'));
+    setText('mnav-workshops', t('nav_workshops'));
+    setText('mnav-contact-btn', t('nav_contact'));
 
-    // Hero CTA buttons
-    setText('hero-btn-collection', t.hero_collection);
-    setText('hero-btn-quote', t.hero_quote);
+    // Hero buttons
+    setText('hero-btn-collection', t('hero_collection'));
+    setText('hero-btn-quote', t('hero_quote'));
+
+    // Headings
+    setText('catalog-title', t('catalog_title'));
+    setText('blog-section-title', t('blog_section_title'));
+    setText('blog-section-sub', t('blog_section_sub'));
 
     // Quote modal
-    setText('modal-quote-title', t.modal_title);
-    setText('modal-quote-sub', t.modal_sub);
-    setText('q-label-name', t.q_label_name);
-    setPlaceholder('q-input-name', t.q_ph_name);
-    setText('q-label-email', t.q_label_email);
-    setText('q-label-phone', t.q_label_phone);
-    setText('q-label-interest', t.q_label_interest);
-    setSelectOptions('q-select-interest', t.q_opts);
-    setText('q-label-message', t.q_label_message);
-    setPlaceholder('q-textarea-message', t.q_ph_message);
-    setText('q-submit', t.q_submit);
+    setText('modal-quote-title', t('modal_title'));
+    setText('modal-quote-sub', t('modal_sub'));
+    setText('q-label-name', t('q_label_name'));
+    setPlaceholder('q-input-name', t('q_ph_name'));
+    setText('q-label-email', t('q_label_email'));
+    setText('q-label-phone', t('q_label_phone'));
+    setText('q-label-interest', t('q_label_interest'));
+    setSelectOptions('q-select-interest', VC_I18N[normalized].q_opts);
+    setText('q-label-message', t('q_label_message'));
+    setPlaceholder('q-textarea-message', t('q_ph_message'));
+    setText('q-submit', t('q_submit'));
 
     // Contact section
-    setText('contact-title', t.contact_title);
-    setText('contact-desc', t.contact_desc);
-    setText('contact-info-address-label', t.contact_address_label);
-    setText('contact-info-phone-label', t.contact_phone_label);
-    setText('contact-info-email-label', t.contact_email_label);
+    setText('contact-title', t('contact_title'));
+    setText('contact-desc', t('contact_desc'));
+    // Contact info labels (correct IDs in HTML)
+    setText('contact-info-address-label', t('contact_address_label'));
+    setText('contact-info-phone-label', t('contact_phone_label'));
+    setText('contact-info-email-label', t('contact_email_label'));
 
     // Contact form
-    setText('c-label-name', t.c_label_name);
-    setPlaceholder('c-input-name', t.c_ph_name);
-    setText('c-label-email', t.c_label_email);
-    setText('c-label-phone', t.c_label_phone);
-    setText('c-label-subject', t.c_label_subject);
-    setSelectOptions('c-select-subject', t.c_opts);
-    setText('c-label-message', t.c_label_message);
-    setPlaceholder('c-textarea-message', t.c_ph_message);
-    setText('c-submit', t.c_submit);
+    setText('c-label-name', t('c_label_name'));
+    setPlaceholder('c-input-name', t('c_ph_name'));
+    setText('c-label-email', t('c_label_email'));
+    setText('c-label-phone', t('c_label_phone'));
+    setText('c-label-subject', t('c_label_subject'));
+    setSelectOptions('c-select-subject', VC_I18N[normalized].c_opts);
+    setText('c-label-message', t('c_label_message'));
+    setPlaceholder('c-textarea-message', t('c_ph_message'));
+    setText('c-submit', t('c_submit'));
+
+    updatePromoMarquee();
+    updateFlagUI(normalized);
+
+    // Normalize bilingual data (supports older saved data)
+    try { if (typeof products !== 'undefined') products = window.VC_LANG.normalizeProducts(products); } catch(e) {}
+    try { if (typeof blogPosts !== 'undefined') blogPosts = window.VC_LANG.normalizeBlogPosts(blogPosts); } catch(e) {}
+    try { if (typeof globalTexts !== 'undefined') globalTexts = window.VC_LANG.normalizeGlobalTexts(globalTexts); } catch(e) {}
+
+    // Re-render dynamic sections
+    try { if (typeof renderProducts === 'function') renderProducts(); } catch(e) {}
+    try { if (typeof renderBlogList === 'function') renderBlogList(); } catch(e) {}
+    try { if (typeof updateAdminTables === 'function') updateAdminTables(); } catch(e) {}
+
+    // If a single blog post is open, refresh it so it switches language too
+    try {
+      const single = document.getElementById('view-blog-single');
+      if (single && !single.classList.contains('hidden') && typeof window.__currentBlogId !== 'undefined') {
+        if (typeof openBlogPost === 'function') openBlogPost(window.__currentBlogId);
+      }
+    } catch(e) {}
   }
 
-  function setLang(lang) {
-    const normalized = SUPPORTED.includes(lang) ? lang : 'el';
-    localStorage.setItem(STORE_KEY, normalized);
-    apply(normalized);
-    setActiveButtons(normalized);
-  }
-
-  function wireButton(id, lang) {
-    const b = byId(id);
-    if (!b) return;
-    b.addEventListener('click', function () { setLang(lang); });
+  function toggleLang() {
+    const current = window.VC_LANG.get();
+    apply(current === 'en' ? 'el' : 'en');
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    wireButton('lang-el', 'el');
-    wireButton('lang-en', 'en');
-    wireButton('m-lang-el', 'el');
-    wireButton('m-lang-en', 'en');
-    setLang(guessLang());
+    apply(guessLang());
+
+    const btn = byId('lang-toggle');
+    if (btn) btn.addEventListener('click', toggleLang);
+
+    const mBtn = byId('m-lang-toggle');
+    if (mBtn) mBtn.addEventListener('click', toggleLang);
   });
+
 })();
 </script>
 
