@@ -254,17 +254,17 @@
             <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-amber transition text-2xl"><i class="fas fa-times"></i></button>
             <div class="text-center mb-6">
                 <i class="fas fa-envelope-open-text text-amber text-4xl mb-3"></i>
-                <h2 class="text-2xl font-serif font-bold text-white">Φόρμα Προσφοράς</h2>
-                <p class="text-gray-400 text-sm mt-2">Συμπληρώστε τα στοιχεία σας και θα επικοινωνήσουμε άμεσα.</p>
+                <h2 class="text-2xl font-serif font-bold text-white" id="modal-quote-title">Φόρμα Προσφοράς</h2>
+                <p class="text-gray-400 text-sm mt-2" id="modal-quote-sub">Συμπληρώστε τα στοιχεία σας και θα επικοινωνήσουμε άμεσα.</p>
             </div>
             <form id="quote-form" onsubmit="event.preventDefault(); submitContactForm(this, {closeModal:true});">
                 <div class="space-y-4">
-                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Ονοματεπώνυμο</label><input name="name" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="π.χ. Γιάννης Παπαδόπουλος"></div>
-                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Email</label><input name="email" type="email" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="email@example.com"></div>
-                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Τηλέφωνο</label><input name="phone" type="tel" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="+30 69XX XXX XXX"></div>
-                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Ενδιαφέρομαι για</label><select name="interest" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition"><option>Αρχιτεκτονικό Βιτρό</option><option>Custom Κόσμημα</option><option>Επισκευή / Συντήρηση</option><option>Άλλο</option></select></div>
-                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Μήνυμα</label><textarea name="message" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition h-24" placeholder="Περιγράψτε τι χρειάζεστε..."></textarea></div>
-                    <button type="submit" class="w-full bg-amber text-lead font-bold py-3 rounded-lg hover:bg-white transition duration-300">Αποστολή Αιτήματος</button>
+                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="q-label-name">Ονοματεπώνυμο</label><input id="q-input-name" name="name" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="π.χ. Γιάννης Παπαδόπουλος"></div>
+                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="q-label-email">Email</label><input id="q-input-email" name="email" type="email" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="email@example.com"></div>
+                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="q-label-phone">Τηλέφωνο</label><input id="q-input-phone" name="phone" type="tel" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="+30 69XX XXX XXX"></div>
+                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="q-label-interest">Ενδιαφέρομαι για</label><select id="q-select-interest" name="interest" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition"><option>Αρχιτεκτονικό Βιτρό</option><option>Custom Κόσμημα</option><option>Επισκευή / Συντήρηση</option><option>Άλλο</option></select></div>
+                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="q-label-message">Μήνυμα</label><textarea id="q-textarea-message" name="message" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition h-24" placeholder="Περιγράψτε τι χρειάζεστε..."></textarea></div>
+                    <button type="submit" class="w-full bg-amber text-lead font-bold py-3 rounded-lg hover:bg-white transition duration-300" id="q-submit">Αποστολή Αιτήματος</button>
                 </div>
             </form>
         </div>
@@ -394,17 +394,24 @@
                 
                 <div class="hidden md:block">
                     <div class="ml-4 flex items-center space-x-2 lg:space-x-6 whitespace-nowrap">
-                        <a href="#home" onclick="navigateToSection(event, 'home')" class="nav-link hover:text-amber px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition">Αρχική</a>
-                        <a href="#about" onclick="navigateToSection(event, 'about')" class="nav-link hover:text-amber px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition">Το Εργαστήριο</a>
-                        <a href="javascript:void(0)" onclick="showCatalog(event)" class="nav-link hover:text-amber px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition">Προϊόντα</a>
-                        <a href="javascript:void(0)" onclick="showBlog(event)" class="nav-link hover:text-amber px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition">Blog</a>
-                        <a href="#workshops" onclick="navigateToSection(event, 'workshops')" class="nav-link hover:text-amber px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition">Workshops</a>
+                        <a href="#home" onclick="navigateToSection(event, 'home')" class="nav-link hover:text-amber px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition" id="nav-home">Αρχική</a>
+                        <a href="#about" onclick="navigateToSection(event, 'about')" class="nav-link hover:text-amber px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition" id="nav-about">Το Εργαστήριο</a>
+                        <a href="javascript:void(0)" onclick="showCatalog(event)" class="nav-link hover:text-amber px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition" id="nav-products">Προϊόντα</a>
+                        <a href="javascript:void(0)" onclick="showBlog(event)" class="nav-link hover:text-amber px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition" id="nav-blog">Blog</a>
+                        <a href="#workshops" onclick="navigateToSection(event, 'workshops')" class="nav-link hover:text-amber px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition" id="nav-workshops">Workshops</a>
                         <!-- Admin Link -->
                         <a href="javascript:void(0)" onclick="showAdminDashboard(event)" id="nav-admin-link" class="hidden text-emerald hover:text-white px-2 py-2 rounded-md text-sm font-bold transition border border-emerald/50 bg-emerald/10"><i class="fas fa-cogs mr-1"></i> Διαχείριση</a>
                         <!-- Logout Link -->
                         <a href="javascript:void(0)" onclick="adminLogout(event)" id="nav-logout-link" class="hidden text-ruby hover:text-white px-2 py-2 rounded-md text-sm font-bold transition"><i class="fas fa-sign-out-alt"></i></a>
+
+                        <div class="flex items-center gap-1 border border-white/10 rounded-full px-2 py-1 bg-black/20">
+                            <button type="button" id="lang-el" class="lang-btn text-xs font-bold px-2 py-1 rounded-full text-white/80 hover:text-white transition" aria-label="Ελληνικά">EL</button>
+                            <span class="text-white/20 text-xs select-none">|</span>
+                            <button type="button" id="lang-en" class="lang-btn text-xs font-bold px-2 py-1 rounded-full text-white/80 hover:text-white transition" aria-label="English">EN</button>
+                        </div>
+
                         
-                        <button onclick="openModal()" class="mr-64 bg-amber text-lead hover:bg-white px-4 py-2 rounded-md text-sm font-bold transition shadow-lg border border-amber/20">Επικοινωνία</button>
+                        <button onclick="openModal()" class="mr-64 bg-amber text-lead hover:bg-white px-4 py-2 rounded-md text-sm font-bold transition shadow-lg border border-amber/20" id="nav-contact-btn">Επικοινωνία</button>
                     </div>
                 </div>
                 <!-- Mobile menu button -->
@@ -418,15 +425,21 @@
         <!-- Mobile Menu -->
         <div class="hidden md:hidden bg-lead border-t border-white/10" id="mobile-menu">
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#home" onclick="navigateToSection(event, 'home'); document.getElementById('mobile-menu').classList.add('hidden');" class="block hover:text-amber px-3 py-2 rounded-md text-base font-medium">Αρχική</a>
-                <a href="#about" onclick="navigateToSection(event, 'about'); document.getElementById('mobile-menu').classList.add('hidden');" class="block hover:text-amber px-3 py-2 rounded-md text-base font-medium">Το Εργαστήριο</a>
-                <a href="javascript:void(0)" onclick="showCatalog(event); document.getElementById('mobile-menu').classList.add('hidden');" class="block hover:text-amber px-3 py-2 rounded-md text-base font-medium">Προϊόντα</a>
-                <a href="javascript:void(0)" onclick="showBlog(event); document.getElementById('mobile-menu').classList.add('hidden');" class="block hover:text-amber px-3 py-2 rounded-md text-base font-medium">Blog</a>
-                <a href="#workshops" onclick="navigateToSection(event, 'workshops'); document.getElementById('mobile-menu').classList.add('hidden');" class="block hover:text-amber px-3 py-2 rounded-md text-base font-medium">Workshops</a>
+                <a href="#home" onclick="navigateToSection(event, 'home'); document.getElementById('mobile-menu').classList.add('hidden');" class="block hover:text-amber px-3 py-2 rounded-md text-base font-medium" id="mnav-home">Αρχική</a>
+                <a href="#about" onclick="navigateToSection(event, 'about'); document.getElementById('mobile-menu').classList.add('hidden');" class="block hover:text-amber px-3 py-2 rounded-md text-base font-medium" id="mnav-about">Το Εργαστήριο</a>
+                <a href="javascript:void(0)" onclick="showCatalog(event); document.getElementById('mobile-menu').classList.add('hidden');" class="block hover:text-amber px-3 py-2 rounded-md text-base font-medium" id="mnav-products">Προϊόντα</a>
+                <a href="javascript:void(0)" onclick="showBlog(event); document.getElementById('mobile-menu').classList.add('hidden');" class="block hover:text-amber px-3 py-2 rounded-md text-base font-medium" id="mnav-blog">Blog</a>
+                <a href="#workshops" onclick="navigateToSection(event, 'workshops'); document.getElementById('mobile-menu').classList.add('hidden');" class="block hover:text-amber px-3 py-2 rounded-md text-base font-medium" id="mnav-workshops">Workshops</a>
                 
                 <a href="javascript:void(0)" onclick="showAdminDashboard(event); document.getElementById('mobile-menu').classList.add('hidden');" id="mobile-nav-admin-link" class="hidden block text-emerald px-3 py-2 rounded-md text-base font-bold">Πίνακας Ελέγχου</a>
                 <a href="javascript:void(0)" onclick="adminLogout(event); document.getElementById('mobile-menu').classList.add('hidden');" id="mobile-nav-logout-link" class="hidden block text-ruby px-3 py-2 rounded-md text-base font-bold">Έξοδος</a>
-                <button onclick="openModal()" class="block w-full text-left text-amber px-3 py-2 rounded-md text-base font-medium">Επικοινωνία</button>
+
+                <div class="flex items-center gap-2 px-3 py-2">
+                    <button type="button" id="m-lang-el" class="lang-btn w-full text-left text-white/80 hover:text-white transition font-bold">EL</button>
+                    <button type="button" id="m-lang-en" class="lang-btn w-full text-left text-white/80 hover:text-white transition font-bold">EN</button>
+                </div>
+
+                <button onclick="openModal()" class="block w-full text-left text-amber px-3 py-2 rounded-md text-base font-medium" id="mnav-contact-btn">Επικοινωνία</button>
             </div>
         </div>
     </nav>
@@ -498,10 +511,10 @@
                     Χειροποίητα βιτρό, μοναδικά κοσμήματα και αρχιτεκτονικές λύσεις που μεταμορφώνουν τον χώρο σας.
                 </p>
                 <div class="flex flex-col md:flex-row gap-4 justify-center">
-                    <button onclick="showCatalog(event)" class="bg-amber text-lead px-8 py-3 rounded-full font-bold hover:bg-white transition duration-300 shadow-[0_0_20px_rgba(251,192,45,0.4)]">
+                    <button onclick="showCatalog(event)" class="bg-amber text-lead px-8 py-3 rounded-full font-bold hover:bg-white transition duration-300 shadow-[0_0_20px_rgba(251,192,45,0.4)]" id="hero-btn-collection">
                         Δείτε τη Συλλογή
                     </button>
-                    <button onclick="openModal()" class="border border-white/30 backdrop-blur-sm text-white px-8 py-3 rounded-full font-bold hover:bg-white/10 transition duration-300">
+                    <button onclick="openModal()" class="border border-white/30 backdrop-blur-sm text-white px-8 py-3 rounded-full font-bold hover:bg-white/10 transition duration-300" id="hero-btn-quote">
                         Ζητήστε Προσφορά
                     </button>
                 </div>
@@ -689,20 +702,20 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
                     <div>
-                        <h2 class="text-3xl md:text-4xl font-bold text-white mb-8">Επικοινωνία</h2>
-                        <p class="text-gray-400 mb-10">Ενδιαφέρεστε για μια custom παραγγελία ή θέλετε να μάθετε περισσότερα για τα μαθήματα; Επικοινωνήστε μαζί μας.</p>
+                        <h2 class="text-3xl md:text-4xl font-bold text-white mb-8" id="contact-title">Επικοινωνία</h2>
+                        <p class="text-gray-400 mb-10" id="contact-desc">Ενδιαφέρεστε για μια custom παραγγελία ή θέλετε να μάθετε περισσότερα για τα μαθήματα; Επικοινωνήστε μαζί μας.</p>
                         <div class="space-y-6">
                             <div class="flex items-start">
                                 <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-amber text-xl flex-shrink-0"><i class="fas fa-map-marker-alt"></i></div>
-                                <div class="ml-4"><h4 class="text-white font-bold">Διεύθυνση</h4><p class="text-gray-400">Νέα Κερασιά, Θεσσαλονίκη</p></div>
+                                <div class="ml-4"><h4 class="text-white font-bold" id="contact-info-address-label">Διεύθυνση</h4><p class="text-gray-400">Νέα Κερασιά, Θεσσαλονίκη</p></div>
                             </div>
                             <div class="flex items-start">
                                 <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-amber text-xl flex-shrink-0"><i class="fas fa-phone-alt"></i></div>
-                                <div class="ml-4"><h4 class="text-white font-bold">Τηλέφωνο</h4><p class="text-gray-400" id="editable-phone">+30 6973 807 097</p></div>
+                                <div class="ml-4"><h4 class="text-white font-bold" id="contact-info-phone-label">Τηλέφωνο</h4><p class="text-gray-400" id="editable-phone">+30 6973 807 097</p></div>
                             </div>
                             <div class="flex items-start">
                                 <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-amber text-xl flex-shrink-0"><i class="fas fa-envelope"></i></div>
-                                <div class="ml-4"><h4 class="text-white font-bold">Email</h4><p class="text-gray-400">info@vitrocanvas.gr</p></div>
+                                <div class="ml-4"><h4 class="text-white font-bold" id="contact-info-email-label">Email</h4><p class="text-gray-400">info@vitrocanvas.gr</p></div>
                             </div>
                         </div>
                         <!-- ... social icons ... -->
@@ -715,13 +728,13 @@
                     <div class="glass-card p-8 rounded-2xl">
                         <form id="contact-form" onsubmit="event.preventDefault(); submitContactForm(this);">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                                <div><label class="block text-gray-400 text-sm mb-2">Όνομα</label><input name="name" type="text" class="w-full bg-black/30 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="Το όνομά σας"></div>
-                                <div><label class="block text-gray-400 text-sm mb-2">Email</label><input name="email" type="email" class="w-full bg-black/30 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="email@example.com"></div>
+                                <div><label class="block text-gray-400 text-sm mb-2" id="c-label-name">Όνομα</label><input id="c-input-name" name="name" type="text" class="w-full bg-black/30 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="Το όνομά σας"></div>
+                                <div><label class="block text-gray-400 text-sm mb-2" id="c-label-email">Email</label><input id="c-input-email" name="email" type="email" class="w-full bg-black/30 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="email@example.com"></div>
                             </div>
-                            <div class="mb-6"><label class="block text-gray-400 text-sm mb-2">Τηλέφωνο</label><input name="phone" type="tel" class="w-full bg-black/30 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="+30 69XX XXX XXX"></div>
-                            <div class="mb-6"><label class="block text-gray-400 text-sm mb-2">Θέμα</label><select name="interest" class="w-full bg-black/30 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-amber transition"><option>Γενική Ερώτηση</option><option>Παραγγελία Βιτρό</option><option>Κοσμήματα</option><option>Επισκευή</option><option>Συμμετοχή σε Workshop</option></select></div>
-                            <div class="mb-6"><label class="block text-gray-400 text-sm mb-2">Μήνυμα</label><textarea name="message" class="w-full bg-black/30 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-amber transition h-32" placeholder="Πώς μπορούμε να βοηθήσουμε;"></textarea></div>
-                            <button type="submit" class="w-full bg-amber text-lead font-bold py-4 rounded-lg hover:bg-white transition duration-300">Αποστολή Μηνύματος</button>
+                            <div class="mb-6"><label class="block text-gray-400 text-sm mb-2" id="c-label-phone">Τηλέφωνο</label><input id="c-input-phone" name="phone" type="tel" class="w-full bg-black/30 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="+30 69XX XXX XXX"></div>
+                            <div class="mb-6"><label class="block text-gray-400 text-sm mb-2" id="c-label-subject">Θέμα</label><select id="c-select-subject" name="interest" class="w-full bg-black/30 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-amber transition"><option>Γενική Ερώτηση</option><option>Παραγγελία Βιτρό</option><option>Κοσμήματα</option><option>Επισκευή</option><option>Συμμετοχή σε Workshop</option></select></div>
+                            <div class="mb-6"><label class="block text-gray-400 text-sm mb-2" id="c-label-message">Μήνυμα</label><textarea id="c-textarea-message" name="message" class="w-full bg-black/30 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-amber transition h-32" placeholder="Πώς μπορούμε να βοηθήσουμε;"></textarea></div>
+                            <button type="submit" class="w-full bg-amber text-lead font-bold py-4 rounded-lg hover:bg-white transition duration-300" id="c-submit">Αποστολή Μηνύματος</button>
                         </form>
                     </div>
                 </div>
@@ -1213,23 +1226,13 @@
         }
 
         // --- AUTH & ANALYTICS INIT ---
-        // Public domain safety lock: never allow "admin mode" on vitrocanvas.gr (or www).
-        const __HOST = (location.hostname || "").toLowerCase();
-        const __PUBLIC_LOCK = (__HOST === "vitrocanvas.gr" || __HOST === "www.vitrocanvas.gr");
+// Admin mode is allowed ONLY on the Render host (or local dev). Public domain must NEVER become admin.
+const __PUBLIC_HOSTS = new Set(['vitrocanvas.gr', 'www.vitrocanvas.gr']);
+const __HOST = (location.hostname || '').toLowerCase();
+const __IS_PUBLIC_HOST = __PUBLIC_HOSTS.has(__HOST);
 
-        // Admin mode can exist only outside the public domain.
-        // (Keeps backward compatibility via localStorage on non-public hosts.)
-        let isAdmin = (!__PUBLIC_LOCK) && (localStorage.getItem('vitro_isAdmin') === 'true');
-
-        // If we are on the public domain, force a silent logout and clear any leftovers.
-        if (__PUBLIC_LOCK) {
-            try {
-                localStorage.removeItem('vitro_isAdmin');
-                localStorage.removeItem('vitro_active_view');
-            } catch (e) {}
-            // Best-effort server logout (clears session cookie on this domain if it exists).
-            fetch('/api/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
-        }
+// Default: NOT admin. If it's not the public host, restore admin state from localStorage.
+let isAdmin = !__IS_PUBLIC_HOST && (localStorage.getItem('vitro_isAdmin') === 'true');
         // (Fallback) will be overridden by server data if present.
         let isMaintenance = localStorage.getItem('vitro_maintenance') === 'true';
 
@@ -1851,11 +1854,6 @@ if (!response.ok) {
 
         // --- AUTH FUNCTIONS ---
         function openAdminLogin() { 
-            if (__PUBLIC_LOCK) {
-                // Public visitors should never see the admin login on the main domain.
-                showToast('Η διαχείριση είναι διαθέσιμη μόνο από το /admin.');
-                return;
-            }
             document.getElementById('admin-login-modal').classList.remove('hidden'); 
             if (isAdmin) {
                 document.getElementById('admin-login-form').classList.add('hidden');
@@ -1869,11 +1867,6 @@ if (!response.ok) {
         function closeAdminLogin() { document.getElementById('admin-login-modal').classList.add('hidden'); }
 
         function attemptAdminLogin() {
-            if (__PUBLIC_LOCK) {
-                // Safety: do not allow login from the public domain.
-                showToast('Η διαχείριση είναι διαθέσιμη μόνο από το /admin.');
-                return;
-            }
             const pass = document.getElementById('admin-password').value;
             if (pass === '1111') {
                 isAdmin = true;
@@ -2098,11 +2091,6 @@ if (!response.ok) {
 
         function showAdminDashboard(e) {
             if(e) e.preventDefault();
-            if (__PUBLIC_LOCK) {
-                // Public domain: force users back to the landing view.
-                showLanding(true);
-                return;
-            }
             if (!isAdmin) { openAdminLogin(); return; }
             hideAllViews();
             document.getElementById('view-admin-dashboard')?.classList.remove('hidden');
@@ -2525,7 +2513,8 @@ async function submitContactForm(form, opts = {}) {
   const originalText = btn ? btn.textContent : null;
   if (btn) {
     btn.disabled = true;
-    btn.textContent = 'Αποστολή...';
+    const __lang = (localStorage.getItem('vc_lang') || 'el').toLowerCase();
+    btn.textContent = (__lang === 'en') ? 'Sending...' : 'Αποστολή...';
   }
 
   try {
@@ -2576,6 +2565,224 @@ async function submitContactForm(form, opts = {}) {
   }
 }
 </script>
+
+
+<script>
+(function () {
+  const STORE_KEY = 'vc_lang';
+  const SUPPORTED = ['el', 'en'];
+
+  const I18N = {
+    el: {
+      nav_home: 'Αρχική',
+      nav_about: 'Το Εργαστήριο',
+      nav_products: 'Προϊόντα',
+      nav_blog: 'Blog',
+      nav_workshops: 'Workshops',
+      nav_contact: 'Επικοινωνία',
+
+      hero_collection: 'Δείτε τη Συλλογή',
+      hero_quote: 'Ζητήστε Προσφορά',
+
+      modal_title: 'Φόρμα Προσφοράς',
+      modal_sub: 'Συμπληρώστε τα στοιχεία σας και θα επικοινωνήσουμε άμεσα.',
+      q_label_name: 'Ονοματεπώνυμο',
+      q_ph_name: 'π.χ. Γιάννης Παπαδόπουλος',
+      q_label_email: 'Email',
+      q_label_phone: 'Τηλέφωνο',
+      q_label_interest: 'Ενδιαφέρομαι για',
+      q_opts: ['Αρχιτεκτονικό Βιτρό', 'Custom Κόσμημα', 'Επισκευή / Συντήρηση', 'Άλλο'],
+      q_label_message: 'Μήνυμα',
+      q_ph_message: 'Περιγράψτε τι χρειάζεστε...',
+      q_submit: 'Αποστολή Αιτήματος',
+
+      contact_title: 'Επικοινωνία',
+      contact_desc: 'Ενδιαφέρεστε για μια custom παραγγελία ή θέλετε να μάθετε περισσότερα για τα μαθήματα; Επικοινωνήστε μαζί μας.',
+      contact_address_label: 'Διεύθυνση',
+      contact_phone_label: 'Τηλέφωνο',
+      contact_email_label: 'Email',
+
+      c_label_name: 'Όνομα',
+      c_ph_name: 'Το όνομά σας',
+      c_label_email: 'Email',
+      c_label_phone: 'Τηλέφωνο',
+      c_label_subject: 'Θέμα',
+      c_opts: ['Γενική Ερώτηση', 'Παραγγελία Βιτρό', 'Κοσμήματα', 'Επισκευή', 'Συμμετοχή σε Workshop'],
+      c_label_message: 'Μήνυμα',
+      c_ph_message: 'Πώς μπορούμε να βοηθήσουμε;',
+      c_submit: 'Αποστολή Μηνύματος'
+    },
+    en: {
+      nav_home: 'Home',
+      nav_about: 'Studio',
+      nav_products: 'Products',
+      nav_blog: 'Blog',
+      nav_workshops: 'Workshops',
+      nav_contact: 'Contact',
+
+      hero_collection: 'View Collection',
+      hero_quote: 'Request a Quote',
+
+      modal_title: 'Quote Form',
+      modal_sub: 'Fill in your details and we’ll get back to you shortly.',
+      q_label_name: 'Full name',
+      q_ph_name: 'e.g. John Doe',
+      q_label_email: 'Email',
+      q_label_phone: 'Phone',
+      q_label_interest: "I'm interested in",
+      q_opts: ['Architectural stained glass', 'Custom jewelry', 'Repair / restoration', 'Other'],
+      q_label_message: 'Message',
+      q_ph_message: 'Describe what you need...',
+      q_submit: 'Send request',
+
+      contact_title: 'Contact',
+      contact_desc: 'Interested in a custom order or want to learn more about workshops? Get in touch.',
+      contact_address_label: 'Address',
+      contact_phone_label: 'Phone',
+      contact_email_label: 'Email',
+
+      c_label_name: 'Name',
+      c_ph_name: 'Your name',
+      c_label_email: 'Email',
+      c_label_phone: 'Phone',
+      c_label_subject: 'Subject',
+      c_opts: ['General question', 'Stained glass order', 'Jewelry', 'Repair', 'Workshop participation'],
+      c_label_message: 'Message',
+      c_ph_message: 'How can we help?',
+      c_submit: 'Send message'
+    }
+  };
+
+  function byId(id) { return document.getElementById(id); }
+
+  function setText(id, value) {
+    const el = byId(id);
+    if (el) el.textContent = value;
+  }
+
+  function setPlaceholder(id, value) {
+    const el = byId(id);
+    if (el) el.setAttribute('placeholder', value);
+  }
+
+  function setSelectOptions(id, values) {
+    const el = byId(id);
+    if (!el) return;
+    const opts = el.querySelectorAll('option');
+    values.forEach((v, i) => { if (opts[i]) opts[i].textContent = v; });
+  }
+
+  function guessLang() {
+    const stored = (localStorage.getItem(STORE_KEY) || '').toLowerCase();
+    if (SUPPORTED.includes(stored)) return stored;
+    const nav = (navigator.language || 'el').toLowerCase();
+    return nav.startsWith('en') ? 'en' : 'el';
+  }
+
+  function setActiveButtons(lang) {
+    const pairs = [
+      ['lang-el', 'el'], ['lang-en', 'en'],
+      ['m-lang-el', 'el'], ['m-lang-en', 'en']
+    ];
+
+    pairs.forEach(([id, code]) => {
+      const b = byId(id);
+      if (!b) return;
+      const active = (lang === code);
+
+      // Desktop buttons
+      if (id === 'lang-el' || id === 'lang-en') {
+        b.classList.toggle('bg-amber', active);
+        b.classList.toggle('text-lead', active);
+        b.classList.toggle('text-white/80', !active);
+      } else {
+        // Mobile buttons (text highlight only)
+        b.classList.toggle('text-amber', active);
+        b.classList.toggle('text-white/80', !active);
+      }
+    });
+  }
+
+  function apply(lang) {
+    const t = I18N[lang] || I18N.el;
+
+    document.documentElement.lang = lang;
+
+    // Nav
+    setText('nav-home', t.nav_home);
+    setText('nav-about', t.nav_about);
+    setText('nav-products', t.nav_products);
+    setText('nav-blog', t.nav_blog);
+    setText('nav-workshops', t.nav_workshops);
+    setText('nav-contact-btn', t.nav_contact);
+
+    // Mobile nav
+    setText('mnav-home', t.nav_home);
+    setText('mnav-about', t.nav_about);
+    setText('mnav-products', t.nav_products);
+    setText('mnav-blog', t.nav_blog);
+    setText('mnav-workshops', t.nav_workshops);
+    setText('mnav-contact-btn', t.nav_contact);
+
+    // Hero CTA buttons
+    setText('hero-btn-collection', t.hero_collection);
+    setText('hero-btn-quote', t.hero_quote);
+
+    // Quote modal
+    setText('modal-quote-title', t.modal_title);
+    setText('modal-quote-sub', t.modal_sub);
+    setText('q-label-name', t.q_label_name);
+    setPlaceholder('q-input-name', t.q_ph_name);
+    setText('q-label-email', t.q_label_email);
+    setText('q-label-phone', t.q_label_phone);
+    setText('q-label-interest', t.q_label_interest);
+    setSelectOptions('q-select-interest', t.q_opts);
+    setText('q-label-message', t.q_label_message);
+    setPlaceholder('q-textarea-message', t.q_ph_message);
+    setText('q-submit', t.q_submit);
+
+    // Contact section
+    setText('contact-title', t.contact_title);
+    setText('contact-desc', t.contact_desc);
+    setText('contact-info-address-label', t.contact_address_label);
+    setText('contact-info-phone-label', t.contact_phone_label);
+    setText('contact-info-email-label', t.contact_email_label);
+
+    // Contact form
+    setText('c-label-name', t.c_label_name);
+    setPlaceholder('c-input-name', t.c_ph_name);
+    setText('c-label-email', t.c_label_email);
+    setText('c-label-phone', t.c_label_phone);
+    setText('c-label-subject', t.c_label_subject);
+    setSelectOptions('c-select-subject', t.c_opts);
+    setText('c-label-message', t.c_label_message);
+    setPlaceholder('c-textarea-message', t.c_ph_message);
+    setText('c-submit', t.c_submit);
+  }
+
+  function setLang(lang) {
+    const normalized = SUPPORTED.includes(lang) ? lang : 'el';
+    localStorage.setItem(STORE_KEY, normalized);
+    apply(normalized);
+    setActiveButtons(normalized);
+  }
+
+  function wireButton(id, lang) {
+    const b = byId(id);
+    if (!b) return;
+    b.addEventListener('click', function () { setLang(lang); });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    wireButton('lang-el', 'el');
+    wireButton('lang-en', 'en');
+    wireButton('m-lang-el', 'el');
+    wireButton('m-lang-en', 'en');
+    setLang(guessLang());
+  });
+})();
+</script>
+
 
 </body>
 </html>
