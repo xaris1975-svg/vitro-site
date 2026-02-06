@@ -122,56 +122,58 @@ function requireSessionApi(req, res, next) {
   return res.status(401).json({ error: "Unauthorized" });
 }
 
-// NOTE: /admin MUST be mounted BEFORE the public site static handler,
-// otherwise any /admin/* files that accidentally exist under PUBLIC_DIR will be served to everyone.
+// ====== BUILD MARKER (helps verify deploy in Render logs) ======
+console.log("[vitro] server build: admin-order+login-save 2026-02-06");
 
 // Admin entry
-app.get("/admin", (req, res) =>
-  res.redirect(isAuthed(req) ? "/admin/index.html" : "/admin/login.html")
-);
-app.get("/admin/", (req, res) =>
-  res.redirect(isAuthed(req) ? "/admin/index.html" : "/admin/login.html")
-);
+app.get("/admin", (req, res) => {
+  return res.redirect(isAuthed(req) ? "/admin/index.html" : "/admin/login.html");
+});
+app.get("/admin/", (req, res) => {
+  return res.redirect(isAuthed(req) ? "/admin/index.html" : "/admin/login.html");
+});
+
+// Admin login page (public)
 app.get("/admin/login.html", (req, res) => res.sendFile(path.join(ADMIN_DIR, "login.html")));
-app.get("/admin/index.html", requireSession, (req, res) =>
-  res.sendFile(path.join(ADMIN_DIR, "index.html"))
-);
-
-// Protect all admin assets/pages except login.html
-app.use("/admin", requireSession, express.static(ADMIN_DIR, { redirect: false, fallthrough: false }));
-
-// Uploaded assets (served publicly)
-app.use("/uploads", express.static(UPLOADS_DIR, { redirect: false }));
-
-// Public site
-app.use("/", express.static(PUBLIC_DIR, { redirect: false }));
 
 // Login / logout API
 app.post("/api/login", (req, res) => {
   const { username, password } = req.body || {};
-
   if (username !== ADMIN_USER || password !== ADMIN_PASS) {
     return res.status(401).json({ error: "Λάθος username ή password." });
   }
 
-  // Make the session persist reliably before the browser navigates to /admin/index.html
+  // Make sure the session is actually persisted BEFORE we respond
   req.session.regenerate((err) => {
     if (err) {
       console.warn("[warn] session regenerate failed:", err?.message || err);
-      // Fallback: try to set on existing session
-      req.session.authed = true;
-      return req.session.save(() => res.json({ ok: true }));
+      return res.status(500).json({ error: "Σφάλμα σύνδεσης (session)." });
     }
-
     req.session.authed = true;
-    req.session.save(() => res.json({ ok: true }));
+    req.session.save((err2) => {
+      if (err2) {
+        console.warn("[warn] session save failed:", err2?.message || err2);
+        return res.status(500).json({ error: "Σφάλμα σύνδεσης (save)." });
+      }
+      return res.json({ ok: true, redirect: "/admin/index.html" });
+    });
   });
 });
+
 app.post("/api/logout", (req, res) => {
   req.session.destroy(() => {
     res.json({ ok: true });
   });
 });
+
+// Protect admin pages/assets (everything under /admin except login.html)
+app.use("/admin", requireSession, express.static(ADMIN_DIR, { redirect: false }));
+
+// Uploaded assets (served publicly)
+app.use("/uploads", express.static(UPLOADS_DIR, { redirect: false }));
+
+// Public site (MUST be after /admin, so /admin/* never gets served from public by mistake)
+app.use("/", express.static(PUBLIC_DIR, { redirect: false }));
 
 /**
  * CMS Site Data
