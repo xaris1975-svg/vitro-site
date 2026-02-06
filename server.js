@@ -123,14 +123,22 @@ function requireSessionApi(req, res, next) {
 }
 
 // Public site
+app.use("/", express.static(PUBLIC_DIR, { redirect: false }));
+
 // Uploaded assets (served publicly)
 app.use("/uploads", express.static(UPLOADS_DIR, { redirect: false }));
 
 // Serve uploaded assets publicly
 
 // Admin entry: always show login page (no auth popups)
-app.get("/admin", (req, res) => res.redirect("/admin/login.html"));
-app.get("/admin/", (req, res) => res.redirect("/admin/login.html"));
+app.get("/admin", (req, res) => {
+  if (isAuthed(req)) return res.redirect("/admin/index.html");
+  return res.redirect("/admin/login.html");
+});
+app.get("/admin/", (req, res) => {
+  if (isAuthed(req)) return res.redirect("/admin/index.html");
+  return res.redirect("/admin/login.html");
+});
 app.get("/admin/login.html", (req, res) => res.sendFile(path.join(ADMIN_DIR, "login.html")));
 
 // Login / logout API
@@ -138,7 +146,7 @@ app.post("/api/login", (req, res) => {
   const { username, password } = req.body || {};
   if (username === ADMIN_USER && password === ADMIN_PASS) {
     req.session.authed = true;
-    return res.json({ ok: true });
+    return res.json({ ok: true, redirect: "/admin/index.html" });
   }
   return res.status(401).json({ error: "Λάθος username ή password." });
 });
@@ -152,9 +160,6 @@ app.post("/api/logout", (req, res) => {
 // Protect all admin assets/pages except login.html
 app.use("/admin", requireSession, express.static(ADMIN_DIR, { redirect: false }));
 
-
-// Public site
-app.use("/", express.static(PUBLIC_DIR, { redirect: false }));
 /**
  * CMS Site Data
  * - GET is public (the website loads content from the server)
@@ -252,7 +257,7 @@ ${message}
 `,
     });
 
-    return res.json({ ok: true });
+    return res.json({ ok: true, redirect: "/admin/index.html" });
   } catch (e) {
     console.error("CONTACT ERROR:", e);
     return res.status(500).json({ ok: false, error: String(e?.message || e) });
