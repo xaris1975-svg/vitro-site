@@ -122,6 +122,50 @@ function requireSessionApi(req, res, next) {
   return res.status(401).json({ error: "Unauthorized" });
 }
 
+
+// ====== Host-based admin lock ======
+// Allow the admin panel ONLY on Render's onrender.com hostname (and localhost for dev).
+// This prevents the custom domain (e.g. vitrocanvas.gr) from exposing /admin or admin APIs.
+const ADMIN_HOST_ALLOWLIST = (process.env.ADMIN_HOST_ALLOWLIST || "")
+  .split(",")
+  .map((s) => s.trim().toLowerCase())
+  .filter(Boolean);
+
+function getReqHost(req) {
+  // IMPORTANT: prefer the actual Host header. Some proxies may set x-forwarded-host
+  // to a canonical/custom domain which would accidentally block the Render hostname.
+  const raw = String(req.headers.host || req.headers["x-forwarded-host"] || "")
+    .split(",")[0]
+    .trim()
+    .toLowerCase();
+  return raw.replace(/:\d+$/, "");
+}
+
+function isAdminHostAllowed(req) {
+  const host = getReqHost(req);
+  if (!host) return false;
+  if (ADMIN_HOST_ALLOWLIST.length) return ADMIN_HOST_ALLOWLIST.includes(host);
+  return host.endsWith(".onrender.com") || host === "localhost" || host === "127.0.0.1";
+}
+
+function isAdminSurface(req) {
+  const p = req.path || "";
+  if (p.startsWith("/admin")) return true;
+  if (p === "/api/login" || p === "/api/logout" || p === "/api/upload") return true;
+  if (p === "/api/site" && req.method !== "GET") return true;
+  if (p.startsWith("/api/gemini")) return true;
+  return false;
+}
+
+app.use((req, res, next) => {
+  if (isAdminSurface(req) && !isAdminHostAllowed(req)) {
+    // Hide admin surface on custom domains.
+    if ((req.path || "").startsWith("/api/")) return res.status(404).json({ error: "Not found" });
+    return res.redirect("/");
+  }
+  next();
+});
+
 // Public site
 app.use("/", express.static(PUBLIC_DIR, { redirect: false }));
 
