@@ -53,48 +53,6 @@ const SESSION_SECRET =
 const PUBLIC_DIR = new URL("./site/public", import.meta.url).pathname;
 const ADMIN_DIR = new URL("./site/admin", import.meta.url).pathname;
 
-// Domains that should NEVER stay logged-in to admin (public website domains)
-const PUBLIC_HOSTS = new Set(
-  (process.env.PUBLIC_HOSTS || "vitrocanvas.gr,www.vitrocanvas.gr")
-    .split(",")
-    .map((s) => s.trim().toLowerCase())
-    .filter(Boolean)
-);
-
-const COOKIE_SECURE = process.env.NODE_ENV === "production";
-const SESSION_COOKIE_NAME = process.env.SESSION_COOKIE_NAME || "connect.sid";
-
-function getRequestHost(req) {
-  const raw = String(req.headers["x-forwarded-host"] || req.headers.host || "")
-    .split(",")[0]
-    .trim()
-    .toLowerCase();
-  return raw.split(":")[0].replace(/\.$/, "");
-}
-
-function isPublicHost(req) {
-  return PUBLIC_HOSTS.has(getRequestHost(req));
-}
-
-function clearAdminSession(req, res, done) {
-  // Clear cookie first (matches express-session options)
-  res.clearCookie(SESSION_COOKIE_NAME, {
-    path: "/",
-    httpOnly: true,
-    sameSite: "lax",
-    secure: COOKIE_SECURE,
-  });
-
-  if (!req.session) return done();
-
-  req.session.destroy(() => {
-    try {
-      req.session = null;
-    } catch {}
-    done();
-  });
-}
-
 app.use(express.json({ limit: "25mb" }));
 
 async function ensureDirs() {
@@ -144,7 +102,7 @@ app.use(
     cookie: {
       httpOnly: true,
       sameSite: "lax",
-      secure: COOKIE_SECURE,
+      secure: process.env.NODE_ENV === "production",
       maxAge: 1000 * 60 * 60 * 12, // 12h
     },
   })
@@ -153,31 +111,6 @@ app.use(
 function isAuthed(req) {
   return Boolean(req.session && req.session.authed);
 }
-
-// IMPORTANT: On public domains (vitrocanvas.gr / www), never allow an admin session to persist.
-// - If someone gets redirected into /admin by mistake, we immediately log them out and send them to "/".
-app.use((req, res, next) => {
-  if (!isPublicHost(req)) return next();
-
-  // Block any admin pages/assets on the public domain.
-  if (req.path === "/admin" || req.path.startsWith("/admin/") || req.path === "/admin/login.html") {
-    return clearAdminSession(req, res, () => res.redirect(302, "/"));
-  }
-
-  // Disable admin login API on the public domain (admin should use the onrender URL).
-  if (req.path === "/api/login") {
-    return clearAdminSession(req, res, () =>
-      res.status(403).json({ error: "Admin login is disabled on this domain." })
-    );
-  }
-
-  // If an admin session exists for any reason on the public domain, wipe it silently.
-  if (isAuthed(req)) {
-    return clearAdminSession(req, res, next);
-  }
-
-  return next();
-});
 
 function requireSession(req, res, next) {
   if (isAuthed(req)) return next();
@@ -188,6 +121,119 @@ function requireSessionApi(req, res, next) {
   if (isAuthed(req)) return next();
   return res.status(401).json({ error: "Unauthorized" });
 }
+
+/**
+ * =========================================================
+ * PUBLIC-DOMAIN ADMIN KILL-SWITCH
+ *
+ * Goal:
+ * - On vitrocanvas.gr (and www.vitrocanvas.gr), nobody should ever be able to stay logged-in to /admin.
+ * - If a visitor is sent to /admin by mistake, force logout and bounce back to "/".
+ * - Admin should keep normal behavior on the Render service domain (vitro-site.onrender.com).
+ *
+ * Configure hosts via env (optional):
+ *   PUBLIC_DOMAIN_HOSTS="vitrocanvas.gr,www.vitrocanvas.gr"
+ * =========================================================
+ */
+function getRequestHost(req) {
+  const xfHost = req.headers["x-forwarded-host"];
+  const raw =
+    (Array.isArray(xfHost) ? xfHost[0] : xfHost) ||
+    req.headers.host ||
+    req.hostname ||
+    "";
+  // If multiple hosts are present (comma-separated), take the first.
+  const first = String(raw).split(",")[0].trim().toLowerCase();
+  // Strip port if present (e.g. "example.com:443")
+  return first.replace(/:\d+$/, "");
+}
+
+const PUBLIC_DOMAIN_HOSTS = new Set(
+  String(process.env.PUBLIC_DOMAIN_HOSTS || "vitrocanvas.gr,www.vitrocanvas.gr")
+    .split(",")
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean)
+);
+
+function clearSessionCookie(res) {
+  // Match the cookie options used by express-session as closely as possible.
+  res.clearCookie("connect.sid", {
+    path: "/",
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    httpOnly: true,
+  });
+}
+
+// IMPORTANT: this middleware must run BEFORE serving /admin or any admin APIs.
+app.use((req, res, next) => {
+  const host = getRequestHost(req);
+
+  // Optional debug header (safe): helps verify which host the server sees.
+  res.setHeader("X-Request-Host", host);
+
+  if (!PUBLIC_DOMAIN_HOSTS.has(host)) return next();
+
+  const isAdminPath = req.path === "/admin" || req.path.startsWith("/admin/");
+  const isAdminApi =
+    req.path === "/api/login" ||
+    req.path === "/api/logout" ||
+    req.path === "/api/upload" ||
+    (req.path === "/api/site" && req.method !== "GET") ||
+    req.path.startsWith("/api/gemini");
+
+  const bounceToHome = () => {
+    // For browser navigation (admin pages/assets), redirect to public home.
+    res.setHeader("Cache-Control", "no-store");
+    return res.redirect(302, "/");
+  };
+
+  const denyApi = () => {
+    res.setHeader("Cache-Control", "no-store");
+    return res.status(403).json({ ok: false, error: "forbidden_on_public_domain" });
+  };
+
+  // If someone hits admin on the public domain, force a logout and bounce/deny.
+  if (isAdminPath || isAdminApi) {
+    console.log(`[public-domain-kill] host=${host} ${req.method} ${req.originalUrl}`);
+    if (req.session) {
+      return req.session.destroy(() => {
+        clearSessionCookie(res);
+        return isAdminApi ? denyApi() : bounceToHome();
+      });
+    }
+    clearSessionCookie(res);
+    return isAdminApi ? denyApi() : bounceToHome();
+  }
+
+  // Also, if a session somehow exists on the public domain, kill it quietly.
+  if (req.session && req.session.authed) {
+    console.log(`[public-domain-kill] host=${host} session_authed=true -> destroy`);
+    return req.session.destroy(() => {
+      clearSessionCookie(res);
+      return next();
+    });
+  }
+
+  return next();
+});
+
+// Simple diagnostic endpoint (safe). Open in browser to confirm host/session.
+// Example: https://vitrocanvas.gr/__diag
+app.get("/__diag", (req, res) => {
+  const host = getRequestHost(req);
+  res.setHeader("Cache-Control", "no-store");
+  res.type("text").send(
+    [
+      `host=${host}`,
+      `path=${req.path}`,
+      `method=${req.method}`,
+      `publicHost=${PUBLIC_DOMAIN_HOSTS.has(host)}`,
+      `authed=${Boolean(req.session && req.session.authed)}`,
+    ].join("\n")
+  );
+});
+
 
 // Public site
 app.use("/", express.static(PUBLIC_DIR, { redirect: false }));
@@ -213,21 +259,11 @@ app.post("/api/login", (req, res) => {
 });
 
 app.post("/api/logout", (req, res) => {
-  // Clear cookie + destroy session (clean logout)
-  res.clearCookie(SESSION_COOKIE_NAME, {
-    path: "/",
-    httpOnly: true,
-    sameSite: "lax",
-    secure: COOKIE_SECURE,
-  });
-
-  if (!req.session) return res.json({ ok: true });
-
   req.session.destroy(() => {
+    clearSessionCookie(res);
     res.json({ ok: true });
   });
 });
-
 // Protect all admin assets/pages except login.html
 app.use("/admin", requireSession, express.static(ADMIN_DIR, { redirect: false }));
 
