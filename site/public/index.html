@@ -1223,8 +1223,7 @@
                 localStorage.removeItem('vitro_isAdmin');
                 localStorage.removeItem('vitro_active_view');
             }
-        } catch(e) {}
-        if (!isAdmin) document.body.classList.remove('admin-mode');
+        } catch (e) {}
         // (Fallback) will be overridden by server data if present.
         let isMaintenance = localStorage.getItem('vitro_maintenance') === 'true';
 
@@ -1848,7 +1847,6 @@ if (!response.ok) {
         function openAdminLogin() {
             // No inline password modal anymore.
             // Public users: go to the real admin login (server-side session).
-            // Admin users: stay inside /admin/ anyway.
             window.location.href = '/admin/login.html';
         }
         function closeAdminLogin() { /* legacy no-op */ }
