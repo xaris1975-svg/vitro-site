@@ -867,7 +867,7 @@
         }
 
         // --- AUTH & ANALYTICS INIT ---
-        let isAdmin = false; // Admin lives at /admin, public should never auto-enter admin
+        let isAdmin = false; // public site never enables admin mode
         let isMaintenance = localStorage.getItem('vitro_maintenance') === 'true';
         
         // Init Analytics Counters
@@ -1391,12 +1391,7 @@ if (!response.ok) {
         }
 
         // --- AUTH FUNCTIONS ---
-        function openAdminLogin() { 
-            document.getElementById('admin-login-modal').classList.remove('hidden'); 
-            if (isAdmin) {
-                document.getElementById('admin-login-form').classList.add('hidden');
-                document.getElementById('admin-logout-view').classList.remove('hidden');
-            } else {
+        function openAdminLogin(){ window.location.href = '/admin/login.html'; } else {
                 document.getElementById('admin-login-form').classList.remove('hidden');
                 document.getElementById('admin-logout-view').classList.add('hidden');
                 setTimeout(() => document.getElementById('admin-password').focus(), 100);
@@ -1404,23 +1399,7 @@ if (!response.ok) {
         }
         function closeAdminLogin() { document.getElementById('admin-login-modal').classList.add('hidden'); }
 
-        function attemptAdminLogin() {
-            const pass = document.getElementById('admin-password').value;
-            if (pass === '1111') {
-                isAdmin = true;
-                localStorage.setItem('vitro_isAdmin', 'true'); 
-                document.getElementById('nav-admin-link').classList.remove('hidden');
-                document.getElementById('nav-logout-link').classList.remove('hidden');
-                document.getElementById('mobile-nav-admin-link').classList.remove('hidden');
-                document.getElementById('mobile-nav-logout-link').classList.remove('hidden');
-                document.body.classList.add('admin-mode');
-                enableImageDropZones();
-                checkMaintenance(); // Refresh maintenance view
-                showToast('Καλωσήρθατε! Το Drag & Drop ενεργοποιήθηκε.');
-                closeAdminLogin();
-                document.getElementById('admin-password').value = ''; 
-                showAdminDashboard(null);
-            } else {
+        function attemptAdminLogin(){ window.location.href = '/admin/login.html'; } else {
                 showToast('Λάθος κωδικός!');
                 document.getElementById('admin-password').value = '';
             }
@@ -2015,6 +1994,8 @@ if (!response.ok) {
         }
 
         window.onload = async function() {
+            try { localStorage.removeItem('vitro_isAdmin'); } catch(e) {}
+
             await loadPublicFromServer();
             applyStaticImages();
             applyGlobalSettings();
@@ -2045,6 +2026,5 @@ if (!response.ok) {
             updatePromoText(); // Initial check for promo text
         };
     </script>
-  <script src="/contact.js"></script>
 </body>
 </html>
