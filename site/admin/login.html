@@ -16,13 +16,13 @@
         <label class="block text-sm mb-1" for="username">Username</label>
         <input id="username" name="username" autocomplete="username"
                class="w-full rounded-xl bg-zinc-950 border border-zinc-800 px-3 py-2 outline-none focus:border-zinc-600"
-               value="admin" required placeholder="admin" />
+               placeholder="admin" value="admin" required>
       </div>
       <div>
         <label class="block text-sm mb-1" for="password">Password</label>
         <input id="password" name="password" type="password" autocomplete="current-password"
                class="w-full rounded-xl bg-zinc-950 border border-zinc-800 px-3 py-2 outline-none focus:border-zinc-600"
-               required placeholder="••••••••" />
+               placeholder="••••••••" />
       </div>
       <button type="submit"
               class="w-full rounded-xl bg-white text-zinc-900 font-semibold py-2 hover:bg-zinc-100 transition">
@@ -49,20 +49,20 @@ form.addEventListener('submit', async (e) => {
   e.preventDefault();
   err.classList.add('hidden');
 
-  const username = document.getElementById('username').value.trim();
+  const username = (document.getElementById('username').value || 'admin').trim() || 'admin';
   const password = document.getElementById('password').value;
 
   try {
     const r = await fetch('/api/login', {
+        credentials: 'include',
+        cache: 'no-store',
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      credentials: 'include',
-      cache: 'no-store',
       body: JSON.stringify({ username, password })
     });
     const data = await r.json().catch(() => ({}));
     if (!r.ok) return showError(data.error || 'Αποτυχία σύνδεσης.');
-    window.location.href = '/admin/index.html';
+    window.location.replace('/admin/');
   } catch (e2) {
     showError('Κάτι πήγε στραβά. Δοκίμασε ξανά.');
   }
