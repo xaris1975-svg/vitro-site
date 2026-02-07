@@ -168,17 +168,6 @@
             transition: all 0.1s;
         }
 
-
-        /* Upload Dropzone (Admin Modals) */
-        .vc-dropzone-over {
-            border-color: var(--color-primary) !important;
-            background: rgba(251, 192, 45, 0.06) !important;
-            box-shadow: 0 0 0 2px rgba(251, 192, 45, 0.25) inset;
-        }
-        .vc-dropzone-uploading {
-            opacity: 0.9;
-        }
-
         /* Statistics Bars */
         .stat-bar {
             transition: width 1s ease-out;
@@ -318,7 +307,7 @@
     <!-- ADD/EDIT PRODUCT MODAL -->
     <div id="add-product-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/90 backdrop-blur-md transition-opacity" onclick="closeAddProductModal()"></div>
-        <div class="relative bg-[#1a1a1a] border border-amber/30 p-8 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-[0_0_50px_rgba(251,192,45,0.2)]">
+        <div class="relative bg-[#1a1a1a] border border-amber/30 p-8 rounded-2xl w-full max-w-2xl shadow-[0_0_50px_rgba(251,192,45,0.2)]">
             <button onclick="closeAddProductModal()" class="absolute top-4 right-4 text-gray-400 hover:text-amber transition text-2xl"><i class="fas fa-times"></i></button>
             <div class="text-center mb-6">
                 <i class="fas fa-plus-circle text-amber text-4xl mb-3"></i>
@@ -340,28 +329,7 @@
                     <!-- NEW DISCOUNT FIELD -->
                     <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Έκπτωση (%)</label><input id="prod-discount" type="number" min="0" max="100" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="0"></div>
                     
-                    <div class="col-span-1 md:col-span-2">
-    <label class="block text-gray-400 text-xs uppercase font-bold mb-1">URL Εικόνας</label>
-    <input id="prod-image" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="https://example.com/image.jpg">
-</div>
-
-<div class="col-span-1 md:col-span-2">
-    <label class="block text-gray-400 text-xs uppercase font-bold mb-1">Ανέβασμα Εικόνας (Drag & Drop)</label>
-    <div id="prod-image-drop" class="border-2 border-dashed border-gray-700 rounded-xl p-4 bg-black/20 hover:bg-black/30 transition cursor-pointer select-none">
-        <input id="prod-image-file" type="file" accept="image/*" class="hidden">
-        <div class="flex items-start justify-between gap-4">
-            <div class="text-gray-400 text-sm leading-snug">
-                Σύρε μια εικόνα εδώ ή <span class="text-amber font-bold">κάνε κλικ</span> για επιλογή.
-                <div class="text-xs text-gray-500 mt-1">Θα ανέβει στον server και θα μπει αυτόματα στο URL.</div>
-            </div>
-            <div id="prod-image-status" class="text-xs text-gray-500 font-bold whitespace-nowrap"></div>
-        </div>
-
-        <div id="prod-image-preview-wrap" class="mt-4 hidden">
-            <img id="prod-image-preview" src="" alt="Preview" class="w-full max-h-56 object-contain rounded-lg border border-white/10 bg-black/20">
-        </div>
-    </div>
-</div>
+                    <div class="col-span-1 md:col-span-2"><label class="block text-gray-400 text-xs uppercase font-bold mb-1">URL Εικόνας</label><input id="prod-image" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="https://example.com/image.jpg"></div>
                     <div class="col-span-1 md:col-span-2"><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Περιγραφή (EL)</label><textarea id="prod-desc" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition h-24"></textarea></div>
                     <div class="col-span-1 md:col-span-2"><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Description (EN)</label><textarea id="prod-desc-en" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition h-24" placeholder="English description"></textarea></div>
                 </div>
@@ -373,7 +341,7 @@
     <!-- ADD BLOG POST MODAL -->
     <div id="add-blog-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/90 backdrop-blur-md transition-opacity" onclick="closeAddBlogModal()"></div>
-        <div class="relative bg-[#1a1a1a] border border-emerald/30 p-8 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-[0_0_50px_rgba(27,94,32,0.2)]">
+        <div class="relative bg-[#1a1a1a] border border-emerald/30 p-8 rounded-2xl w-full max-w-3xl shadow-[0_0_50px_rgba(27,94,32,0.2)]">
             <button onclick="closeAddBlogModal()" class="absolute top-4 right-4 text-gray-400 hover:text-emerald transition text-2xl"><i class="fas fa-times"></i></button>
             <div class="text-center mb-6">
                 <i class="fas fa-pen-nib text-emerald text-4xl mb-3"></i>
@@ -389,28 +357,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Ημερομηνία (EL)</label><input id="blog-date" type="text" placeholder="π.χ. 25 Μαρ 2026" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition"></div>
                         <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Date (EN)</label><input id="blog-date-en" type="text" placeholder="e.g. Mar 25, 2026" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition"></div>
-                        <div class="md:col-span-2">
-    <label class="block text-gray-400 text-xs uppercase font-bold mb-1">URL Εικόνας</label>
-    <input id="blog-image" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition" placeholder="https://...">
-
-    <div class="mt-4">
-        <label class="block text-gray-400 text-xs uppercase font-bold mb-1">Ανέβασμα Εικόνας (Drag & Drop)</label>
-        <div id="blog-image-drop" class="border-2 border-dashed border-gray-700 rounded-xl p-4 bg-black/20 hover:bg-black/30 transition cursor-pointer select-none">
-            <input id="blog-image-file" type="file" accept="image/*" class="hidden">
-            <div class="flex items-start justify-between gap-4">
-                <div class="text-gray-400 text-sm leading-snug">
-                    Σύρε μια εικόνα εδώ ή <span class="text-emerald font-bold">κάνε κλικ</span> για επιλογή.
-                    <div class="text-xs text-gray-500 mt-1">Θα ανέβει στον server και θα μπει αυτόματα στο URL.</div>
-                </div>
-                <div id="blog-image-status" class="text-xs text-gray-500 font-bold whitespace-nowrap"></div>
-            </div>
-
-            <div id="blog-image-preview-wrap" class="mt-4 hidden">
-                <img id="blog-image-preview" src="" alt="Preview" class="w-full max-h-56 object-contain rounded-lg border border-white/10 bg-black/20">
-            </div>
-        </div>
-    </div>
-</div>
+                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">URL Εικόνας</label><input id="blog-image" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition" placeholder="https://..."></div>
                     </div>
                     <div class="flex items-center justify-end mt-1">
                         <button type="button" id="btn-blog-auto-en" onclick="autoTranslateBlogToEn()" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-full border border-emerald/40 bg-emerald/10 text-emerald hover:bg-emerald/20 transition">
@@ -424,6 +371,79 @@
                 </div>
                 <button type="submit" class="w-full bg-emerald text-white font-bold py-3 mt-6 rounded-lg hover:bg-emerald-700 transition duration-300">Δημοσίευση Άρθρου</button>
             </form>
+        </div>
+    </div>
+
+    <!-- PRODUCT DETAILS MODAL (Shop-like) -->
+    <div id="product-details-modal" class="fixed inset-0 z-[120] hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeProductDetails()"></div>
+
+        <div class="relative w-full max-w-5xl bg-[#151515] border border-amber/20 rounded-2xl shadow-[0_0_60px_rgba(251,192,45,0.15)] overflow-hidden">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-white/10">
+                <button id="pd-back-btn" onclick="closeProductDetails()" class="text-sm font-bold text-amber hover:text-white transition flex items-center gap-2">
+                    <i class="fas fa-arrow-left"></i>
+                    <span id="pd-back-text">Επιστροφή στα προϊόντα</span>
+                </button>
+                <button onclick="closeProductDetails()" class="text-gray-400 hover:text-amber transition text-2xl" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div id="product-details-scroll" class="max-h-[85vh] overflow-y-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+                    <!-- IMAGE -->
+                    <div class="md:sticky md:top-4">
+                        <div class="rounded-xl overflow-hidden border border-white/10 bg-black/30 group">
+                            <img id="product-details-image" src="" alt="" class="w-full h-[360px] md:h-[520px] object-cover transition-transform duration-300 ease-out group-hover:scale-110">
+                        </div>
+                        <p class="text-xs text-gray-500 mt-3" id="pd-zoom-hint">Περάστε τον κέρσορα πάνω στην εικόνα για ζουμ.</p>
+                    </div>
+
+                    <!-- DETAILS -->
+                    <div>
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <h2 id="product-details-title" class="text-2xl md:text-3xl font-serif font-bold text-white leading-tight">—</h2>
+                                <p class="text-sm text-gray-400 mt-2" id="product-details-category-line">
+                                    <span class="font-bold text-gray-300" id="pd-label-category">Κατηγορία:</span>
+                                    <span id="product-details-category" class="text-gray-300">—</span>
+                                </p>
+                                <p class="text-sm mt-1" id="product-details-stock-line">
+                                    <span class="font-bold text-gray-300" id="pd-label-stock">Διαθεσιμότητα:</span>
+                                    <span id="product-details-stock" class="ml-1">—</span>
+                                </p>
+                            </div>
+
+                            <div class="text-right">
+                                <div id="product-details-price" class="text-amber font-serif font-bold text-2xl md:text-3xl">—</div>
+                                <div id="product-details-discount" class="mt-2 hidden">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-bold bg-ruby/20 text-ruby border border-ruby/30" id="product-details-discount-badge">-0%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 border-t border-white/10 pt-6">
+                            <h3 class="text-sm font-bold uppercase tracking-wider text-gray-300" id="pd-label-desc">Περιγραφή</h3>
+                            <p id="product-details-desc" class="text-gray-300 mt-3 leading-relaxed whitespace-pre-line">—</p>
+                        </div>
+
+                        <div class="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                            <button id="pd-add-to-cart" disabled class="w-full sm:w-auto px-5 py-3 rounded-xl font-bold bg-white/5 text-gray-400 border border-white/10 cursor-not-allowed">
+                                <span id="pd-add-text">Προσθήκη στο καλάθι</span>
+                                <span class="text-xs ml-2 opacity-70" id="pd-soon-text">(σύντομα)</span>
+                            </button>
+                            <div class="text-xs text-gray-500 leading-relaxed">
+                                <span id="pd-note">Σύντομα θα προστεθούν κατηγορίες και καλάθι αγορών.</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 text-xs text-gray-600">
+                            <span class="font-bold text-gray-500" id="pd-label-code">Κωδικός:</span>
+                            <span id="product-details-code">—</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -650,7 +670,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h2 id="about-title" class="text-3xl md:text-4xl font-bold text-white mb-6">Σχετικά με τη <span class="text-amber">Vitro Canvas</span></h2>
+                        <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">Σχετικά με τη <span class="text-amber">Vitro Canvas</span></h2>
                         <div id="editable-about-text">
                             <p class="text-gray-400 mb-6 leading-relaxed">
                                 Το εργαστήριό μας στη Νέα Κερασιά συνδυάζει την παραδοσιακή δεξιότητα με τη σύγχρονη αισθητική. Ονομάζομαι <strong class="text-white">Χάρης Ελευθερίου</strong> και στόχος μου είναι η παροχή λύσεων γυαλιού υψηλής αισθητικής για ιδιώτες και επαγγελματίες.
@@ -662,15 +682,15 @@
                         <div class="grid grid-cols-3 gap-4 text-center">
                             <div class="p-4 border border-white/10 rounded-lg">
                                 <i class="fas fa-hand-holding-heart text-ruby text-2xl mb-2"></i>
-                                <h4 id="about-feature-1" class="font-bold text-sm">Χειροποίητο</h4>
+                                <h4 class="font-bold text-sm">Χειροποίητο</h4>
                             </div>
                             <div class="p-4 border border-white/10 rounded-lg">
                                 <i class="fas fa-history text-royal text-2xl mb-2"></i>
-                                <h4 id="about-feature-2" class="font-bold text-sm">Διαχρονικό</h4>
+                                <h4 class="font-bold text-sm">Διαχρονικό</h4>
                             </div>
                             <div class="p-4 border border-white/10 rounded-lg">
                                 <i class="fas fa-tools text-emerald text-2xl mb-2"></i>
-                                <h4 id="about-feature-3" class="font-bold text-sm">Custom</h4>
+                                <h4 class="font-bold text-sm">Custom</h4>
                             </div>
                         </div>
                     </div>
@@ -1166,48 +1186,30 @@
             const resp = await fetch('/api/gemini/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                cache: 'no-store',
                 body: JSON.stringify(payload)
             });
             if (!resp.ok) {
-                const errText = await resp.text().catch(() => '');
-                let err = {};
-                try { err = errText ? JSON.parse(errText) : {}; } catch {}
-                throw new Error(err?.error || err?.message || `Σφάλμα server (generate): ${resp.status}`);
+                const err = await resp.json().catch(() => ({}));
+                throw new Error(err?.error || `Σφάλμα server (generate): ${resp.status}`);
             }
             return await resp.json();
-        }// ==========================================================
+        }
+        // ==========================================================
 
         async function callGeminiGenerate({ key, model, body }) {
-            // In production we use the server proxy so the API key stays on the server.
             if (window.USE_SERVER_AI) {
-                // Keep model as plain name (e.g. "gemini-2.5-flash") for the proxy.
-                const cleanModel = (model || 'gemini-2.5-flash').replace(/^models\//, '');
-                return await serverGenerateContent({ model: cleanModel, body });
+                // body should be the JSON payload you would send to Gemini
+                return await serverGenerateContent({ model, body });
             }
-
-            // Direct mode (only if you intentionally run without server proxy)
-            const directKey = (key || (typeof geminiKey !== 'undefined' ? geminiKey : '') || localStorage.getItem('vitro_gemini_key') || '').trim();
-            if (!directKey) {
-                throw new Error('Δεν υπάρχει Gemini API key. Βάλτο στις Ρυθμίσεις Admin (Gemini) ή ενεργοποίησε server proxy.');
-            }
-
-            const modelPath = (model || (typeof geminiModel !== 'undefined' ? geminiModel : '') || 'gemini-2.5-flash').trim();
-            const fullModel = modelPath.startsWith('models/') ? modelPath : `models/${modelPath}`;
-
-            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/${fullModel}:generateContent?key=${encodeURIComponent(directKey)}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            });
-
+            const resp = await callGeminiGenerate({ key, model, body: body });
             if (!resp.ok) {
                 const err = await resp.json().catch(() => ({}));
                 throw new Error(err?.error?.message || `Σφάλμα Google (generate): ${resp.status}`);
             }
             return await resp.json();
-        }function showToast(message) {
+        }
+
+        function showToast(message) {
             const toast = document.getElementById('toast');
             const msgElement = document.getElementById('toast-message');
             msgElement.textContent = message;
@@ -1258,74 +1260,14 @@
             }
         }
 
-
-        // --- AI helper: rate-limit / quota friendly handling ---
-        function _vcParseRetrySeconds(msg) {
-            const m = String(msg || '').match(/retry in\s+([0-9.]+)s/i);
-            if (m && m[1]) {
-                const v = parseFloat(m[1]);
-                return Number.isFinite(v) ? v : null;
-            }
-            return null;
-        }
-
-        function _vcSetBtnCooldown(btn, seconds) {
-            if (!btn) return;
-            const total = Math.max(1, Math.ceil(Number(seconds) || 1));
-            if (!btn.dataset._label) btn.dataset._label = btn.innerHTML;
-
-            // Clear any existing cooldown timer
-            if (btn.dataset._cooldownTimer) {
-                try { clearInterval(Number(btn.dataset._cooldownTimer)); } catch {}
-                delete btn.dataset._cooldownTimer;
-            }
-
-            btn.dataset._cooldown = '1';
-            btn.disabled = true;
-            btn.classList.add('opacity-60', 'cursor-not-allowed');
-
-            let remaining = total;
-            btn.innerHTML = `⏳ Περίμενε ${remaining}s`;
-
-            const timerId = setInterval(() => {
-                remaining -= 1;
-                if (remaining <= 0) {
-                    clearInterval(timerId);
-                    btn.disabled = false;
-                    btn.classList.remove('opacity-60', 'cursor-not-allowed');
-                    if (btn.dataset._label) btn.innerHTML = btn.dataset._label;
-                    delete btn.dataset._cooldown;
-                    delete btn.dataset._cooldownTimer;
-                    return;
-                }
-                btn.innerHTML = `⏳ Περίμενε ${remaining}s`;
-            }, 1000);
-
-            btn.dataset._cooldownTimer = String(timerId);
-        }
         async function _vcGeminiJson(prompt, { model = 'gemini-2.5-flash', maxOutputTokens = 1024 } = {}) {
             const body = {
                 contents: [{ role: "user", parts: [{ text: prompt }] }],
                 generationConfig: { temperature: 0.2, topP: 0.95, maxOutputTokens }
             };
-
-            try {
-                const resp = await callGeminiGenerate({ model, body });
-                const text = _vcExtractGeminiText(resp);
-                return _vcParseJsonLoose(text);
-            } catch (e) {
-                const msg = String(e?.message || e || '');
-
-                // Quota / rate-limit handling (common on free tier)
-                if (/quota|resource exhausted|rate limit/i.test(msg)) {
-                    const retry = _vcParseRetrySeconds(msg);
-                    const seconds = Math.max(1, Math.ceil(Number(retry) || 60));
-                    const err = new Error(`Έφτασες το όριο αιτημάτων του Gemini (free tier). Περίμενε ${seconds}s και ξαναδοκίμασε ή βάλε billing για μεγαλύτερο όριο.`);
-                    err.retrySeconds = seconds;
-                    throw err;
-                }
-                throw e;
-            }
+            const resp = await serverGenerateContent({ model, body });
+            const text = _vcExtractGeminiText(resp);
+            return _vcParseJsonLoose(text);
         }
 
         async function autoTranslateProductToEn() {
@@ -1347,15 +1289,9 @@ Greek product description: [[[${descEl}]]]`;
                 if (out?.desc_en) document.getElementById('prod-desc-en').value = String(out.desc_en).trim();
                 showToast('Έγινε μετάφραση στα Αγγλικά (Product).');
             } catch (e) {
-                if (e && e.retrySeconds) {
-                    const s = Math.max(1, Math.ceil(Number(e.retrySeconds) || 60));
-                    _vcSetBtnCooldown(btn, s);
-                    showToast('Όριο Gemini (free tier). Περίμενε ' + s + 's και πάτα ξανά.');
-                    return;
-                }
                 showToast('Σφάλμα μετάφρασης: ' + String(e?.message || e));
             } finally {
-                if (!(btn && btn.dataset._cooldown === '1')) { _vcSetBtnBusy(btn, false); }
+                _vcSetBtnBusy(btn, false);
             }
         }
 
@@ -1384,16 +1320,9 @@ Greek HTML content: [[[${contentEl}]]]`;
                 if (out?.content_en) document.getElementById('blog-content-en').value = String(out.content_en).trim();
                 showToast('Έγινε μετάφραση στα Αγγλικά (Blog).');
             } catch (e) {
-                if (e && e.retrySeconds) {
-                    const s = Math.max(1, Math.ceil(Number(e.retrySeconds) || 60));
-                    _vcSetBtnCooldown(btn, s);
-                    showToast('Όριο Gemini (free tier). Περίμενε ' + s + 's και πάτα ξανά.');
-                    return;
-                }
                 showToast('Σφάλμα μετάφρασης: ' + String(e?.message || e));
-            }
-} finally {
-                if (!(btn && btn.dataset._cooldown === '1')) { _vcSetBtnBusy(btn, false); }
+            } finally {
+                _vcSetBtnBusy(btn, false);
             }
         }
         // ===============================================
@@ -1613,146 +1542,6 @@ let isAdmin = !__IS_PUBLIC_HOST && (localStorage.getItem('vitro_isAdmin') === 't
             return j.url;
         }
         
-
-        // ===== Admin Modals: Image Drag & Drop Upload + Preview =====
-        function setModalPreviewByUrl(urlInputId, previewWrapId, previewImgId, statusId) {
-            const urlEl = document.getElementById(urlInputId);
-            const wrap = document.getElementById(previewWrapId);
-            const img = document.getElementById(previewImgId);
-            const st = statusId ? document.getElementById(statusId) : null;
-            if (!urlEl || !wrap || !img) return;
-            const url = (urlEl.value || '').trim();
-            if (!url) {
-                wrap.classList.add('hidden');
-                img.src = '';
-                if (st) st.textContent = '';
-                return;
-            }
-            img.src = url;
-            wrap.classList.remove('hidden');
-            if (st) st.textContent = '';
-        }
-
-        function bindModalDropzone(cfg) {
-            const drop = document.getElementById(cfg.dropId);
-            const fileInput = document.getElementById(cfg.fileId);
-            const urlInput = document.getElementById(cfg.urlId);
-            const previewWrap = document.getElementById(cfg.previewWrapId);
-            const previewImg = document.getElementById(cfg.previewImgId);
-            const status = document.getElementById(cfg.statusId);
-
-            if (!drop || !fileInput || !urlInput || !previewWrap || !previewImg || !status) return;
-
-            function setStatus(text, kind) {
-                status.textContent = text || '';
-                status.className = 'text-xs font-bold whitespace-nowrap ' + (
-                    kind === 'ok' ? 'text-emerald-400' :
-                    kind === 'err' ? 'text-ruby' :
-                    kind === 'up' ? 'text-amber' :
-                    'text-gray-500'
-                );
-            }
-
-            function setPreviewSrc(src) {
-                if (!src) {
-                    previewWrap.classList.add('hidden');
-                    previewImg.src = '';
-                    return;
-                }
-                previewImg.src = src;
-                previewWrap.classList.remove('hidden');
-            }
-
-            async function processFile(file) {
-                if (!file || !file.type || !file.type.startsWith('image/')) {
-                    showToast('Παρακαλώ επέλεξε αρχείο εικόνας.');
-                    return;
-                }
-
-                // Local preview immediately
-                const localUrl = URL.createObjectURL(file);
-                setPreviewSrc(localUrl);
-                previewImg.onload = () => { try { URL.revokeObjectURL(localUrl); } catch(e) {} };
-
-                // Upload
-                drop.classList.add('vc-dropzone-uploading');
-                setStatus('Uploading…', 'up');
-                try {
-                    const url = await uploadImageToServer(file);
-                    urlInput.value = url;
-                    setPreviewSrc(url);
-                    setStatus('OK', 'ok');
-                } catch (e) {
-                    console.warn('Modal upload failed:', e);
-                    setStatus('Error', 'err');
-                    showToast('Αποτυχία ανεβάσματος εικόνας.');
-                } finally {
-                    drop.classList.remove('vc-dropzone-uploading');
-                }
-            }
-
-            // Click -> open file picker
-            drop.addEventListener('click', () => fileInput.click());
-
-            // File picker
-            fileInput.addEventListener('change', () => {
-                const file = fileInput.files && fileInput.files[0];
-                if (file) processFile(file);
-                fileInput.value = ''; // allow same file again
-            });
-
-            // URL typing also updates preview
-            urlInput.addEventListener('input', () => setModalPreviewByUrl(cfg.urlId, cfg.previewWrapId, cfg.previewImgId, cfg.statusId));
-
-            // Drag & Drop
-            ['dragenter','dragover'].forEach(ev => {
-                drop.addEventListener(ev, (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    drop.classList.add('vc-dropzone-over');
-                });
-            });
-            ['dragleave','dragend'].forEach(ev => {
-                drop.addEventListener(ev, (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    drop.classList.remove('vc-dropzone-over');
-                });
-            });
-            drop.addEventListener('drop', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                drop.classList.remove('vc-dropzone-over');
-                const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-                if (file) processFile(file);
-            });
-
-            // Initial preview if URL already exists
-            setModalPreviewByUrl(cfg.urlId, cfg.previewWrapId, cfg.previewImgId, cfg.statusId);
-        }
-
-        function initAdminModalUploads() {
-            bindModalDropzone({
-                dropId: 'prod-image-drop',
-                fileId: 'prod-image-file',
-                urlId: 'prod-image',
-                previewWrapId: 'prod-image-preview-wrap',
-                previewImgId: 'prod-image-preview',
-                statusId: 'prod-image-status'
-            });
-
-            bindModalDropzone({
-                dropId: 'blog-image-drop',
-                fileId: 'blog-image-file',
-                urlId: 'blog-image',
-                previewWrapId: 'blog-image-preview-wrap',
-                previewImgId: 'blog-image-preview',
-                statusId: 'blog-image-status'
-            });
-        }
-
-        // Init once
-        document.addEventListener('DOMContentLoaded', initAdminModalUploads);
         // Init Analytics Counters
         let analytics = JSON.parse(localStorage.getItem('vitro_analytics')) || {
             totalVisits: 0,
@@ -2234,7 +2023,7 @@ if (!response.ok) {
             root.style.setProperty('--spin-speed', (globalGraphics.spinSpeed || '60') + 's');
             
             const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
-            setVal('admin-hero-title', (globalTexts.heroTitle ? String((window.VC_LANG ? window.VC_LANG.pick(globalTexts.heroTitle) : globalTexts.heroTitle)) : "Η Τέχνη του Φωτός").replace(/<[^>]*>?/gm, ''));
+            setVal('admin-hero-title', globalTexts.heroTitle ? globalTexts.heroTitle.replace(/<[^>]*>?/gm, '') : "Η Τέχνη του Φωτός");
             setVal('admin-phone', globalTexts.phone || "+30 6973 807 097");
             setVal('admin-insta', globalTexts.instagram || "#");
             setVal('admin-fb', globalTexts.facebook || "#");
@@ -2430,8 +2219,7 @@ if (!response.ok) {
             } else {
                 title.innerText = "Νέο Προϊόν";
             }
-            modal.classList.remove('hidden');
-            setModalPreviewByUrl('prod-image','prod-image-preview-wrap','prod-image-preview','prod-image-status'); 
+            modal.classList.remove('hidden'); 
         }
         function closeAddProductModal() { document.getElementById('add-product-modal').classList.add('hidden'); }
         function openAddBlogModal(editMode=false, blogId=null) {
@@ -2469,7 +2257,6 @@ if (!response.ok) {
                 if (contentEl) contentEl.value = (window.VC_LANG ? window.VC_LANG.pickLang(post.content, 'el') : post.content);
                 if (contentEnEl) contentEnEl.value = (window.VC_LANG ? window.VC_LANG.pickLang(post.content, 'en') : post.content);
             }
-            setModalPreviewByUrl('blog-image','blog-image-preview-wrap','blog-image-preview','blog-image-status');
         }
         function closeAddBlogModal() { document.getElementById('add-blog-modal').classList.add('hidden'); }
 
@@ -2737,7 +2524,7 @@ if (!response.ok) {
                 }
 
                 grid.innerHTML += `
-                    <div class="glass-card rounded-xl overflow-hidden group flex flex-col h-full relative">
+                    <div class="glass-card rounded-xl overflow-hidden group flex flex-col h-full relative cursor-pointer" role="button" tabindex="0" onclick="openProductDetails(${prod.id})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openProductDetails(${prod.id});}">
                         ${discountBadge}
                         <div class="h-64 overflow-hidden relative">
                             <img src="${prod.image}" alt="${(window.VC_LANG?window.VC_LANG.pick(prod.name):prod.name)}" onclick="handleImageClick(this, 'product', ${prod.id})" class="admin-editable-img w-full h-full object-cover group-hover:scale-110 transition duration-500" data-type="product" data-id="${prod.id}">
@@ -2750,7 +2537,7 @@ if (!response.ok) {
                                 ${priceDisplay}
                                 <div class="flex items-center">
                                     ${adminEditBtn}
-                                    <button onclick="openModal()" class="text-white hover:text-amber transition"><i class="fas fa-shopping-bag"></i></button>
+                                    <button onclick="event.stopPropagation(); openModal()" class="text-white hover:text-amber transition"><i class="fas fa-shopping-bag"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -2759,6 +2546,139 @@ if (!response.ok) {
             enableImageDropZones(); 
         }
 
+
+        // --- PRODUCT DETAILS MODAL (Shop-like) ---
+        function getCategoryLabel(category, lang) {
+            const c = (category || '').toString().toLowerCase();
+            const map = {
+                architectural: { el: 'Αρχιτεκτονικό Βιτρό', en: 'Architectural Stained Glass' },
+                jewelry:       { el: 'Κοσμήματα',           en: 'Jewelry' },
+                lighting:      { el: 'Φωτιστικά',           en: 'Lighting' },
+                decor:         { el: 'Διακόσμηση',          en: 'Decor' },
+                'stained-glass': { el: 'Βιτρό',             en: 'Stained Glass' }
+            };
+            const hit = map[c];
+            if (hit) return (lang === 'en' ? hit.en : hit.el);
+            // Fallback: show the raw value (future categories will still display)
+            return category || '';
+        }
+
+        function formatPriceParts(rawPrice) {
+            const s = (rawPrice ?? '').toString().trim();
+            // Try to parse number even if it has € or spaces
+            const clean = s.replace(/[€\s]/g, '').replace(',', '.');
+            const n = parseFloat(clean);
+            if (isNaN(n)) return { isNumber: false, text: s };
+            return { isNumber: true, value: n };
+        }
+
+        function productStockText(code, lang) {
+            const dict = (window.VC_I18N && (window.VC_I18N[lang] || window.VC_I18N.el)) || {};
+            if (code === 'in-stock') return dict.stock_in || (lang === 'en' ? 'In stock' : 'Άμεσα Διαθέσιμο');
+            if (code === 'sold') return dict.stock_sold || (lang === 'en' ? 'Sold out' : 'Εξαντλήθηκε');
+            return dict.stock_made || (lang === 'en' ? 'Made to order' : 'Κατόπιν Παραγγελίας');
+        }
+
+        function productStockClass(code) {
+            return code === 'in-stock' ? 'text-emerald' : (code === 'sold' ? 'text-ruby' : 'text-amber');
+        }
+
+        function updateProductDetailsModal() {
+            if (typeof window.__currentProductId === 'undefined') return;
+            const modal = document.getElementById('product-details-modal');
+            if (!modal || modal.classList.contains('hidden')) return;
+            openProductDetails(window.__currentProductId, { noShow: true });
+        }
+
+        function openProductDetails(productId, opts = {}) {
+            window.__currentProductId = productId;
+            const prod = (typeof products !== 'undefined') ? products.find(p => p.id === productId) : null;
+            if (!prod) return;
+
+            const lang = (window.VC_LANG && window.VC_LANG.get) ? window.VC_LANG.get() : 'el';
+            const dict = (window.VC_I18N && (window.VC_I18N[lang] || window.VC_I18N.el)) || {};
+
+            // Labels (localized)
+            const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+            setTxt('pd-back-text', dict.pd_back || (lang === 'en' ? 'Back to products' : 'Επιστροφή στα προϊόντα'));
+            setTxt('pd-zoom-hint', dict.pd_zoom_hint || (lang === 'en' ? 'Hover the image to zoom.' : 'Περάστε τον κέρσορα πάνω στην εικόνα για ζουμ.'));
+            setTxt('pd-label-category', dict.pd_category || (lang === 'en' ? 'Category:' : 'Κατηγορία:'));
+            setTxt('pd-label-stock', dict.pd_stock || (lang === 'en' ? 'Availability:' : 'Διαθεσιμότητα:'));
+            setTxt('pd-label-desc', dict.pd_desc || (lang === 'en' ? 'Description' : 'Περιγραφή'));
+            setTxt('pd-add-text', dict.pd_add || (lang === 'en' ? 'Add to cart' : 'Προσθήκη στο καλάθι'));
+            setTxt('pd-soon-text', dict.pd_soon || (lang === 'en' ? '(soon)' : '(σύντομα)'));
+            setTxt('pd-note', dict.pd_note || (lang === 'en' ? 'Categories and shopping cart are coming soon.' : 'Σύντομα θα προστεθούν κατηγορίες και καλάθι αγορών.'));
+            setTxt('pd-label-code', dict.pd_code || (lang === 'en' ? 'Code:' : 'Κωδικός:'));
+
+            // Dynamic product content (localized fields)
+            const pick = (v) => (window.VC_LANG && window.VC_LANG.pick) ? window.VC_LANG.pick(v) : (v ?? '');
+            const title = pick(prod.name);
+            const desc = pick(prod.desc);
+
+            const img = document.getElementById('product-details-image');
+            if (img) {
+                img.src = prod.image || '';
+                img.alt = title || 'Product';
+            }
+
+            setTxt('product-details-title', title || '');
+            setTxt('product-details-desc', desc || '');
+            setTxt('product-details-category', getCategoryLabel(prod.category, lang) || '');
+            setTxt('product-details-code', String(prod.id));
+
+            const stockEl = document.getElementById('product-details-stock');
+            if (stockEl) {
+                stockEl.textContent = productStockText(prod.stock, lang);
+                stockEl.className = 'ml-1 font-bold ' + productStockClass(prod.stock);
+            }
+
+            // Price + discount
+            const priceEl = document.getElementById('product-details-price');
+            const discWrap = document.getElementById('product-details-discount');
+            const discBadge = document.getElementById('product-details-discount-badge');
+
+            const parts = formatPriceParts(prod.price);
+            if (!parts.isNumber) {
+                if (priceEl) priceEl.textContent = parts.text || '';
+                if (discWrap) discWrap.classList.add('hidden');
+            } else {
+                const base = parts.value;
+                const discount = parseFloat(prod.discount || 0) || 0;
+                if (discount > 0) {
+                    const final = (base * (1 - discount / 100));
+                    if (priceEl) {
+                        priceEl.innerHTML = `
+                            <div class="flex flex-col items-end">
+                                <span class="text-xs text-gray-500 line-through decoration-red-500/50">€${base.toFixed(2)}</span>
+                                <span>€${final.toFixed(2)}</span>
+                            </div>
+                        `;
+                    }
+                    if (discBadge) discBadge.textContent = `-${discount}%`;
+                    if (discWrap) discWrap.classList.remove('hidden');
+                } else {
+                    if (priceEl) priceEl.textContent = `€${base.toFixed(2)}`;
+                    if (discWrap) discWrap.classList.add('hidden');
+                }
+            }
+
+            if (!opts.noShow) {
+                const modal = document.getElementById('product-details-modal');
+                if (modal) modal.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+            }
+        }
+
+        function closeProductDetails() {
+            const modal = document.getElementById('product-details-modal');
+            if (modal) modal.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        // Close on ESC
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeProductDetails();
+        });
         // PROMO TEXT LOGIC
         function updatePromoText() {
             const promo = document.getElementById('hero-promo-text');
@@ -3008,11 +2928,6 @@ if (!response.ok) {
             
             checkWeeklyAI();
             updatePromoText(); // Initial check for promo text
-
-            // Ensure UI text matches the selected language AFTER server data/global settings are applied.
-            try {
-                if (window.VC_I18N_APPLY) window.VC_I18N_APPLY(window.VC_LANG ? window.VC_LANG.get() : (localStorage.getItem('vc_lang') || 'el'));
-            } catch(e) {}
         };
     
 </script>
@@ -3186,15 +3101,6 @@ async function submitContactForm(form, opts = {}) {
       hero_collection: 'Δείτε τη Συλλογή',
       hero_quote: 'Ζητήστε Προσφορά',
 
-      hero_title_html: `Η Τέχνη του <span class="inline-block"><span class="glowing-letter" style="animation-delay: 0s;">Φ</span><span class="glowing-letter" style="animation-delay: 0.2s;">ω</span><span class="glowing-letter" style="animation-delay: 0.4s;">τ</span><span class="glowing-letter" style="animation-delay: 0.6s;">ό</span><span class="glowing-letter" style="animation-delay: 0.8s;">ς</span></span>`,
-      hero_desc: 'Χειροποίητα βιτρό, μοναδικά κοσμήματα και αρχιτεκτονικές λύσεις που μεταμορφώνουν τον χώρο σας.',
-      about_title_html: `Σχετικά με τη <span class="text-amber">Vitro Canvas</span>`,
-      about_body_html: `<p class="text-gray-400 mb-6 leading-relaxed">Το εργαστήριό μας στη Νέα Κερασιά συνδυάζει την παραδοσιακή δεξιότητα με τη σύγχρονη αισθητική. Ονομάζομαι <strong class="text-white">Χάρης Ελευθερίου</strong> και στόχος μου είναι η παροχή λύσεων γυαλιού υψηλής αισθητικής για ιδιώτες και επαγγελματίες.</p><p class="text-gray-400 mb-8 leading-relaxed">Από την κλασική τεχνική μολύβδου μέχρι την λεπτεπίλεπτη μέθοδο Tiffany, κάθε έργο είναι μοναδικό, σχεδιασμένο για να παίζει με το φως και να δημιουργεί ατμόσφαιρα.</p>`,
-      about_feature1: 'Χειροποίητο',
-      about_feature2: 'Διαχρονικό',
-      about_feature3: 'Custom',
-
-
       promo_marquee: '🔥 ΠΡΟΣΦΟΡΕΣ: Ανακαλύψτε τις εκπτώσεις μας και αποκτήστε μοναδικά έργα σε προνομιακές τιμές!',
       catalog_title: 'Κατάλογος Προϊόντων',
       blog_section_title: 'Το Blog μας',
@@ -3265,15 +3171,6 @@ async function submitContactForm(form, opts = {}) {
 
       hero_collection: 'View Collection',
       hero_quote: 'Request a Quote',
-
-      hero_title_html: `The Art of <span class="inline-block"><span class="glowing-letter" style="animation-delay: 0s;">L</span><span class="glowing-letter" style="animation-delay: 0.2s;">i</span><span class="glowing-letter" style="animation-delay: 0.4s;">g</span><span class="glowing-letter" style="animation-delay: 0.6s;">h</span><span class="glowing-letter" style="animation-delay: 0.8s;">t</span></span>`,
-      hero_desc: 'Handmade stained glass, unique jewelry and architectural solutions that transform your space.',
-      about_title_html: `About <span class="text-amber">Vitro Canvas</span>`,
-      about_body_html: `<p class="text-gray-400 mb-6 leading-relaxed">Our studio in Nea Kerasia combines traditional craftsmanship with contemporary aesthetics. My name is <strong class="text-white">Χάρης Ελευθερίου</strong> and my goal is to deliver high-aesthetic glass solutions for private clients and professionals.</p><p class="text-gray-400 mb-8 leading-relaxed">From classic lead came techniques to the delicate Tiffany method, every piece is unique, designed to play with light and create atmosphere.</p>`,
-      about_feature1: 'Handmade',
-      about_feature2: 'Timeless',
-      about_feature3: 'Custom',
-
 
       promo_marquee: '🔥 LIMITED OFFERS: Discover our discounts and get unique pieces at special prices!',
       catalog_title: 'Product Catalog',
@@ -3391,30 +3288,6 @@ async function submitContactForm(form, opts = {}) {
     setText('hero-btn-collection', t('hero_collection'));
     setText('hero-btn-quote', t('hero_quote'));
 
-    // Hero title & subtitle (supports admin custom EL title; EN falls back to default if not provided)
-    (function () {
-      let heroHtml = '';
-      try {
-        if (typeof globalTexts !== 'undefined' && globalTexts && globalTexts.heroTitle !== undefined) {
-          const elVal = window.VC_LANG.pickLang(globalTexts.heroTitle, 'el');
-          const enVal = window.VC_LANG.pickLang(globalTexts.heroTitle, 'en');
-          if (normalized === 'el') heroHtml = elVal || '';
-          else heroHtml = (enVal && enVal !== elVal) ? enVal : '';
-        }
-      } catch (e) {}
-      if (!heroHtml) heroHtml = t('hero_title_html');
-      setHTML('editable-hero-title', heroHtml);
-      setText('editable-hero-desc', t('hero_desc'));
-    })();
-
-    // About section
-    setHTML('about-title', t('about_title_html'));
-    setHTML('editable-about-text', t('about_body_html'));
-    setText('about-feature-1', t('about_feature1'));
-    setText('about-feature-2', t('about_feature2'));
-    setText('about-feature-3', t('about_feature3'));
-
-
     // Headings
     setText('catalog-title', t('catalog_title'));
     setText('blog-section-title', t('blog_section_title'));
@@ -3499,14 +3372,20 @@ async function submitContactForm(form, opts = {}) {
         if (typeof openBlogPost === 'function') openBlogPost(window.__currentBlogId);
       }
     } catch(e) {}
+
+    // If product details modal is open, refresh it so it switches language too
+    try {
+      const pd = document.getElementById('product-details-modal');
+      if (pd && !pd.classList.contains('hidden') && typeof window.__currentProductId !== 'undefined') {
+        if (typeof updateProductDetailsModal === 'function') updateProductDetailsModal();
+      }
+    } catch(e) {}
   }
 
   function toggleLang() {
     const current = window.VC_LANG.get();
     apply(current === 'en' ? 'el' : 'en');
   }
-
-  window.VC_I18N_APPLY = apply;
 
   document.addEventListener('DOMContentLoaded', function () {
     apply(guessLang());
