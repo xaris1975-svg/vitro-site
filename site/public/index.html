@@ -1468,29 +1468,26 @@ Greek HTML content: [[[${contentEl}]]]`;
         }
 
         // --- AUTH & ANALYTICS INIT ---
-// Admin mode is allowed ONLY on the Render host (or local dev). Public domain must NEVER become admin.
-const __PUBLIC_HOSTS = new Set(['vitrocanvas.gr', 'www.vitrocanvas.gr']);
-const __HOST = (location.hostname || '').toLowerCase();
-const __IS_PUBLIC_HOST = __PUBLIC_HOSTS.has(__HOST);
-
-// Default: NOT admin. If it's not the public host, restore admin state from localStorage.
-let isAdmin = !__IS_PUBLIC_HOST && (localStorage.getItem('vitro_isAdmin') === 'true');
-// Public users: dropping files on the page should do absolutely nothing (and never navigate away).
-if (!isAdmin) {
-    const __vcBlockFiles = (e) => {
-        try {
-            const dt = e.dataTransfer;
-            const types = dt && dt.types ? Array.from(dt.types) : [];
-            if (types.includes('Files')) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-        } catch(_) {}
-    };
-    document.addEventListener('dragenter', __vcBlockFiles, true);
-    document.addEventListener('dragover', __vcBlockFiles, true);
-    document.addEventListener('drop', __vcBlockFiles, true);
-}
+// --- ADMIN MODE ---
+// Admin mode is enabled only after a successful admin login (stored in localStorage).
+// Public visitors should never get admin features unless they explicitly log in.
+let isAdmin = (localStorage.getItem('vitro_isAdmin') === 'true');
+// File-drop guard (Safari & friends): never navigate away on dropped files.
+// - Public users: do absolutely nothing.
+// - Admin: allow drop to reach the specific drop zones.
+const __vcGuardFileDrop = (e) => {
+    try {
+        const dt = e.dataTransfer;
+        const types = dt && dt.types ? Array.from(dt.types) : [];
+        if (types.includes('Files')) {
+            e.preventDefault(); // always block navigation
+            if (!isAdmin) e.stopPropagation(); // public: no action at all
+        }
+    } catch(_) {}
+};
+document.addEventListener('dragenter', __vcGuardFileDrop, true);
+document.addEventListener('dragover', __vcGuardFileDrop, true);
+document.addEventListener('drop', __vcGuardFileDrop, true);
 
 
         // (Fallback) will be overridden by server data if present.
