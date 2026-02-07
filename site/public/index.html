@@ -318,11 +318,6 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Όνομα Προϊόντος (EL)</label><input id="prod-name" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition"></div>
                     <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Product Name (EN)</label><input id="prod-name-en" type="text" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="English name"></div>
-                    <div class="col-span-1 md:col-span-2 flex items-center justify-end">
-                        <button type="button" id="btn-prod-auto-en" onclick="autoTranslateProductToEn()" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-full border border-amber/40 bg-amber/10 text-amber hover:bg-amber/20 transition">
-                            <i class="fas fa-language"></i> Auto-translate to EN
-                        </button>
-                    </div>
                     <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Τιμή (€)</label><input id="prod-price" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="π.χ. 120.00"></div>
                     <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Κατηγορία</label><select id="prod-category" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition"><option value="stained-glass">Αρχιτεκτονικό Βιτρό</option><option value="jewelry">Κοσμήματα</option><option value="decor">Διακόσμηση</option></select></div>
                     <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Διαθεσιμότητα</label><select id="prod-stock" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition"><option value="in-stock">Άμεσα Διαθέσιμο</option><option value="made-to-order">Κατόπιν Παραγγελίας</option><option value="sold">Πωλήθηκε</option></select></div>
@@ -358,11 +353,6 @@
                         <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Ημερομηνία (EL)</label><input id="blog-date" type="text" placeholder="π.χ. 25 Μαρ 2026" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition"></div>
                         <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Date (EN)</label><input id="blog-date-en" type="text" placeholder="e.g. Mar 25, 2026" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition"></div>
                         <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">URL Εικόνας</label><input id="blog-image" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition" placeholder="https://..."></div>
-                    </div>
-                    <div class="flex items-center justify-end mt-1">
-                        <button type="button" id="btn-blog-auto-en" onclick="autoTranslateBlogToEn()" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-full border border-emerald/40 bg-emerald/10 text-emerald hover:bg-emerald/20 transition">
-                            <i class="fas fa-language"></i> Auto-translate to EN
-                        </button>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Περιεχόμενο (EL, HTML επιτρέπεται)</label><textarea id="blog-content" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition h-48" placeholder="<p>Γράψτε το κείμενό σας εδώ...</p>"></textarea></div>
@@ -629,7 +619,7 @@
         <section id="services" class="py-20 bg-[#121212]">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
-                    <h2 id="services-title" class="text-3xl md:text-4xl font-bold text-white mb-4">Δημιουργίες & Υπηρεσίες</h2>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Δημιουργίες & Υπηρεσίες</h2>
                     <div class="w-24 h-1 bg-amber mx-auto"></div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -640,9 +630,9 @@
                             <div class="absolute inset-0 bg-black/40 group-hover:bg-transparent transition pointer-events-none"></div>
                         </div>
                         <div class="p-6">
-                            <h3 id="service-1-title" class="text-xl font-bold text-white mb-2">Αρχιτεκτονικό Βιτρό</h3>
-                            <p id="service-1-desc" class="text-gray-400 text-sm mb-4">Παράθυρα, φεγγίτες και πόρτες εισόδου που αλλάζουν την όψη του κτιρίου.</p>
-                            <a href="javascript:void(0)" onclick="showCatalog(event)" class="text-amber text-sm font-bold hover:underline" id="service-1-link">Δείτε περισσότερα <i class="fas fa-arrow-right ml-1"></i></a>
+                            <h3 class="text-xl font-bold text-white mb-2">Αρχιτεκτονικό Βιτρό</h3>
+                            <p class="text-gray-400 text-sm mb-4">Παράθυρα, φεγγίτες και πόρτες εισόδου που αλλάζουν την όψη του κτιρίου.</p>
+                            <a href="javascript:void(0)" onclick="showCatalog(event)" class="text-amber text-sm font-bold hover:underline">Δείτε περισσότερα <i class="fas fa-arrow-right ml-1"></i></a>
                         </div>
                     </div>
                     <!-- Product 2 -->
@@ -652,9 +642,9 @@
                             <div class="absolute inset-0 bg-black/40 group-hover:bg-transparent transition pointer-events-none"></div>
                         </div>
                         <div class="p-6">
-                            <h3 id="service-2-title" class="text-xl font-bold text-white mb-2">Κοσμήματα</h3>
-                            <p id="service-2-desc" class="text-gray-400 text-sm mb-4">Μοναδικά χειροποίητα κοσμήματα και αξεσουάρ από γυαλί για ξεχωριστές εμφανίσεις.</p>
-                            <a href="javascript:void(0)" onclick="showCatalog(event)" class="text-amber text-sm font-bold hover:underline" id="service-2-link">Δείτε περισσότερα <i class="fas fa-arrow-right ml-1"></i></a>
+                            <h3 class="text-xl font-bold text-white mb-2">Κοσμήματα</h3>
+                            <p class="text-gray-400 text-sm mb-4">Μοναδικά χειροποίητα κοσμήματα και αξεσουάρ από γυαλί για ξεχωριστές εμφανίσεις.</p>
+                            <a href="javascript:void(0)" onclick="showCatalog(event)" class="text-amber text-sm font-bold hover:underline">Δείτε περισσότερα <i class="fas fa-arrow-right ml-1"></i></a>
                         </div>
                     </div>
                     <!-- Product 3 -->
@@ -664,9 +654,9 @@
                             <div class="absolute inset-0 bg-black/40 group-hover:bg-transparent transition pointer-events-none"></div>
                         </div>
                         <div class="p-6">
-                            <h3 id="service-3-title" class="text-xl font-bold text-white mb-2">Suncatchers & Decor</h3>
-                            <p id="service-3-desc" class="text-gray-400 text-sm mb-4">Μικρά διακοσμητικά, φωτιστικά Tiffany και καθρέφτες για κάθε γωνιά.</p>
-                            <a href="javascript:void(0)" onclick="showCatalog(event)" class="text-amber text-sm font-bold hover:underline" id="service-3-link">Δείτε περισσότερα <i class="fas fa-arrow-right ml-1"></i></a>
+                            <h3 class="text-xl font-bold text-white mb-2">Suncatchers & Decor</h3>
+                            <p class="text-gray-400 text-sm mb-4">Μικρά διακοσμητικά, φωτιστικά Tiffany και καθρέφτες για κάθε γωνιά.</p>
+                            <a href="javascript:void(0)" onclick="showCatalog(event)" class="text-amber text-sm font-bold hover:underline">Δείτε περισσότερα <i class="fas fa-arrow-right ml-1"></i></a>
                         </div>
                     </div>
                     <!-- Service 4 -->
@@ -676,9 +666,9 @@
                             <div class="absolute inset-0 bg-black/40 group-hover:bg-transparent transition pointer-events-none"></div>
                         </div>
                         <div class="p-6">
-                            <h3 id="service-4-title" class="text-xl font-bold text-white mb-2">Συντήρηση & Αποκατάσταση</h3>
-                            <p id="service-4-desc" class="text-gray-400 text-sm mb-4">Εξειδικευμένη επισκευή παλαιών βιτρό σε νεοκλασικά και εκκλησίες.</p>
-                            <a href="javascript:void(0)" onclick="openModal()" class="text-amber text-sm font-bold hover:underline" id="service-4-link">Ζητήστε εκτίμηση <i class="fas fa-arrow-right ml-1"></i></a>
+                            <h3 class="text-xl font-bold text-white mb-2">Συντήρηση & Αποκατάσταση</h3>
+                            <p class="text-gray-400 text-sm mb-4">Εξειδικευμένη επισκευή παλαιών βιτρό σε νεοκλασικά και εκκλησίες.</p>
+                            <a href="javascript:void(0)" onclick="openModal()" class="text-amber text-sm font-bold hover:underline">Ζητήστε εκτίμηση <i class="fas fa-arrow-right ml-1"></i></a>
                         </div>
                     </div>
                 </div>
@@ -691,17 +681,17 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pointer-events-none">
                 <div class="flex flex-col md:flex-row items-center justify-between gap-10">
                     <div class="md:w-1/2 pointer-events-auto">
-                        <h2 id="workshops-title" class="text-3xl md:text-5xl font-bold text-white mb-6">Μάθετε την Τέχνη του Βιτρό</h2>
-                        <p id="workshops-desc" class="text-gray-300 text-lg mb-8">
+                        <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">Μάθετε την Τέχνη του Βιτρό</h2>
+                        <p class="text-gray-300 text-lg mb-8">
                             Διοργανώνουμε διήμερα workshops για αρχάριους. Μάθετε να κόβετε, να τροχίζετε και να κολλάτε το δικό σας έργο τέχνης.
                         </p>
                         <!-- ... list ... -->
                         <ul class="space-y-4 mb-8">
-                            <li class="flex items-center text-gray-300"><i class="fas fa-check text-amber mr-3"></i> <span id="workshops-li-1">Όλα τα υλικά παρέχονται</span></li>
-                            <li class="flex items-center text-gray-300"><i class="fas fa-check text-amber mr-3"></i> <span id="workshops-li-2">Ολιγομελή τμήματα</span></li>
-                            <li class="flex items-center text-gray-300"><i class="fas fa-check text-amber mr-3"></i> <span id="workshops-li-3">Παίρνετε το έργο σπίτι σας</span></li>
+                            <li class="flex items-center text-gray-300"><i class="fas fa-check text-amber mr-3"></i> Όλα τα υλικά παρέχονται</li>
+                            <li class="flex items-center text-gray-300"><i class="fas fa-check text-amber mr-3"></i> Ολιγομελή τμήματα</li>
+                            <li class="flex items-center text-gray-300"><i class="fas fa-check text-amber mr-3"></i> Παίρνετε το έργο σπίτι σας</li>
                         </ul>
-                        <a id="workshops-cta" href="#contact" class="bg-ruby text-white px-8 py-3 rounded-full font-bold hover:bg-red-700 transition duration-300">
+                        <a href="#contact" class="bg-ruby text-white px-8 py-3 rounded-full font-bold hover:bg-red-700 transition duration-300">
                             Κλείστε Θέση Τώρα
                         </a>
                     </div>
@@ -1147,114 +1137,6 @@
                 setTimeout(() => { toast.classList.add('hidden'); }, 3000); // Wait 3s then hide
             }, 3000);
         }
-
-        // ===== Auto-translate (Gemini via server) =====
-        function _vcExtractGeminiText(resp) {
-            try {
-                const cand = resp?.candidates?.[0];
-                const parts = cand?.content?.parts;
-                if (Array.isArray(parts)) {
-                    return parts.map(p => p?.text || '').join('').trim();
-                }
-            } catch (e) {}
-            return '';
-        }
-
-        function _vcParseJsonLoose(text) {
-            if (!text) throw new Error('Empty model response.');
-            const cleaned = String(text)
-                .replace(/```(?:json)?/gi, '')
-                .replace(/```/g, '')
-                .trim();
-            const first = cleaned.indexOf('{');
-            const last = cleaned.lastIndexOf('}');
-            if (first === -1 || last === -1 || last <= first) throw new Error('No JSON object found in model response.');
-            const jsonStr = cleaned.slice(first, last + 1);
-            return JSON.parse(jsonStr);
-        }
-
-        function _vcSetBtnBusy(btn, busy, busyText) {
-            if (!btn) return;
-            if (busy) {
-                if (!btn.dataset._label) btn.dataset._label = btn.innerHTML;
-                btn.disabled = true;
-                btn.classList.add('opacity-60', 'cursor-not-allowed');
-                btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${busyText || 'Translating...'}`;
-            } else {
-                btn.disabled = false;
-                btn.classList.remove('opacity-60', 'cursor-not-allowed');
-                if (btn.dataset._label) btn.innerHTML = btn.dataset._label;
-            }
-        }
-
-        async function _vcGeminiJson(prompt, { model = 'gemini-2.5-flash', maxOutputTokens = 1024 } = {}) {
-            const body = {
-                contents: [{ role: "user", parts: [{ text: prompt }] }],
-                generationConfig: { temperature: 0.2, topP: 0.95, maxOutputTokens }
-            };
-            const resp = await serverGenerateContent({ model, body });
-            const text = _vcExtractGeminiText(resp);
-            return _vcParseJsonLoose(text);
-        }
-
-        async function autoTranslateProductToEn() {
-            const btn = document.getElementById('btn-prod-auto-en');
-            try {
-                const nameEl = (document.getElementById('prod-name')?.value || '').trim();
-                const descEl = (document.getElementById('prod-desc')?.value || '').trim();
-                if (!nameEl && !descEl) { showToast('Γράψε πρώτα το ελληνικό όνομα/περιγραφή.'); return; }
-
-                _vcSetBtnBusy(btn, true, 'Translating...');
-                const prompt = `You are a professional Greek to English translator for a premium stained-glass studio website.
-Return ONLY valid JSON (no markdown, no code fences), with EXACT keys: "name_en", "desc_en".
-Translate naturally, concise, marketing tone. Do not invent details. Keep brand names and "Tiffany" as-is.
-Greek product name: [[[${nameEl}]]]
-Greek product description: [[[${descEl}]]]`;
-
-                const out = await _vcGeminiJson(prompt, { maxOutputTokens: 512 });
-                if (out?.name_en) document.getElementById('prod-name-en').value = String(out.name_en).trim();
-                if (out?.desc_en) document.getElementById('prod-desc-en').value = String(out.desc_en).trim();
-                showToast('Έγινε μετάφραση στα Αγγλικά (Product).');
-            } catch (e) {
-                showToast('Σφάλμα μετάφρασης: ' + String(e?.message || e));
-            } finally {
-                _vcSetBtnBusy(btn, false);
-            }
-        }
-
-        async function autoTranslateBlogToEn() {
-            const btn = document.getElementById('btn-blog-auto-en');
-            try {
-                const titleEl = (document.getElementById('blog-title')?.value || '').trim();
-                const dateEl = (document.getElementById('blog-date')?.value || '').trim();
-                const contentEl = (document.getElementById('blog-content')?.value || '').trim();
-                if (!titleEl && !contentEl) { showToast('Γράψε πρώτα τον ελληνικό τίτλο/περιεχόμενο.'); return; }
-
-                _vcSetBtnBusy(btn, true, 'Translating...');
-                const prompt = `You are a professional Greek to English translator for a premium stained-glass studio blog.
-Return ONLY valid JSON (no markdown, no code fences) with EXACT keys: "title_en", "date_en", "content_en".
-- Translate into natural English.
-- Keep the meaning, do not invent details.
-- The blog content is an HTML fragment. Preserve ALL HTML tags and attributes exactly; translate only the human-readable text.
-- For date, output English in format "D Mon YYYY" (example: "4 Feb 2026"). If input is already English, keep it.
-Greek title: [[[${titleEl}]]]
-Greek date: [[[${dateEl}]]]
-Greek HTML content: [[[${contentEl}]]]`;
-
-                const out = await _vcGeminiJson(prompt, { maxOutputTokens: 2048 });
-                if (out?.title_en) document.getElementById('blog-title-en').value = String(out.title_en).trim();
-                if (out?.date_en) document.getElementById('blog-date-en').value = String(out.date_en).trim();
-                if (out?.content_en) document.getElementById('blog-content-en').value = String(out.content_en).trim();
-                showToast('Έγινε μετάφραση στα Αγγλικά (Blog).');
-            } catch (e) {
-                showToast('Σφάλμα μετάφρασης: ' + String(e?.message || e));
-            } finally {
-                _vcSetBtnBusy(btn, false);
-            }
-        }
-        // ===============================================
-
-
 
 // --- THEME PRESETS (optional, zero-impact unless used) ---
         // Keeps the current visuals unchanged by default.
@@ -2873,25 +2755,6 @@ async function submitContactForm(form, opts = {}) {
       nav_workshops: 'Workshops',
       nav_contact: 'Επικοινωνία',
 
-      services_title: 'Δημιουργίες & Υπηρεσίες',
-      service1_title: 'Αρχιτεκτονικό Βιτρό',
-      service1_desc: 'Παράθυρα, φεγγίτες και πόρτες εισόδου που αλλάζουν την όψη του κτιρίου.',
-      service2_title: 'Κοσμήματα',
-      service2_desc: 'Μοναδικά χειροποίητα κοσμήματα και αξεσουάρ από γυαλί για ξεχωριστές εμφανίσεις.',
-      service3_title: 'Suncatchers & Decor',
-      service3_desc: 'Μικρά διακοσμητικά, φωτιστικά Tiffany και καθρέφτες για κάθε γωνιά.',
-      service4_title: 'Συντήρηση & Αποκατάσταση',
-      service4_desc: 'Εξειδικευμένη επισκευή παλαιών βιτρό σε νεοκλασικά και εκκλησίες.',
-      service_link_more_html: 'Δείτε περισσότερα <i class="fas fa-arrow-right ml-1"></i>',
-      service_link_estimate_html: 'Ζητήστε εκτίμηση <i class="fas fa-arrow-right ml-1"></i>',
-
-      workshops_title: 'Μάθετε την Τέχνη του Βιτρό',
-      workshops_desc: 'Διοργανώνουμε διήμερα workshops για αρχάριους. Μάθετε να κόβετε, να τροχίζετε και να κολλάτε το δικό σας έργο τέχνης.',
-      workshops_li1: 'Όλα τα υλικά παρέχονται',
-      workshops_li2: 'Ολιγομελή τμήματα',
-      workshops_li3: 'Παίρνετε το έργο σπίτι σας',
-      workshops_cta: 'Κλείστε Θέση Τώρα',
-
       hero_collection: 'Δείτε τη Συλλογή',
       hero_quote: 'Ζητήστε Προσφορά',
 
@@ -2943,25 +2806,6 @@ async function submitContactForm(form, opts = {}) {
       nav_blog: 'Blog',
       nav_workshops: 'Workshops',
       nav_contact: 'Contact',
-
-      services_title: 'Creations & Services',
-      service1_title: 'Architectural Stained Glass',
-      service1_desc: 'Windows, skylights and entrance doors that transform the look of your building.',
-      service2_title: 'Jewelry',
-      service2_desc: 'Handmade glass jewelry and accessories for truly distinctive looks.',
-      service3_title: 'Suncatchers & Decor',
-      service3_desc: 'Small decor pieces, Tiffany lamps and mirrors for every corner.',
-      service4_title: 'Maintenance & Restoration',
-      service4_desc: 'Specialized restoration of old stained glass for neoclassical buildings and churches.',
-      service_link_more_html: 'See more <i class="fas fa-arrow-right ml-1"></i>',
-      service_link_estimate_html: 'Request an estimate <i class="fas fa-arrow-right ml-1"></i>',
-
-      workshops_title: 'Learn the Art of Stained Glass',
-      workshops_desc: 'We run two-day beginner workshops. Learn to cut, grind and solder your own piece of art.',
-      workshops_li1: 'All materials provided',
-      workshops_li2: 'Small groups',
-      workshops_li3: 'Take your piece home',
-      workshops_cta: 'Book your spot now',
 
       hero_collection: 'View Collection',
       hero_quote: 'Request a Quote',
@@ -3086,33 +2930,6 @@ async function submitContactForm(form, opts = {}) {
     setText('catalog-title', t('catalog_title'));
     setText('blog-section-title', t('blog_section_title'));
     setText('blog-section-sub', t('blog_section_sub'));
-
-    // Services section
-    setText('services-title', t('services_title'));
-    setText('service-1-title', t('service1_title'));
-    setText('service-1-desc', t('service1_desc'));
-    setHTML('service-1-link', t('service_link_more_html'));
-
-    setText('service-2-title', t('service2_title'));
-    setText('service-2-desc', t('service2_desc'));
-    setHTML('service-2-link', t('service_link_more_html'));
-
-    setText('service-3-title', t('service3_title'));
-    setText('service-3-desc', t('service3_desc'));
-    setHTML('service-3-link', t('service_link_more_html'));
-
-    setText('service-4-title', t('service4_title'));
-    setText('service-4-desc', t('service4_desc'));
-    setHTML('service-4-link', t('service_link_estimate_html'));
-
-    // Workshops section
-    setText('workshops-title', t('workshops_title'));
-    setText('workshops-desc', t('workshops_desc'));
-    setText('workshops-li-1', t('workshops_li1'));
-    setText('workshops-li-2', t('workshops_li2'));
-    setText('workshops-li-3', t('workshops_li3'));
-    setText('workshops-cta', t('workshops_cta'));
-
 
     // Quote modal
     setText('modal-quote-title', t('modal_title'));
