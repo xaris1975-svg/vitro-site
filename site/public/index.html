@@ -374,79 +374,6 @@
         </div>
     </div>
 
-    <!-- PRODUCT DETAILS MODAL (Shop-like) -->
-    <div id="product-details-modal" class="fixed inset-0 z-[120] hidden flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeProductDetails()"></div>
-
-        <div class="relative w-full max-w-5xl bg-[#151515] border border-amber/20 rounded-2xl shadow-[0_0_60px_rgba(251,192,45,0.15)] overflow-hidden">
-            <div class="flex items-center justify-between px-5 py-4 border-b border-white/10">
-                <button id="pd-back-btn" onclick="closeProductDetails()" class="text-sm font-bold text-amber hover:text-white transition flex items-center gap-2">
-                    <i class="fas fa-arrow-left"></i>
-                    <span id="pd-back-text">Επιστροφή στα προϊόντα</span>
-                </button>
-                <button onclick="closeProductDetails()" class="text-gray-400 hover:text-amber transition text-2xl" aria-label="Close">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-
-            <div id="product-details-scroll" class="max-h-[85vh] overflow-y-auto">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-                    <!-- IMAGE -->
-                    <div class="md:sticky md:top-4">
-                        <div class="rounded-xl overflow-hidden border border-white/10 bg-black/30 group">
-                            <img id="product-details-image" src="" alt="" class="w-full h-[360px] md:h-[520px] object-cover transition-transform duration-300 ease-out group-hover:scale-110">
-                        </div>
-                        <p class="text-xs text-gray-500 mt-3" id="pd-zoom-hint">Περάστε τον κέρσορα πάνω στην εικόνα για ζουμ.</p>
-                    </div>
-
-                    <!-- DETAILS -->
-                    <div>
-                        <div class="flex items-start justify-between gap-4">
-                            <div>
-                                <h2 id="product-details-title" class="text-2xl md:text-3xl font-serif font-bold text-white leading-tight">—</h2>
-                                <p class="text-sm text-gray-400 mt-2" id="product-details-category-line">
-                                    <span class="font-bold text-gray-300" id="pd-label-category">Κατηγορία:</span>
-                                    <span id="product-details-category" class="text-gray-300">—</span>
-                                </p>
-                                <p class="text-sm mt-1" id="product-details-stock-line">
-                                    <span class="font-bold text-gray-300" id="pd-label-stock">Διαθεσιμότητα:</span>
-                                    <span id="product-details-stock" class="ml-1">—</span>
-                                </p>
-                            </div>
-
-                            <div class="text-right">
-                                <div id="product-details-price" class="text-amber font-serif font-bold text-2xl md:text-3xl">—</div>
-                                <div id="product-details-discount" class="mt-2 hidden">
-                                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-bold bg-ruby/20 text-ruby border border-ruby/30" id="product-details-discount-badge">-0%</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-6 border-t border-white/10 pt-6">
-                            <h3 class="text-sm font-bold uppercase tracking-wider text-gray-300" id="pd-label-desc">Περιγραφή</h3>
-                            <p id="product-details-desc" class="text-gray-300 mt-3 leading-relaxed whitespace-pre-line">—</p>
-                        </div>
-
-                        <div class="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                            <button id="pd-add-to-cart" disabled class="w-full sm:w-auto px-5 py-3 rounded-xl font-bold bg-white/5 text-gray-400 border border-white/10 cursor-not-allowed">
-                                <span id="pd-add-text">Προσθήκη στο καλάθι</span>
-                                <span class="text-xs ml-2 opacity-70" id="pd-soon-text">(σύντομα)</span>
-                            </button>
-                            <div class="text-xs text-gray-500 leading-relaxed">
-                                <span id="pd-note">Σύντομα θα προστεθούν κατηγορίες και καλάθι αγορών.</span>
-                            </div>
-                        </div>
-
-                        <div class="mt-6 text-xs text-gray-600">
-                            <span class="font-bold text-gray-500" id="pd-label-code">Κωδικός:</span>
-                            <span id="product-details-code">—</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- UNDER CONSTRUCTION VIEW -->
     <div id="view-maintenance" class="hidden fixed inset-0 z-[200] maintenance-bg flex flex-col justify-between text-center">
         <div class="flex-grow flex flex-col items-center justify-center px-4">
@@ -842,6 +769,11 @@
                     <h2 id="catalog-title" class="text-3xl md:text-4xl font-bold text-white">Κατάλογος Προϊόντων</h2>
                     <div class="w-20 h-1 bg-amber mt-2"></div>
                 </div>
+                
+                <button id="catalog-home-btn" onclick="showLanding(true)" class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-black/30 text-white font-bold hover:bg-black/50 hover:border-amber/40 transition">
+                    <i class="fas fa-house"></i>
+                    <span id="catalog-home-btn-text">Αρχική</span>
+                </button>
                 <!-- Admin Button (Shows in Dashboard instead) -->
             </div>
 
@@ -852,12 +784,102 @@
         </div>
     </div>
 
+
+    <!-- PRODUCT DETAILS MODAL (Public) -->
+    <div id="product-details-modal" class="fixed inset-0 z-[95] hidden">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeProductDetails()"></div>
+
+        <div class="relative max-w-6xl mx-auto my-8 md:my-10 px-4 sm:px-6 lg:px-8">
+            <div class="relative bg-[#151515] border border-white/10 rounded-2xl shadow-[0_0_60px_rgba(0,0,0,0.55)] overflow-hidden">
+                <button onclick="closeProductDetails()" class="absolute top-4 right-4 text-gray-400 hover:text-amber transition text-2xl z-10" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+
+                <div class="p-6 md:p-8">
+                    <div class="flex flex-col lg:flex-row gap-8">
+                        <div class="lg:w-1/2">
+                            <div class="relative rounded-2xl overflow-hidden border border-white/10 bg-black/20"
+                                 onmouseenter="showPdZoom()" onmouseleave="hidePdZoom()">
+                                <img id="pd-image" src="" alt="" class="w-full h-[360px] sm:h-[420px] md:h-[520px] object-cover cursor-zoom-in">
+                                <div id="pd-zoom-hint" class="absolute bottom-3 left-3 bg-black/70 text-white text-xs font-bold px-3 py-1 rounded-full border border-white/10">
+                                    Περάστε το ποντίκι για ζουμ
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lg:w-1/2">
+                            <div class="flex items-start justify-between gap-4">
+                                <h3 id="pd-title" class="text-2xl md:text-3xl font-bold text-white leading-tight"></h3>
+                                <div id="pd-discount-badge" class="hidden shrink-0 bg-ruby text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">-0%</div>
+                            </div>
+
+                            <p id="pd-desc" class="mt-4 text-gray-300 leading-relaxed"></p>
+
+                            <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="rounded-xl bg-black/30 border border-white/10 p-4">
+                                    <div id="pd-label-price" class="text-xs uppercase tracking-wider text-gray-400 font-bold">Τιμή</div>
+                                    <div class="mt-2 flex items-end gap-3">
+                                        <div id="pd-price" class="text-2xl font-serif font-bold text-amber"></div>
+                                        <div id="pd-price-old" class="hidden text-sm text-gray-500 line-through decoration-red-500/50"></div>
+                                    </div>
+                                </div>
+
+                                <div class="rounded-xl bg-black/30 border border-white/10 p-4">
+                                    <div id="pd-label-availability" class="text-xs uppercase tracking-wider text-gray-400 font-bold">Διαθεσιμότητα</div>
+                                    <div id="pd-stock" class="mt-2 text-white font-bold"></div>
+                                </div>
+
+                                <div class="rounded-xl bg-black/30 border border-white/10 p-4">
+                                    <div id="pd-label-category" class="text-xs uppercase tracking-wider text-gray-400 font-bold">Κατηγορία</div>
+                                    <div id="pd-category" class="mt-2 text-white font-bold"></div>
+                                </div>
+
+                                <div class="rounded-xl bg-black/30 border border-white/10 p-4">
+                                    <div id="pd-label-code" class="text-xs uppercase tracking-wider text-gray-400 font-bold">Κωδικός</div>
+                                    <div id="pd-code" class="mt-2 text-white font-bold"></div>
+                                </div>
+                            </div>
+
+                            <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                                <button id="pd-back-products-btn" onclick="closeProductDetails()" class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-white/10 bg-black/30 text-white font-bold hover:bg-black/50 hover:border-amber/40 transition">
+                                    <i class="fas fa-arrow-left"></i>
+                                    <span id="pd-back-products-text">Επιστροφή στα προϊόντα</span>
+                                </button>
+
+                                <button id="pd-add-to-cart-btn" disabled class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-white/10 bg-white/5 text-gray-400 font-bold cursor-not-allowed">
+                                    <i class="fas fa-shopping-bag"></i>
+                                    <span id="pd-add-to-cart-text">Σύντομα: Καλάθι</span>
+                                </button>
+                            </div>
+
+                            <p id="pd-future-note" class="mt-4 text-xs text-gray-500">
+                                <!-- Reserved for future (categories, cart, checkout). -->
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRODUCT IMAGE ZOOM POPUP (Hover) -->
+    <div id="pd-zoom-pop" class="fixed inset-0 z-[99] hidden pointer-events-none">
+        <div class="absolute left-4 md:left-10 top-20 md:top-24 bg-white rounded-xl shadow-2xl overflow-hidden border border-black/10">
+            <img id="pd-zoom-img" src="" alt="" class="w-[88vw] max-w-[900px] h-[72vh] object-contain bg-white">
+        </div>
+    </div>
+
     <!-- NEW BLOG LIST VIEW (Hidden by default) -->
     <div id="view-blog" class="hidden pt-32 pb-20 min-h-screen bg-lead">
         <!-- ... existing blog list code ... -->
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-end mb-16">
                 <div class="text-center w-full relative">
+                    
+                    <button id="blog-home-btn" onclick="showLanding(true)" class="absolute left-0 top-0 inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-black/30 text-white font-bold hover:bg-black/50 hover:border-amber/40 transition">
+                        <i class="fas fa-house"></i>
+                        <span id="blog-home-btn-text">Αρχική</span>
+                    </button>
                     <h2 id="blog-section-title" class="text-3xl md:text-4xl font-bold text-white mb-4">Το Blog μας</h2>
                     <div class="w-24 h-1 bg-amber mx-auto"></div>
                     <p id="blog-section-sub" class="text-gray-400 mt-4 font-serif italic">Ιστορία, τεχνικές και νέα από τον κόσμο του γυαλιού.</p>
@@ -876,9 +898,15 @@
         <!-- ... existing single blog code ... -->
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Back Button -->
-            <button onclick="showBlog(event)" class="mb-8 flex items-center text-amber hover:text-white transition font-bold">
-                <i class="fas fa-arrow-left mr-2"></i> Πίσω στο Blog
-            </button>
+            <div class="mb-8 flex items-center justify-between gap-4">
+                <button onclick="showBlog(event)" class="flex items-center text-amber hover:text-white transition font-bold">
+                    <i class="fas fa-arrow-left mr-2"></i> <span id="blog-single-back-text">Πίσω στο Blog</span>
+                </button>
+                <button id="blog-single-home-btn" onclick="showLanding(true)" class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-black/30 text-white font-bold hover:bg-black/50 hover:border-amber/40 transition">
+                    <i class="fas fa-house"></i>
+                    <span id="blog-single-home-btn-text">Αρχική</span>
+                </button>
+            </div>
 
             <!-- Article Content (Populated by JS) -->
             <article id="blog-single-content" class="glass-card p-8 md:p-12 rounded-2xl border border-white/5">
@@ -2524,7 +2552,7 @@ if (!response.ok) {
                 }
 
                 grid.innerHTML += `
-                    <div class="glass-card rounded-xl overflow-hidden group flex flex-col h-full relative cursor-pointer" role="button" tabindex="0" onclick="openProductDetails(${prod.id})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openProductDetails(${prod.id});}">
+                    <div class="glass-card rounded-xl overflow-hidden group flex flex-col h-full relative cursor-pointer" onclick="openProductDetails(${prod.id})">
                         ${discountBadge}
                         <div class="h-64 overflow-hidden relative">
                             <img src="${prod.image}" alt="${(window.VC_LANG?window.VC_LANG.pick(prod.name):prod.name)}" onclick="handleImageClick(this, 'product', ${prod.id})" class="admin-editable-img w-full h-full object-cover group-hover:scale-110 transition duration-500" data-type="product" data-id="${prod.id}">
@@ -2537,7 +2565,7 @@ if (!response.ok) {
                                 ${priceDisplay}
                                 <div class="flex items-center">
                                     ${adminEditBtn}
-                                    <button onclick="event.stopPropagation(); openModal()" class="text-white hover:text-amber transition"><i class="fas fa-shopping-bag"></i></button>
+                                    <button onclick="event.stopPropagation(); openModal()" class="text-white hover:text-amber transition" title="Σύντομα: καλάθι"><i class="fas fa-shopping-bag"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -2546,139 +2574,123 @@ if (!response.ok) {
             enableImageDropZones(); 
         }
 
+        // PRODUCT DETAILS MODAL (Public shop-style)
+        let __pdIsOpen = false;
 
-        // --- PRODUCT DETAILS MODAL (Shop-like) ---
-        function getCategoryLabel(category, lang) {
-            const c = (category || '').toString().toLowerCase();
-            const map = {
-                architectural: { el: 'Αρχιτεκτονικό Βιτρό', en: 'Architectural Stained Glass' },
-                jewelry:       { el: 'Κοσμήματα',           en: 'Jewelry' },
-                lighting:      { el: 'Φωτιστικά',           en: 'Lighting' },
-                decor:         { el: 'Διακόσμηση',          en: 'Decor' },
-                'stained-glass': { el: 'Βιτρό',             en: 'Stained Glass' }
-            };
-            const hit = map[c];
-            if (hit) return (lang === 'en' ? hit.en : hit.el);
-            // Fallback: show the raw value (future categories will still display)
-            return category || '';
-        }
-
-        function formatPriceParts(rawPrice) {
-            const s = (rawPrice ?? '').toString().trim();
-            // Try to parse number even if it has € or spaces
-            const clean = s.replace(/[€\s]/g, '').replace(',', '.');
-            const n = parseFloat(clean);
-            if (isNaN(n)) return { isNumber: false, text: s };
-            return { isNumber: true, value: n };
-        }
-
-        function productStockText(code, lang) {
-            const dict = (window.VC_I18N && (window.VC_I18N[lang] || window.VC_I18N.el)) || {};
-            if (code === 'in-stock') return dict.stock_in || (lang === 'en' ? 'In stock' : 'Άμεσα Διαθέσιμο');
-            if (code === 'sold') return dict.stock_sold || (lang === 'en' ? 'Sold out' : 'Εξαντλήθηκε');
-            return dict.stock_made || (lang === 'en' ? 'Made to order' : 'Κατόπιν Παραγγελίας');
-        }
-
-        function productStockClass(code) {
-            return code === 'in-stock' ? 'text-emerald' : (code === 'sold' ? 'text-ruby' : 'text-amber');
-        }
-
-        function updateProductDetailsModal() {
-            if (typeof window.__currentProductId === 'undefined') return;
-            const modal = document.getElementById('product-details-modal');
-            if (!modal || modal.classList.contains('hidden')) return;
-            openProductDetails(window.__currentProductId, { noShow: true });
-        }
-
-        function openProductDetails(productId, opts = {}) {
-            window.__currentProductId = productId;
-            const prod = (typeof products !== 'undefined') ? products.find(p => p.id === productId) : null;
-            if (!prod) return;
-
+        function __pdDict() {
             const lang = (window.VC_LANG && window.VC_LANG.get) ? window.VC_LANG.get() : 'el';
-            const dict = (window.VC_I18N && (window.VC_I18N[lang] || window.VC_I18N.el)) || {};
+            return (window.VC_I18N && (window.VC_I18N[lang] || window.VC_I18N.el)) || {};
+        }
 
-            // Labels (localized)
-            const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-            setTxt('pd-back-text', dict.pd_back || (lang === 'en' ? 'Back to products' : 'Επιστροφή στα προϊόντα'));
-            setTxt('pd-zoom-hint', dict.pd_zoom_hint || (lang === 'en' ? 'Hover the image to zoom.' : 'Περάστε τον κέρσορα πάνω στην εικόνα για ζουμ.'));
-            setTxt('pd-label-category', dict.pd_category || (lang === 'en' ? 'Category:' : 'Κατηγορία:'));
-            setTxt('pd-label-stock', dict.pd_stock || (lang === 'en' ? 'Availability:' : 'Διαθεσιμότητα:'));
-            setTxt('pd-label-desc', dict.pd_desc || (lang === 'en' ? 'Description' : 'Περιγραφή'));
-            setTxt('pd-add-text', dict.pd_add || (lang === 'en' ? 'Add to cart' : 'Προσθήκη στο καλάθι'));
-            setTxt('pd-soon-text', dict.pd_soon || (lang === 'en' ? '(soon)' : '(σύντομα)'));
-            setTxt('pd-note', dict.pd_note || (lang === 'en' ? 'Categories and shopping cart are coming soon.' : 'Σύντομα θα προστεθούν κατηγορίες και καλάθι αγορών.'));
-            setTxt('pd-label-code', dict.pd_code || (lang === 'en' ? 'Code:' : 'Κωδικός:'));
+        function __pdStockText(code) {
+            const dict = __pdDict();
+            if (code === 'in-stock') return dict.stock_in || 'Άμεσα Διαθέσιμο';
+            if (code === 'sold') return dict.stock_sold || 'Εξαντλήθηκε';
+            return dict.stock_made || 'Κατόπιν Παραγγελίας';
+        }
 
-            // Dynamic product content (localized fields)
-            const pick = (v) => (window.VC_LANG && window.VC_LANG.pick) ? window.VC_LANG.pick(v) : (v ?? '');
-            const title = pick(prod.name);
-            const desc = pick(prod.desc);
+        function __pdCategoryText(cat) {
+            const dict = __pdDict();
+            const map = dict.category_map || {};
+            if (!cat) return dict.category_unknown || '—';
+            return map[cat] || cat;
+        }
 
-            const img = document.getElementById('product-details-image');
-            if (img) {
-                img.src = prod.image || '';
-                img.alt = title || 'Product';
-            }
+        function openProductDetails(productId) {
+            const prod = (Array.isArray(products) ? products : []).find(p => String(p.id) === String(productId));
+            const modal = document.getElementById('product-details-modal');
+            if (!prod || !modal) return;
 
-            setTxt('product-details-title', title || '');
-            setTxt('product-details-desc', desc || '');
-            setTxt('product-details-category', getCategoryLabel(prod.category, lang) || '');
-            setTxt('product-details-code', String(prod.id));
+            const name = (window.VC_LANG && window.VC_LANG.pick) ? window.VC_LANG.pick(prod.name) : (prod.name || '');
+            const desc = (window.VC_LANG && window.VC_LANG.pick) ? window.VC_LANG.pick(prod.desc) : (prod.desc || '');
 
-            const stockEl = document.getElementById('product-details-stock');
-            if (stockEl) {
-                stockEl.textContent = productStockText(prod.stock, lang);
-                stockEl.className = 'ml-1 font-bold ' + productStockClass(prod.stock);
-            }
+            const img = document.getElementById('pd-image');
+            const zoomImg = document.getElementById('pd-zoom-img');
+            if (img) { img.src = prod.image || ''; img.alt = name; }
+            if (zoomImg) { zoomImg.src = prod.image || ''; zoomImg.alt = name; }
 
-            // Price + discount
-            const priceEl = document.getElementById('product-details-price');
-            const discWrap = document.getElementById('product-details-discount');
-            const discBadge = document.getElementById('product-details-discount-badge');
+            const titleEl = document.getElementById('pd-title');
+            const descEl = document.getElementById('pd-desc');
+            if (titleEl) titleEl.textContent = name;
+            if (descEl) descEl.textContent = desc;
 
-            const parts = formatPriceParts(prod.price);
-            if (!parts.isNumber) {
-                if (priceEl) priceEl.textContent = parts.text || '';
-                if (discWrap) discWrap.classList.add('hidden');
-            } else {
-                const base = parts.value;
-                const discount = parseFloat(prod.discount || 0) || 0;
-                if (discount > 0) {
-                    const final = (base * (1 - discount / 100));
-                    if (priceEl) {
-                        priceEl.innerHTML = `
-                            <div class="flex flex-col items-end">
-                                <span class="text-xs text-gray-500 line-through decoration-red-500/50">€${base.toFixed(2)}</span>
-                                <span>€${final.toFixed(2)}</span>
-                            </div>
-                        `;
+            // Price / discount rendering
+            const priceEl = document.getElementById('pd-price');
+            const oldEl = document.getElementById('pd-price-old');
+            const discBadge = document.getElementById('pd-discount-badge');
+
+            const rawPrice = (prod.price ?? '').toString();
+            const numericPrice = parseFloat(rawPrice);
+
+            if (priceEl) {
+                if (!isNaN(numericPrice)) {
+                    if (prod.discount && Number(prod.discount) > 0) {
+                        const discounted = (numericPrice * (1 - (Number(prod.discount) / 100))).toFixed(2);
+                        priceEl.textContent = `€${discounted}`;
+                        if (oldEl) { oldEl.textContent = `€${rawPrice}`; oldEl.classList.remove('hidden'); }
+                        if (discBadge) { discBadge.textContent = `-${Number(prod.discount)}%`; discBadge.classList.remove('hidden'); }
+                    } else {
+                        priceEl.textContent = `€${rawPrice}`;
+                        if (oldEl) oldEl.classList.add('hidden');
+                        if (discBadge) discBadge.classList.add('hidden');
                     }
-                    if (discBadge) discBadge.textContent = `-${discount}%`;
-                    if (discWrap) discWrap.classList.remove('hidden');
                 } else {
-                    if (priceEl) priceEl.textContent = `€${base.toFixed(2)}`;
-                    if (discWrap) discWrap.classList.add('hidden');
+                    // Non-numeric (e.g. "Κατόπιν Εκτίμησης")
+                    priceEl.textContent = rawPrice;
+                    if (oldEl) oldEl.classList.add('hidden');
+                    if (discBadge) discBadge.classList.add('hidden');
                 }
             }
 
-            if (!opts.noShow) {
-                const modal = document.getElementById('product-details-modal');
-                if (modal) modal.classList.remove('hidden');
-                document.body.classList.add('overflow-hidden');
+            const stockEl = document.getElementById('pd-stock');
+            const catEl = document.getElementById('pd-category');
+            const codeEl = document.getElementById('pd-code');
+
+            if (stockEl) stockEl.textContent = __pdStockText(prod.stock);
+            if (catEl) catEl.textContent = __pdCategoryText(prod.category);
+            if (codeEl) codeEl.textContent = prod.sku ? String(prod.sku) : `#${prod.id}`;
+
+            // Hover hint only for hover-capable devices
+            const hint = document.getElementById('pd-zoom-hint');
+            if (hint) {
+                const canHover = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+                hint.style.display = canHover ? 'inline-flex' : 'none';
             }
+
+            modal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+            __pdIsOpen = true;
         }
 
         function closeProductDetails() {
             const modal = document.getElementById('product-details-modal');
             if (modal) modal.classList.add('hidden');
+            hidePdZoom();
             document.body.classList.remove('overflow-hidden');
+            __pdIsOpen = false;
         }
 
-        // Close on ESC
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') closeProductDetails();
+        function showPdZoom() {
+            const canHover = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+            if (!canHover) return;
+            const pop = document.getElementById('pd-zoom-pop');
+            const img = document.getElementById('pd-image');
+            const zoomImg = document.getElementById('pd-zoom-img');
+            if (!pop || !img || !zoomImg) return;
+            zoomImg.src = img.src;
+            zoomImg.alt = img.alt || '';
+            pop.classList.remove('hidden');
+        }
+
+        function hidePdZoom() {
+            const pop = document.getElementById('pd-zoom-pop');
+            if (pop) pop.classList.add('hidden');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && __pdIsOpen) closeProductDetails();
         });
+
         // PROMO TEXT LOGIC
         function updatePromoText() {
             const promo = document.getElementById('hero-promo-text');
@@ -3079,6 +3091,26 @@ async function submitContactForm(form, opts = {}) {
       nav_workshops: 'Workshops',
       nav_contact: 'Επικοινωνία',
 
+
+      btn_back_home: 'Αρχική',
+      back_to_blog: 'Πίσω στο Blog',
+
+      pd_price_label: 'Τιμή',
+      pd_availability_label: 'Διαθεσιμότητα',
+      pd_category_label: 'Κατηγορία',
+      pd_code_label: 'Κωδικός',
+      pd_back_products: 'Επιστροφή στα προϊόντα',
+      pd_add_to_cart_soon: 'Σύντομα: Καλάθι',
+      pd_zoom_hint: 'Περάστε το ποντίκι για ζουμ',
+
+      category_unknown: '—',
+      category_map: {
+        architectural: 'Αρχιτεκτονικό Βιτρό',
+        jewelry: 'Κοσμήματα',
+        decor: 'Decor & Suncatchers',
+        lighting: 'Φωτιστικά Tiffany'
+      },
+
       services_title: 'Δημιουργίες & Υπηρεσίες',
       service1_title: 'Αρχιτεκτονικό Βιτρό',
       service1_desc: 'Παράθυρα, φεγγίτες και πόρτες εισόδου που αλλάζουν την όψη του κτιρίου.',
@@ -3149,6 +3181,26 @@ async function submitContactForm(form, opts = {}) {
       nav_blog: 'Blog',
       nav_workshops: 'Workshops',
       nav_contact: 'Contact',
+
+
+      btn_back_home: 'Home',
+      back_to_blog: 'Back to Blog',
+
+      pd_price_label: 'Price',
+      pd_availability_label: 'Availability',
+      pd_category_label: 'Category',
+      pd_code_label: 'Code',
+      pd_back_products: 'Back to products',
+      pd_add_to_cart_soon: 'Coming soon: Cart',
+      pd_zoom_hint: 'Hover to zoom',
+
+      category_unknown: '—',
+      category_map: {
+        architectural: 'Architectural stained glass',
+        jewelry: 'Jewelry',
+        decor: 'Decor & suncatchers',
+        lighting: 'Tiffany lighting'
+      },
 
       services_title: 'Creations & Services',
       service1_title: 'Architectural Stained Glass',
@@ -3293,6 +3345,21 @@ async function submitContactForm(form, opts = {}) {
     setText('blog-section-title', t('blog_section_title'));
     setText('blog-section-sub', t('blog_section_sub'));
 
+    // View-level "Home" buttons
+    setText('catalog-home-btn-text', t('btn_back_home'));
+    setText('blog-home-btn-text', t('btn_back_home'));
+    setText('blog-single-home-btn-text', t('btn_back_home'));
+    setText('blog-single-back-text', t('back_to_blog'));
+
+    // Product details modal labels
+    setText('pd-label-price', t('pd_price_label'));
+    setText('pd-label-availability', t('pd_availability_label'));
+    setText('pd-label-category', t('pd_category_label'));
+    setText('pd-label-code', t('pd_code_label'));
+    setText('pd-back-products-text', t('pd_back_products'));
+    setText('pd-add-to-cart-text', t('pd_add_to_cart_soon'));
+    setText('pd-zoom-hint', t('pd_zoom_hint'));
+
     // Services section
     setText('services-title', t('services_title'));
     setText('service-1-title', t('service1_title'));
@@ -3370,14 +3437,6 @@ async function submitContactForm(form, opts = {}) {
       const single = document.getElementById('view-blog-single');
       if (single && !single.classList.contains('hidden') && typeof window.__currentBlogId !== 'undefined') {
         if (typeof openBlogPost === 'function') openBlogPost(window.__currentBlogId);
-      }
-    } catch(e) {}
-
-    // If product details modal is open, refresh it so it switches language too
-    try {
-      const pd = document.getElementById('product-details-modal');
-      if (pd && !pd.classList.contains('hidden') && typeof window.__currentProductId !== 'undefined') {
-        if (typeof updateProductDetailsModal === 'function') updateProductDetailsModal();
       }
     } catch(e) {}
   }
