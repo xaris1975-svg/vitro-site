@@ -597,7 +597,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">Σχετικά με τη <span class="text-amber">Vitro Canvas</span></h2>
+                        <h2 id="about-title" class="text-3xl md:text-4xl font-bold text-white mb-6">Σχετικά με τη <span class="text-amber">Vitro Canvas</span></h2>
                         <div id="editable-about-text">
                             <p class="text-gray-400 mb-6 leading-relaxed">
                                 Το εργαστήριό μας στη Νέα Κερασιά συνδυάζει την παραδοσιακή δεξιότητα με τη σύγχρονη αισθητική. Ονομάζομαι <strong class="text-white">Χάρης Ελευθερίου</strong> και στόχος μου είναι η παροχή λύσεων γυαλιού υψηλής αισθητικής για ιδιώτες και επαγγελματίες.
@@ -609,15 +609,15 @@
                         <div class="grid grid-cols-3 gap-4 text-center">
                             <div class="p-4 border border-white/10 rounded-lg">
                                 <i class="fas fa-hand-holding-heart text-ruby text-2xl mb-2"></i>
-                                <h4 class="font-bold text-sm">Χειροποίητο</h4>
+                                <h4 id="about-feature-1" class="font-bold text-sm">Χειροποίητο</h4>
                             </div>
                             <div class="p-4 border border-white/10 rounded-lg">
                                 <i class="fas fa-history text-royal text-2xl mb-2"></i>
-                                <h4 class="font-bold text-sm">Διαχρονικό</h4>
+                                <h4 id="about-feature-2" class="font-bold text-sm">Διαχρονικό</h4>
                             </div>
                             <div class="p-4 border border-white/10 rounded-lg">
                                 <i class="fas fa-tools text-emerald text-2xl mb-2"></i>
-                                <h4 class="font-bold text-sm">Custom</h4>
+                                <h4 id="about-feature-3" class="font-bold text-sm">Custom</h4>
                             </div>
                         </div>
                     </div>
@@ -1950,7 +1950,7 @@ if (!response.ok) {
             root.style.setProperty('--spin-speed', (globalGraphics.spinSpeed || '60') + 's');
             
             const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
-            setVal('admin-hero-title', globalTexts.heroTitle ? globalTexts.heroTitle.replace(/<[^>]*>?/gm, '') : "Η Τέχνη του Φωτός");
+            setVal('admin-hero-title', (globalTexts.heroTitle ? String((window.VC_LANG ? window.VC_LANG.pick(globalTexts.heroTitle) : globalTexts.heroTitle)) : "Η Τέχνη του Φωτός").replace(/<[^>]*>?/gm, ''));
             setVal('admin-phone', globalTexts.phone || "+30 6973 807 097");
             setVal('admin-insta', globalTexts.instagram || "#");
             setVal('admin-fb', globalTexts.facebook || "#");
@@ -2722,6 +2722,11 @@ if (!response.ok) {
             
             checkWeeklyAI();
             updatePromoText(); // Initial check for promo text
+
+            // Ensure UI text matches the selected language AFTER server data/global settings are applied.
+            try {
+                if (window.VC_I18N_APPLY) window.VC_I18N_APPLY(window.VC_LANG ? window.VC_LANG.get() : (localStorage.getItem('vc_lang') || 'el'));
+            } catch(e) {}
         };
     
 </script>
@@ -2895,6 +2900,15 @@ async function submitContactForm(form, opts = {}) {
       hero_collection: 'Δείτε τη Συλλογή',
       hero_quote: 'Ζητήστε Προσφορά',
 
+      hero_title_html: `Η Τέχνη του <span class="inline-block"><span class="glowing-letter" style="animation-delay: 0s;">Φ</span><span class="glowing-letter" style="animation-delay: 0.2s;">ω</span><span class="glowing-letter" style="animation-delay: 0.4s;">τ</span><span class="glowing-letter" style="animation-delay: 0.6s;">ό</span><span class="glowing-letter" style="animation-delay: 0.8s;">ς</span></span>`,
+      hero_desc: 'Χειροποίητα βιτρό, μοναδικά κοσμήματα και αρχιτεκτονικές λύσεις που μεταμορφώνουν τον χώρο σας.',
+      about_title_html: `Σχετικά με τη <span class="text-amber">Vitro Canvas</span>`,
+      about_body_html: `<p class="text-gray-400 mb-6 leading-relaxed">Το εργαστήριό μας στη Νέα Κερασιά συνδυάζει την παραδοσιακή δεξιότητα με τη σύγχρονη αισθητική. Ονομάζομαι <strong class="text-white">Χάρης Ελευθερίου</strong> και στόχος μου είναι η παροχή λύσεων γυαλιού υψηλής αισθητικής για ιδιώτες και επαγγελματίες.</p><p class="text-gray-400 mb-8 leading-relaxed">Από την κλασική τεχνική μολύβδου μέχρι την λεπτεπίλεπτη μέθοδο Tiffany, κάθε έργο είναι μοναδικό, σχεδιασμένο για να παίζει με το φως και να δημιουργεί ατμόσφαιρα.</p>`,
+      about_feature1: 'Χειροποίητο',
+      about_feature2: 'Διαχρονικό',
+      about_feature3: 'Custom',
+
+
       promo_marquee: '🔥 ΠΡΟΣΦΟΡΕΣ: Ανακαλύψτε τις εκπτώσεις μας και αποκτήστε μοναδικά έργα σε προνομιακές τιμές!',
       catalog_title: 'Κατάλογος Προϊόντων',
       blog_section_title: 'Το Blog μας',
@@ -2965,6 +2979,15 @@ async function submitContactForm(form, opts = {}) {
 
       hero_collection: 'View Collection',
       hero_quote: 'Request a Quote',
+
+      hero_title_html: `The Art of <span class="inline-block"><span class="glowing-letter" style="animation-delay: 0s;">L</span><span class="glowing-letter" style="animation-delay: 0.2s;">i</span><span class="glowing-letter" style="animation-delay: 0.4s;">g</span><span class="glowing-letter" style="animation-delay: 0.6s;">h</span><span class="glowing-letter" style="animation-delay: 0.8s;">t</span></span>`,
+      hero_desc: 'Handmade stained glass, unique jewelry and architectural solutions that transform your space.',
+      about_title_html: `About <span class="text-amber">Vitro Canvas</span>`,
+      about_body_html: `<p class="text-gray-400 mb-6 leading-relaxed">Our studio in Nea Kerasia combines traditional craftsmanship with contemporary aesthetics. My name is <strong class="text-white">Χάρης Ελευθερίου</strong> and my goal is to deliver high-aesthetic glass solutions for private clients and professionals.</p><p class="text-gray-400 mb-8 leading-relaxed">From classic lead came techniques to the delicate Tiffany method, every piece is unique, designed to play with light and create atmosphere.</p>`,
+      about_feature1: 'Handmade',
+      about_feature2: 'Timeless',
+      about_feature3: 'Custom',
+
 
       promo_marquee: '🔥 LIMITED OFFERS: Discover our discounts and get unique pieces at special prices!',
       catalog_title: 'Product Catalog',
@@ -3082,6 +3105,30 @@ async function submitContactForm(form, opts = {}) {
     setText('hero-btn-collection', t('hero_collection'));
     setText('hero-btn-quote', t('hero_quote'));
 
+    // Hero title & subtitle (supports admin custom EL title; EN falls back to default if not provided)
+    (function () {
+      let heroHtml = '';
+      try {
+        if (typeof globalTexts !== 'undefined' && globalTexts && globalTexts.heroTitle !== undefined) {
+          const elVal = window.VC_LANG.pickLang(globalTexts.heroTitle, 'el');
+          const enVal = window.VC_LANG.pickLang(globalTexts.heroTitle, 'en');
+          if (normalized === 'el') heroHtml = elVal || '';
+          else heroHtml = (enVal && enVal !== elVal) ? enVal : '';
+        }
+      } catch (e) {}
+      if (!heroHtml) heroHtml = t('hero_title_html');
+      setHTML('editable-hero-title', heroHtml);
+      setText('editable-hero-desc', t('hero_desc'));
+    })();
+
+    // About section
+    setHTML('about-title', t('about_title_html'));
+    setHTML('editable-about-text', t('about_body_html'));
+    setText('about-feature-1', t('about_feature1'));
+    setText('about-feature-2', t('about_feature2'));
+    setText('about-feature-3', t('about_feature3'));
+
+
     // Headings
     setText('catalog-title', t('catalog_title'));
     setText('blog-section-title', t('blog_section_title'));
@@ -3172,6 +3219,8 @@ async function submitContactForm(form, opts = {}) {
     const current = window.VC_LANG.get();
     apply(current === 'en' ? 'el' : 'en');
   }
+
+  window.VC_I18N_APPLY = apply;
 
   document.addEventListener('DOMContentLoaded', function () {
     apply(guessLang());
