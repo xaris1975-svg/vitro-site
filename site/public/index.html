@@ -1258,14 +1258,74 @@
             }
         }
 
+
+        // --- AI helper: rate-limit / quota friendly handling ---
+        function _vcParseRetrySeconds(msg) {
+            const m = String(msg || '').match(/retry in\s+([0-9.]+)s/i);
+            if (m && m[1]) {
+                const v = parseFloat(m[1]);
+                return Number.isFinite(v) ? v : null;
+            }
+            return null;
+        }
+
+        function _vcSetBtnCooldown(btn, seconds) {
+            if (!btn) return;
+            const total = Math.max(1, Math.ceil(Number(seconds) || 1));
+            if (!btn.dataset._label) btn.dataset._label = btn.innerHTML;
+
+            // Clear any existing cooldown timer
+            if (btn.dataset._cooldownTimer) {
+                try { clearInterval(Number(btn.dataset._cooldownTimer)); } catch {}
+                delete btn.dataset._cooldownTimer;
+            }
+
+            btn.dataset._cooldown = '1';
+            btn.disabled = true;
+            btn.classList.add('opacity-60', 'cursor-not-allowed');
+
+            let remaining = total;
+            btn.innerHTML = `⏳ Περίμενε ${remaining}s`;
+
+            const timerId = setInterval(() => {
+                remaining -= 1;
+                if (remaining <= 0) {
+                    clearInterval(timerId);
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-60', 'cursor-not-allowed');
+                    if (btn.dataset._label) btn.innerHTML = btn.dataset._label;
+                    delete btn.dataset._cooldown;
+                    delete btn.dataset._cooldownTimer;
+                    return;
+                }
+                btn.innerHTML = `⏳ Περίμενε ${remaining}s`;
+            }, 1000);
+
+            btn.dataset._cooldownTimer = String(timerId);
+        }
         async function _vcGeminiJson(prompt, { model = 'gemini-2.5-flash', maxOutputTokens = 1024 } = {}) {
             const body = {
                 contents: [{ role: "user", parts: [{ text: prompt }] }],
                 generationConfig: { temperature: 0.2, topP: 0.95, maxOutputTokens }
             };
-            const resp = await callGeminiGenerate({ model, body });
-            const text = _vcExtractGeminiText(resp);
-            return _vcParseJsonLoose(text);
+
+            try {
+                const resp = await callGeminiGenerate({ model, body });
+                const text = _vcExtractGeminiText(resp);
+                return _vcParseJsonLoose(text);
+            } catch (e) {
+                const msg = String(e?.message || e || '');
+
+                // Quota / rate-limit handling (common on free tier)
+                if (/quota|resource exhausted|rate limit/i.test(msg)) {
+                    const retry = _vcParseRetrySeconds(msg);
+                    const seconds = Math.max(1, Math.ceil(Number(retry) || 60));
+                    const err = new Error(`Έφτασες το όριο αιτημάτων του Gemini (free tier). Περίμενε ${seconds}s και ξαναδοκίμασε ή βάλε billing για μεγαλύτερο όριο.`);
+                    err.retrySeconds = seconds;
+                    throw err;
+                }
+                throw e;
+            }
         }
 
         async function autoTranslateProductToEn() {
@@ -1287,9 +1347,15 @@ Greek product description: [[[${descEl}]]]`;
                 if (out?.desc_en) document.getElementById('prod-desc-en').value = String(out.desc_en).trim();
                 showToast('Έγινε μετάφραση στα Αγγλικά (Product).');
             } catch (e) {
+                if (e && e.retrySeconds) {
+                    const s = Math.max(1, Math.ceil(Number(e.retrySeconds) || 60));
+                    _vcSetBtnCooldown(btn, s);
+                    showToast('Όριο Gemini (free tier). Περίμενε ' + s + 's και πάτα ξανά.');
+                    return;
+                }
                 showToast('Σφάλμα μετάφρασης: ' + String(e?.message || e));
             } finally {
-                _vcSetBtnBusy(btn, false);
+                if (!(btn && btn.dataset._cooldown === '1')) { _vcSetBtnBusy(btn, false); }
             }
         }
 
@@ -1318,9 +1384,16 @@ Greek HTML content: [[[${contentEl}]]]`;
                 if (out?.content_en) document.getElementById('blog-content-en').value = String(out.content_en).trim();
                 showToast('Έγινε μετάφραση στα Αγγλικά (Blog).');
             } catch (e) {
+                if (e && e.retrySeconds) {
+                    const s = Math.max(1, Math.ceil(Number(e.retrySeconds) || 60));
+                    _vcSetBtnCooldown(btn, s);
+                    showToast('Όριο Gemini (free tier). Περίμενε ' + s + 's και πάτα ξανά.');
+                    return;
+                }
                 showToast('Σφάλμα μετάφρασης: ' + String(e?.message || e));
-            } finally {
-                _vcSetBtnBusy(btn, false);
+            }
+} finally {
+                if (!(btn && btn.dataset._cooldown === '1')) { _vcSetBtnBusy(btn, false); }
             }
         }
         // ===============================================
