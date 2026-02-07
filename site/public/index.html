@@ -35,11 +35,10 @@
             --glow-start: #fbc02d;
             --glow-end: #b71c1c;
             --spin-speed: 60s;
-            --color-text: #e0e0e0;
         }
 
         body {
-            background-color: var(--color-text);
+            background-color: #0f0f0f;
             color: #e0e0e0;
             font-family: 'Montserrat', sans-serif;
         }
@@ -317,37 +316,24 @@
             <form onsubmit="event.preventDefault(); handleAddProduct();">
                 <input type="hidden" id="prod-id"> <!-- Hidden ID field for edits -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="prod-label-name-el">Όνομα Προϊόντος (EL)</label><input id="prod-name" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition"></div>
-                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="prod-label-name-en">Product Name (EN)</label><input id="prod-name-en" type="text" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="English name"></div>
+                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Όνομα Προϊόντος (EL)</label><input id="prod-name" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition"></div>
+                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Product Name (EN)</label><input id="prod-name-en" type="text" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="English name"></div>
                     <div class="col-span-1 md:col-span-2 flex items-center justify-end">
                         <button type="button" id="btn-prod-auto-en" onclick="autoTranslateProductToEn()" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-full border border-amber/40 bg-amber/10 text-amber hover:bg-amber/20 transition">
                             <i class="fas fa-language"></i> Auto-translate to EN
                         </button>
                     </div>
-                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="prod-label-price">Τιμή (€)</label><input id="prod-price" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="π.χ. 120.00"></div>
-                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="prod-label-category">Κατηγορία</label><select id="prod-category" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition"><option value="stained-glass">Αρχιτεκτονικό Βιτρό</option><option value="jewelry">Κοσμήματα</option><option value="decor">Διακόσμηση</option></select></div>
-                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="prod-label-stock">Διαθεσιμότητα</label><select id="prod-stock" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition"><option value="in-stock">Άμεσα Διαθέσιμο</option><option value="made-to-order">Κατόπιν Παραγγελίας</option><option value="sold">Πωλήθηκε</option></select></div>
+                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Τιμή (€)</label><input id="prod-price" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="π.χ. 120.00"></div>
+                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Κατηγορία</label><select id="prod-category" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition"><option value="stained-glass">Αρχιτεκτονικό Βιτρό</option><option value="jewelry">Κοσμήματα</option><option value="decor">Διακόσμηση</option></select></div>
+                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Διαθεσιμότητα</label><select id="prod-stock" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition"><option value="in-stock">Άμεσα Διαθέσιμο</option><option value="made-to-order">Κατόπιν Παραγγελίας</option><option value="sold">Πωλήθηκε</option></select></div>
                     <!-- NEW DISCOUNT FIELD -->
-                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="prod-label-discount">Έκπτωση (%)</label><input id="prod-discount" type="number" min="0" max="100" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="0"></div>
+                    <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Έκπτωση (%)</label><input id="prod-discount" type="number" min="0" max="100" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="0"></div>
                     
-                    <div class="col-span-1 md:col-span-2"><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="prod-label-image-url">URL Εικόνας</label><input id="prod-image" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="https://example.com/image.jpg"></div>
-<div class="col-span-1 md:col-span-2">
-  <label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="prod-upload-label">Μεταφόρτωση Εικόνας</label>
-  <div id="prod-image-dropzone" class="w-full bg-black/30 border border-dashed border-gray-700 rounded-lg p-4 text-center cursor-pointer hover:border-amber transition">
-    <p class="text-sm text-gray-300 font-bold" id="prod-image-dropzone-text">Σύρετε & αφήστε εικόνα εδώ ή κάντε κλικ για επιλογή</p>
-    <p class="text-xs text-gray-500 mt-1" id="prod-image-dropzone-sub">JPG/PNG/WebP</p>
-  </div>
-  <input id="prod-image-file" type="file" accept="image/*" class="hidden">
-  <div class="mt-3 flex items-center gap-3">
-    <img id="prod-image-preview" src="" alt="preview" class="hidden w-20 h-20 rounded-lg object-cover border border-white/10">
-    <button type="button" id="prod-image-clear" class="hidden text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-full border border-gray-700 text-gray-200 hover:border-ruby hover:text-ruby transition">Remove</button>
-    <span id="prod-image-upload-status" class="text-xs text-gray-400"></span>
-  </div>
-</div>
-                    <div class="col-span-1 md:col-span-2"><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="prod-label-desc-el">Περιγραφή (EL)</label><textarea id="prod-desc" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition h-24"></textarea></div>
-                    <div class="col-span-1 md:col-span-2"><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="prod-label-desc-en">Description (EN)</label><textarea id="prod-desc-en" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition h-24" placeholder="English description"></textarea></div>
+                    <div class="col-span-1 md:col-span-2"><label class="block text-gray-400 text-xs uppercase font-bold mb-1">URL Εικόνας</label><input id="prod-image" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="https://example.com/image.jpg"></div>
+                    <div class="col-span-1 md:col-span-2"><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Περιγραφή (EL)</label><textarea id="prod-desc" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition h-24"></textarea></div>
+                    <div class="col-span-1 md:col-span-2"><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Description (EN)</label><textarea id="prod-desc-en" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition h-24" placeholder="English description"></textarea></div>
                 </div>
-                <button type="submit" class="w-full bg-amber text-lead font-bold py-3 rounded-lg hover:bg-white transition duration-300"><span id="prod-btn-save">Αποθήκευση</span></button>
+                <button type="submit" class="w-full bg-amber text-lead font-bold py-3 rounded-lg hover:bg-white transition duration-300">Αποθήκευση</button>
             </form>
         </div>
     </div>
@@ -359,32 +345,19 @@
             <button onclick="closeAddBlogModal()" class="absolute top-4 right-4 text-gray-400 hover:text-emerald transition text-2xl"><i class="fas fa-times"></i></button>
             <div class="text-center mb-6">
                 <i class="fas fa-pen-nib text-emerald text-4xl mb-3"></i>
-                <h2 class="text-2xl font-serif font-bold text-white" id="modal-blog-title">Νέο Άρθρο Blog</h2>
+                <h2 class="text-2xl font-serif font-bold text-white">Νέο Άρθρο Blog</h2>
             </div>
             <form onsubmit="event.preventDefault(); handleAddBlogPost();">
                 <input type="hidden" id="blog-id">
                 <div class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="blog-label-title-el">Τίτλος Άρθρου (EL)</label><input id="blog-title" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition"></div>
-                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="blog-label-title-en">Post Title (EN)</label><input id="blog-title-en" type="text" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition" placeholder="English title"></div>
+                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Τίτλος Άρθρου (EL)</label><input id="blog-title" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition"></div>
+                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Post Title (EN)</label><input id="blog-title-en" type="text" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition" placeholder="English title"></div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="blog-label-date-el">Ημερομηνία (EL)</label><input id="blog-date" type="text" placeholder="π.χ. 25 Μαρ 2026" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition"></div>
-                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="blog-label-date-en">Date (EN)</label><input id="blog-date-en" type="text" placeholder="e.g. Mar 25, 2026" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition"></div>
-                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="blog-label-image-url">URL Εικόνας</label><input id="blog-image" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition" placeholder="https://..."></div>
-<div class="md:col-span-2">
-  <label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="blog-upload-label">Μεταφόρτωση Εικόνας</label>
-  <div id="blog-image-dropzone" class="w-full bg-black/30 border border-dashed border-gray-700 rounded-lg p-4 text-center cursor-pointer hover:border-emerald transition">
-    <p class="text-sm text-gray-300 font-bold" id="blog-image-dropzone-text">Σύρετε & αφήστε εικόνα εδώ ή κάντε κλικ για επιλογή</p>
-    <p class="text-xs text-gray-500 mt-1" id="blog-image-dropzone-sub">JPG/PNG/WebP</p>
-  </div>
-  <input id="blog-image-file" type="file" accept="image/*" class="hidden">
-  <div class="mt-3 flex items-center gap-3">
-    <img id="blog-image-preview" src="" alt="preview" class="hidden w-20 h-20 rounded-lg object-cover border border-white/10">
-    <button type="button" id="blog-image-clear" class="hidden text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-full border border-gray-700 text-gray-200 hover:border-ruby hover:text-ruby transition">Remove</button>
-    <span id="blog-image-upload-status" class="text-xs text-gray-400"></span>
-  </div>
-</div>
+                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Ημερομηνία (EL)</label><input id="blog-date" type="text" placeholder="π.χ. 25 Μαρ 2026" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition"></div>
+                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Date (EN)</label><input id="blog-date-en" type="text" placeholder="e.g. Mar 25, 2026" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition"></div>
+                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">URL Εικόνας</label><input id="blog-image" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition" placeholder="https://..."></div>
                     </div>
                     <div class="flex items-center justify-end mt-1">
                         <button type="button" id="btn-blog-auto-en" onclick="autoTranslateBlogToEn()" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-full border border-emerald/40 bg-emerald/10 text-emerald hover:bg-emerald/20 transition">
@@ -392,11 +365,11 @@
                         </button>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="blog-label-content-el">Περιεχόμενο (EL, HTML επιτρέπεται)</label><textarea id="blog-content" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition h-48" placeholder="<p>Γράψτε το κείμενό σας εδώ...</p>"></textarea></div>
-                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="blog-label-content-en">Content (EN, HTML allowed)</label><textarea id="blog-content-en" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition h-48" placeholder="<p>Write your text here...</p>"></textarea></div>
+                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Περιεχόμενο (EL, HTML επιτρέπεται)</label><textarea id="blog-content" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition h-48" placeholder="<p>Γράψτε το κείμενό σας εδώ...</p>"></textarea></div>
+                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Content (EN, HTML allowed)</label><textarea id="blog-content-en" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition h-48" placeholder="<p>Write your text here...</p>"></textarea></div>
                     </div>
                 </div>
-                <button type="submit" class="w-full bg-emerald text-white font-bold py-3 mt-6 rounded-lg hover:bg-emerald-700 transition duration-300"><span id="blog-btn-publish">Δημοσίευση Άρθρου</span></button>
+                <button type="submit" class="w-full bg-emerald text-white font-bold py-3 mt-6 rounded-lg hover:bg-emerald-700 transition duration-300">Δημοσίευση Άρθρου</button>
             </form>
         </div>
     </div>
@@ -447,7 +420,7 @@
                         <a href="javascript:void(0)" onclick="showBlog(event)" class="nav-link hover:text-amber px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition" id="nav-blog">Blog</a>
                         <a href="#workshops" onclick="navigateToSection(event, 'workshops')" class="nav-link hover:text-amber px-2 lg:px-3 py-2 rounded-md text-sm font-medium transition" id="nav-workshops">Workshops</a>
                         <!-- Admin Link -->
-                        <a href="javascript:void(0)" onclick="showAdminDashboard(event)" id="nav-admin-link" class="hidden text-emerald hover:text-white px-2 py-2 rounded-md text-sm font-bold transition border border-emerald/50 bg-emerald/10"><i class="fas fa-cogs mr-1"></i> <span id="nav-admin-link-text">Διαχείριση</span></a>
+                        <a href="javascript:void(0)" onclick="showAdminDashboard(event)" id="nav-admin-link" class="hidden text-emerald hover:text-white px-2 py-2 rounded-md text-sm font-bold transition border border-emerald/50 bg-emerald/10"><i class="fas fa-cogs mr-1"></i> Διαχείριση</a>
                         <!-- Logout Link -->
                         <a href="javascript:void(0)" onclick="adminLogout(event)" id="nav-logout-link" class="hidden text-ruby hover:text-white px-2 py-2 rounded-md text-sm font-bold transition"><i class="fas fa-sign-out-alt"></i></a>
 
@@ -752,7 +725,7 @@
                         <div class="space-y-6">
                             <div class="flex items-start">
                                 <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-amber text-xl flex-shrink-0"><i class="fas fa-map-marker-alt"></i></div>
-                                <div class="ml-4"><h4 class="text-white font-bold" id="contact-info-address-label">Διεύθυνση</h4><p class="text-gray-400" id="editable-address">Νέα Κερασιά, Θεσσαλονίκη</p></div>
+                                <div class="ml-4"><h4 class="text-white font-bold" id="contact-info-address-label">Διεύθυνση</h4><p class="text-gray-400">Νέα Κερασιά, Θεσσαλονίκη</p></div>
                             </div>
                             <div class="flex items-start">
                                 <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-amber text-xl flex-shrink-0"><i class="fas fa-phone-alt"></i></div>
@@ -760,7 +733,7 @@
                             </div>
                             <div class="flex items-start">
                                 <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-amber text-xl flex-shrink-0"><i class="fas fa-envelope"></i></div>
-                                <div class="ml-4"><h4 class="text-white font-bold" id="contact-info-email-label">Email</h4><a class="text-gray-400 hover:text-amber transition" id="editable-email" href="mailto:info@vitrocanvas.gr">info@vitrocanvas.gr</a></div>
+                                <div class="ml-4"><h4 class="text-white font-bold" id="contact-info-email-label">Email</h4><p class="text-gray-400">info@vitrocanvas.gr</p></div>
                             </div>
                         </div>
                         <!-- ... social icons ... -->
@@ -846,8 +819,8 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center mb-10">
                 <div>
-                    <h2 class="text-3xl md:text-4xl font-bold text-white"><i class="fas fa-tachometer-alt text-emerald mr-3"></i> <span id="admin-dashboard-title">Πίνακας Ελέγχου</span></h2>
-                    <p class="text-gray-400 mt-2" id="admin-dashboard-sub">Διαχείριση περιεχομένου και ρυθμίσεις.</p>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white"><i class="fas fa-tachometer-alt text-emerald mr-3"></i> Πίνακας Ελέγχου</h2>
+                    <p class="text-gray-400 mt-2">Διαχείριση περιεχομένου και ρυθμίσεις.</p>
                 </div>
                 <div class="flex items-center gap-4">
                     <div class="bg-black/30 p-2 px-4 rounded-lg border border-white/10 text-right">
@@ -970,30 +943,24 @@
                                 <div class="space-y-6">
                                     <!-- Contact Info -->
                                     <div class="space-y-4">
-                                        <h4 class="text-amber font-bold text-sm uppercase border-b border-white/10 pb-2" id="admin-info-title">Στοιχεία</h4>
-                                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="admin-hero-title-label">Τίτλος Hero</label><input id="admin-hero-title" type="text" class="w-full bg-black/40 border border-gray-700 rounded py-2 px-3 text-white text-sm"></div>
-                                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="admin-phone-label">Τηλέφωνο</label><input id="admin-phone" type="text" class="w-full bg-black/40 border border-gray-700 rounded py-2 px-3 text-white text-sm"></div>
-<div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="admin-email-label">Email</label><input id="admin-email" type="text" class="w-full bg-black/40 border border-gray-700 rounded py-2 px-3 text-white text-sm" placeholder="info@vitrocanvas.gr"></div>
-<div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="admin-address-label">Διεύθυνση</label><input id="admin-address" type="text" class="w-full bg-black/40 border border-gray-700 rounded py-2 px-3 text-white text-sm" placeholder="Νέα Κερασιά, Θεσσαλονίκη"></div>
+                                        <h4 class="text-amber font-bold text-sm uppercase border-b border-white/10 pb-2">Στοιχεία</h4>
+                                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Τίτλος Hero</label><input id="admin-hero-title" type="text" class="w-full bg-black/40 border border-gray-700 rounded py-2 px-3 text-white text-sm"></div>
+                                        <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Τηλέφωνο</label><input id="admin-phone" type="text" class="w-full bg-black/40 border border-gray-700 rounded py-2 px-3 text-white text-sm"></div>
                                     </div>
 
                                     <!-- Graphics Vars -->
                                     <div class="space-y-4">
-                                        <h4 class="text-amber font-bold text-sm uppercase border-b border-white/10 pb-2" id="admin-graphics-title">Γραφικά (Live)</h4>
+                                        <h4 class="text-amber font-bold text-sm uppercase border-b border-white/10 pb-2">Γραφικά (Live)</h4>
                                         <div class="grid grid-cols-2 gap-4">
-                                            <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="admin-color-primary-label">Βασικό Χρώμα</label><input id="admin-color-primary" type="color" value="#fbc02d" class="w-full bg-transparent h-8 cursor-pointer"></div>
-                                            <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="admin-glass-opacity-label">Αδιαφάνεια (0-1)</label><input id="admin-glass-opacity" type="number" step="0.1" min="0" max="1" value="0.6" class="w-full bg-black/40 border border-gray-700 rounded py-1 px-2 text-white text-sm"></div>
-                                            <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="admin-glow-start-label">Glow Start</label><input id="admin-glow-start" type="color" value="#fbc02d" class="w-full bg-transparent h-8 cursor-pointer"></div>
-                                            <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="admin-glow-end-label">Glow End</label><input id="admin-glow-end" type="color" value="#b71c1c" class="w-full bg-transparent h-8 cursor-pointer"></div>
-                                            <div class="col-span-2"><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="admin-spin-speed-label">Ταχύτητα Animation (sec)</label><input id="admin-spin-speed" type="number" value="60" class="w-full bg-black/40 border border-gray-700 rounded py-1 px-2 text-white text-sm"></div>
-                                        <div class="col-span-2"><label class="block text-gray-400 text-xs uppercase font-bold mb-1" id="admin-text-color-label">Χρώμα Κειμένου</label><input id="admin-text-color" type="color" value="#e0e0e0" class="w-full bg-transparent h-8 cursor-pointer"></div>
-<div class="col-span-2 flex items-center justify-between gap-3">
-  <button type="button" id="btn-reset-graphics" onclick="resetGraphicsSettings()" class="w-full bg-black/40 border border-gray-700 text-gray-200 font-bold py-2 rounded hover:border-amber hover:text-amber transition">Επαναφορά Γραφικών</button>
-</div>
-</div>
+                                            <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Βασικό Χρώμα</label><input id="admin-color-primary" type="color" value="#fbc02d" class="w-full bg-transparent h-8 cursor-pointer"></div>
+                                            <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Αδιαφάνεια (0-1)</label><input id="admin-glass-opacity" type="number" step="0.1" min="0" max="1" value="0.6" class="w-full bg-black/40 border border-gray-700 rounded py-1 px-2 text-white text-sm"></div>
+                                            <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Glow Start</label><input id="admin-glow-start" type="color" value="#fbc02d" class="w-full bg-transparent h-8 cursor-pointer"></div>
+                                            <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Glow End</label><input id="admin-glow-end" type="color" value="#b71c1c" class="w-full bg-transparent h-8 cursor-pointer"></div>
+                                            <div class="col-span-2"><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Ταχύτητα Animation (sec)</label><input id="admin-spin-speed" type="number" value="60" class="w-full bg-black/40 border border-gray-700 rounded py-1 px-2 text-white text-sm"></div>
+                                        </div>
                                     </div>
                                 </div>
-                                <button type="submit" id="btn-save-global-settings" class="w-full bg-blue-600 text-white font-bold py-3 mt-6 rounded hover:bg-blue-700 transition">Αποθήκευση Ρυθμίσεων</button>
+                                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 mt-6 rounded hover:bg-blue-700 transition">Αποθήκευση Ρυθμίσεων</button>
                             </form>
 
                             <!-- Right Column: Live Preview Box -->
@@ -1127,7 +1094,8 @@
     </footer>
 
     <script>
-// ===== Server-side AI proxy support (production-safe) =====
+
+        // ===== Server-side AI proxy support (production-safe) =====
         // If true, the admin AI calls your own backend (/api/gemini/*) so the API key is NOT exposed in the browser.
         // Set window.USE_SERVER_AI = true when hosting with the included server.
         window.USE_SERVER_AI = window.USE_SERVER_AI ?? false;
@@ -1501,113 +1469,7 @@ let isAdmin = !__IS_PUBLIC_HOST && (localStorage.getItem('vitro_isAdmin') === 't
             return j.url;
         }
         
-        
-
-// ===== Admin: Image upload (Products/Blog) =====
-function wireImageUpload(opts) {
-    const drop = document.getElementById(opts.dropId);
-    const fileInput = document.getElementById(opts.fileInputId);
-    const preview = document.getElementById(opts.previewId);
-    const urlInput = document.getElementById(opts.urlInputId);
-    const statusEl = document.getElementById(opts.statusId);
-    const clearBtn = document.getElementById(opts.clearBtnId);
-
-    if (!drop || !fileInput || !urlInput) return;
-
-    const setStatus = (msg) => { if (statusEl) statusEl.textContent = msg || ''; };
-    const showPreview = (url) => {
-        if (preview) {
-            preview.src = url || '';
-            preview.classList.toggle('hidden', !url);
-        }
-        if (clearBtn) clearBtn.classList.toggle('hidden', !url);
-    };
-
-    const doUpload = async (file) => {
-        if (!file) return;
-        if (!file.type || !file.type.startsWith('image/')) {
-            showToast('Please upload an image file.');
-            return;
-        }
-        setStatus((window.VC_I18N?.[window.VC_LANG.get()]?.upload_uploading) || 'Uploading...');
-        drop.classList.add('opacity-60');
-        try {
-            const url = await uploadImageToServer(file);
-            urlInput.value = url;
-            showPreview(url);
-            setStatus((window.VC_I18N?.[window.VC_LANG.get()]?.upload_done) || 'Uploaded ✓');
-            scheduleServerSave();
-        } catch (e) {
-            console.error(e);
-            setStatus((window.VC_I18N?.[window.VC_LANG.get()]?.upload_error) || 'Upload failed');
-            showToast('Upload failed. Please try again.');
-        } finally {
-            drop.classList.remove('opacity-60');
-        }
-    };
-
-    drop.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', () => doUpload(fileInput.files && fileInput.files[0]));
-
-    drop.addEventListener('dragenter', () => drop.classList.add(opts.highlightClass || 'border-amber'));
-    drop.addEventListener('dragover', () => drop.classList.add(opts.highlightClass || 'border-amber'));
-    drop.addEventListener('dragleave', () => drop.classList.remove(opts.highlightClass || 'border-amber'));
-    drop.addEventListener('drop', (e) => {
-        drop.classList.remove(opts.highlightClass || 'border-amber');
-        const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-        doUpload(file);
-    });
-
-    if (clearBtn) {
-        clearBtn.addEventListener('click', () => {
-            urlInput.value = '';
-            showPreview('');
-            setStatus('');
-        });
-    }
-
-    // If URL already has value (editing), show it.
-    if (urlInput.value) showPreview(urlInput.value);
-}
-
-function initAdminFormUploads() {
-    wireImageUpload({
-        dropId: 'prod-image-dropzone',
-        fileInputId: 'prod-image-file',
-        previewId: 'prod-image-preview',
-        urlInputId: 'prod-image',
-        statusId: 'prod-image-upload-status',
-        clearBtnId: 'prod-image-clear',
-        highlightClass: 'border-amber'
-    });
-    wireImageUpload({
-        dropId: 'blog-image-dropzone',
-        fileInputId: 'blog-image-file',
-        previewId: 'blog-image-preview',
-        urlInputId: 'blog-image',
-        statusId: 'blog-image-upload-status',
-        clearBtnId: 'blog-image-clear',
-        highlightClass: 'border-emerald'
-    });
-}
-
-// ===== Admin: Reset graphics =====
-function resetGraphicsSettings() {
-    globalGraphics = {
-        primary: '#fbc02d',
-        opacity: '0.6',
-        glowStart: '#fbc02d',
-        glowEnd: '#b71c1c',
-        spinSpeed: '60',
-        textColor: '#e0e0e0'
-    };
-    localStorage.setItem('vitro_graphics', JSON.stringify(globalGraphics));
-    applyGlobalSettings();
-    scheduleServerSave();
-    showToast('Graphics reset!');
-}
-
-// Init Analytics Counters
+        // Init Analytics Counters
         let analytics = JSON.parse(localStorage.getItem('vitro_analytics')) || {
             totalVisits: 0,
             pageViews: { home: 0, catalog: 0, blog: 0, workshops: 0 }
@@ -1642,8 +1504,7 @@ function resetGraphicsSettings() {
             opacity: '0.6',
             glowStart: '#fbc02d', 
             glowEnd: '#b71c1c', 
-            spinSpeed: '60',
-            textColor: '#e0e0e0'
+            spinSpeed: '60' 
         };
         // AI State
         let geminiKey = localStorage.getItem('vitro_gemini_key') || "";
@@ -2072,29 +1933,11 @@ if (!response.ok) {
             if (glowStart) root.style.setProperty('--glow-start', glowStart);
             if (glowEnd) root.style.setProperty('--glow-end', glowEnd);
             if (spinSpeed) root.style.setProperty('--spin-speed', spinSpeed + 's');
-        
-            root.style.setProperty('--color-text', globalGraphics.textColor || '#e0e0e0');
-}
+        }
 
         function applyGlobalSettings() {
             if (globalTexts.heroTitle) { const elTitle = document.getElementById('editable-hero-title'); if (elTitle) elTitle.innerHTML = (window.VC_LANG ? window.VC_LANG.pick(globalTexts.heroTitle) : globalTexts.heroTitle); }
             if (globalTexts.phone) { const phoneEls = document.querySelectorAll('.fa-phone-alt + div p, #editable-phone'); phoneEls.forEach(el => el.textContent = globalTexts.phone); }
-
-
-            if (globalTexts.address) {
-    const addrEl = document.getElementById('editable-address');
-    if (addrEl) addrEl.textContent = globalTexts.address;
-}
-if (globalTexts.email) {
-    const emailEl = document.getElementById('editable-email');
-    if (emailEl) {
-        emailEl.textContent = globalTexts.email;
-        if (emailEl.tagName && emailEl.tagName.toLowerCase() === 'a') {
-            emailEl.href = 'mailto:' + globalTexts.email;
-        }
-    }
-}
-
             if (globalTexts.instagram) document.querySelectorAll('.link-instagram').forEach(el => el.href = globalTexts.instagram);
             if (globalTexts.facebook) document.querySelectorAll('.link-facebook').forEach(el => el.href = globalTexts.facebook);
             if (globalTexts.pinterest) document.querySelectorAll('.link-pinterest').forEach(el => el.href = globalTexts.pinterest);
@@ -2109,8 +1952,6 @@ if (globalTexts.email) {
             const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
             setVal('admin-hero-title', globalTexts.heroTitle ? globalTexts.heroTitle.replace(/<[^>]*>?/gm, '') : "Η Τέχνη του Φωτός");
             setVal('admin-phone', globalTexts.phone || "+30 6973 807 097");
-            setVal('admin-email', globalTexts.email || 'info@vitrocanvas.gr');
-            setVal('admin-address', globalTexts.address || 'Νέα Κερασιά, Θεσσαλονίκη');
             setVal('admin-insta', globalTexts.instagram || "#");
             setVal('admin-fb', globalTexts.facebook || "#");
             setVal('admin-pin', globalTexts.pinterest || "#");
@@ -2119,7 +1960,6 @@ if (globalTexts.email) {
             setVal('admin-glow-start', globalGraphics.glowStart || '#fbc02d');
             setVal('admin-glow-end', globalGraphics.glowEnd || '#b71c1c');
             setVal('admin-spin-speed', globalGraphics.spinSpeed || '60');
-            setVal('admin-text-color', globalGraphics.textColor || '#e0e0e0');
             
             // AI Key
             if(document.getElementById('gemini-api-key')) document.getElementById('gemini-api-key').value = geminiKey;
@@ -2129,8 +1969,6 @@ if (globalTexts.email) {
             const getVal = (id) => { const el = document.getElementById(id); return el ? el.value : ""; };
             globalTexts.heroTitle = getVal('admin-hero-title');
             globalTexts.phone = getVal('admin-phone');
-            globalTexts.email = getVal('admin-email');
-            globalTexts.address = getVal('admin-address');
             globalTexts.instagram = getVal('admin-insta');
             globalTexts.facebook = getVal('admin-fb');
             globalTexts.pinterest = getVal('admin-pin');
@@ -2139,7 +1977,6 @@ if (globalTexts.email) {
             globalGraphics.glowStart = getVal('admin-glow-start');
             globalGraphics.glowEnd = getVal('admin-glow-end');
             globalGraphics.spinSpeed = getVal('admin-spin-speed');
-            globalGraphics.textColor = getVal('admin-text-color');
             localStorage.setItem('vitro_texts', JSON.stringify(globalTexts));
             localStorage.setItem('vitro_graphics', JSON.stringify(globalGraphics));
             scheduleServerSave();
@@ -2885,9 +2722,8 @@ if (globalTexts.email) {
             
             checkWeeklyAI();
             updatePromoText(); // Initial check for promo text
-        
-            try { initAdminFormUploads(); } catch(e) {}
-};
+        };
+    
 </script>
 
 
@@ -3099,63 +2935,6 @@ async function submitContactForm(form, opts = {}) {
 
       lang_caption: 'Ελληνικά',
       lang_aria: 'Αλλαγή γλώσσας'
-// Admin UI
-admin_nav_manage: 'Διαχείριση',
-admin_nav_manage_html: '<i class="fas fa-cogs mr-1"></i> Διαχείριση',
-admin_dashboard: 'Πίνακας Ελέγχου',
-admin_dashboard_sub: 'Διαχείριση περιεχομένου και ρυθμίσεις.',
-admin_logout: 'Έξοδος',
-admin_tab_products: 'Προϊόντα',
-admin_tab_blog: 'Blog',
-admin_tab_general: 'Γενικά',
-admin_tab_stats: 'Στατιστικά',
-admin_tab_system: 'Σύστημα',
-
-modal_product_title: 'Νέο Προϊόν',
-prod_label_name_el: 'Όνομα Προϊόντος (EL)',
-prod_label_name_en: 'Όνομα Προϊόντος (EN)',
-prod_label_price: 'Τιμή (€)',
-prod_label_category: 'Κατηγορία',
-prod_label_stock: 'Διαθεσιμότητα',
-prod_label_discount: 'Έκπτωση (%)',
-prod_label_image_url: 'URL Εικόνας',
-prod_label_desc_el: 'Περιγραφή (EL)',
-prod_label_desc_en: 'Περιγραφή (EN)',
-prod_btn_save: 'Αποθήκευση',
-
-modal_blog_title: 'Νέο Άρθρο Blog',
-blog_label_title_el: 'Τίτλος Άρθρου (EL)',
-blog_label_title_en: 'Τίτλος Άρθρου (EN)',
-blog_label_date_el: 'Ημερομηνία (EL)',
-blog_label_date_en: 'Ημερομηνία (EN)',
-blog_label_image_url: 'URL Εικόνας',
-blog_label_content_el: 'Περιεχόμενο (EL, HTML επιτρέπεται)',
-blog_label_content_en: 'Περιεχόμενο (EN, HTML επιτρέπεται)',
-blog_btn_publish: 'Δημοσίευση Άρθρου',
-
-admin_info_title: 'Στοιχεία',
-admin_graphics_title: 'Γραφικά (Live)',
-admin_label_hero: 'Τίτλος Hero',
-admin_label_phone: 'Τηλέφωνο',
-admin_label_email: 'Email',
-admin_label_address: 'Διεύθυνση',
-admin_label_primary: 'Βασικό Χρώμα',
-admin_label_opacity: 'Αδιαφάνεια (0-1)',
-admin_label_glow_start: 'Glow Start',
-admin_label_glow_end: 'Glow End',
-admin_label_spin_speed: 'Ταχύτητα Animation (sec)',
-admin_label_text_color: 'Χρώμα Κειμένου',
-admin_btn_reset_graphics: 'Επαναφορά Γραφικών',
-admin_btn_save_settings: 'Αποθήκευση Ρυθμίσεων',
-
-upload_label: 'Μεταφόρτωση Εικόνας',
-upload_hint: 'Σύρετε & αφήστε εικόνα εδώ ή κάντε κλικ για επιλογή',
-upload_formats: 'JPG/PNG/WebP',
-upload_remove: 'Αφαίρεση',
-upload_uploading: 'Ανεβαίνει...',
-upload_done: 'Ανέβηκε ✓',
-upload_error: 'Αποτυχία μεταφόρτωσης'
-
     },
     en: {
       nav_home: 'Home',
@@ -3227,63 +3006,6 @@ upload_error: 'Αποτυχία μεταφόρτωσης'
 
       lang_caption: 'English',
       lang_aria: 'Change language'
-// Admin UI
-admin_nav_manage: 'Admin',
-admin_nav_manage_html: '<i class="fas fa-cogs mr-1"></i> Admin',
-admin_dashboard: 'Dashboard',
-admin_dashboard_sub: 'Content management and settings.',
-admin_logout: 'Logout',
-admin_tab_products: 'Products',
-admin_tab_blog: 'Blog',
-admin_tab_general: 'General',
-admin_tab_stats: 'Stats',
-admin_tab_system: 'System',
-
-modal_product_title: 'New Product',
-prod_label_name_el: 'Product Name (EL)',
-prod_label_name_en: 'Product Name (EN)',
-prod_label_price: 'Price (€)',
-prod_label_category: 'Category',
-prod_label_stock: 'Availability',
-prod_label_discount: 'Discount (%)',
-prod_label_image_url: 'Image URL',
-prod_label_desc_el: 'Description (EL)',
-prod_label_desc_en: 'Description (EN)',
-prod_btn_save: 'Save',
-
-modal_blog_title: 'New Blog Post',
-blog_label_title_el: 'Post Title (EL)',
-blog_label_title_en: 'Post Title (EN)',
-blog_label_date_el: 'Date (EL)',
-blog_label_date_en: 'Date (EN)',
-blog_label_image_url: 'Image URL',
-blog_label_content_el: 'Content (EL, HTML allowed)',
-blog_label_content_en: 'Content (EN, HTML allowed)',
-blog_btn_publish: 'Publish Post',
-
-admin_info_title: 'Details',
-admin_graphics_title: 'Graphics (Live)',
-admin_label_hero: 'Hero Title',
-admin_label_phone: 'Phone',
-admin_label_email: 'Email',
-admin_label_address: 'Address',
-admin_label_primary: 'Primary Color',
-admin_label_opacity: 'Opacity (0-1)',
-admin_label_glow_start: 'Glow Start',
-admin_label_glow_end: 'Glow End',
-admin_label_spin_speed: 'Animation Speed (sec)',
-admin_label_text_color: 'Text Color',
-admin_btn_reset_graphics: 'Reset Graphics',
-admin_btn_save_settings: 'Save Settings',
-
-upload_label: 'Upload Image',
-upload_hint: 'Drag & drop an image here or click to select',
-upload_formats: 'JPG/PNG/WebP',
-upload_remove: 'Remove',
-upload_uploading: 'Uploading...',
-upload_done: 'Uploaded ✓',
-upload_error: 'Upload failed'
-
     }
   };
   window.VC_I18N = VC_I18N;
@@ -3424,76 +3146,7 @@ upload_error: 'Upload failed'
     setPlaceholder('c-textarea-message', t('c_ph_message'));
     setText('c-submit', t('c_submit'));
 
-
-    // Admin navigation links
-    setHTML('nav-admin-link', t('admin_nav_manage_html'));
-    setText('nav-admin-link-text', t('admin_nav_manage'));
-    setText('mobile-nav-admin-link', t('admin_dashboard'));
-    setText('mobile-nav-logout-link', t('admin_logout'));
-    
-    // Admin dashboard
-    setText('admin-dashboard-title', t('admin_dashboard'));
-    setText('admin-dashboard-sub', t('admin_dashboard_sub'));
-    
-    // Admin tabs
-    setText('tab-btn-products', t('admin_tab_products'));
-    setText('tab-btn-blog', t('admin_tab_blog'));
-    setText('tab-btn-general', t('admin_tab_general'));
-    setText('tab-btn-stats', t('admin_tab_stats'));
-    setText('tab-btn-system', t('admin_tab_system'));
-    
-    // Modals: Product
-    setText('modal-product-title', t('modal_product_title'));
-    setText('prod-label-name-el', t('prod_label_name_el'));
-    setText('prod-label-name-en', t('prod_label_name_en'));
-    setText('prod-label-price', t('prod_label_price'));
-    setText('prod-label-category', t('prod_label_category'));
-    setText('prod-label-stock', t('prod_label_stock'));
-    setText('prod-label-discount', t('prod_label_discount'));
-    setText('prod-label-image-url', t('prod_label_image_url'));
-    setText('prod-label-desc-el', t('prod_label_desc_el'));
-    setText('prod-label-desc-en', t('prod_label_desc_en'));
-    setText('prod-btn-save', t('prod_btn_save'));
-    
-    // Modals: Blog
-    setText('modal-blog-title', t('modal_blog_title'));
-    setText('blog-label-title-el', t('blog_label_title_el'));
-    setText('blog-label-title-en', t('blog_label_title_en'));
-    setText('blog-label-date-el', t('blog_label_date_el'));
-    setText('blog-label-date-en', t('blog_label_date_en'));
-    setText('blog-label-image-url', t('blog_label_image_url'));
-    setText('blog-label-content-el', t('blog_label_content_el'));
-    setText('blog-label-content-en', t('blog_label_content_en'));
-    setText('blog-btn-publish', t('blog_btn_publish'));
-    
-    // Admin settings labels/buttons
-    setText('admin-info-title', t('admin_info_title'));
-    setText('admin-graphics-title', t('admin_graphics_title'));
-    setText('admin-hero-title-label', t('admin_label_hero'));
-    setText('admin-phone-label', t('admin_label_phone'));
-    setText('admin-email-label', t('admin_label_email'));
-    setText('admin-address-label', t('admin_label_address'));
-    setText('admin-color-primary-label', t('admin_label_primary'));
-    setText('admin-glass-opacity-label', t('admin_label_opacity'));
-    setText('admin-glow-start-label', t('admin_label_glow_start'));
-    setText('admin-glow-end-label', t('admin_label_glow_end'));
-    setText('admin-spin-speed-label', t('admin_label_spin_speed'));
-    setText('admin-text-color-label', t('admin_label_text_color'));
-    setText('btn-reset-graphics', t('admin_btn_reset_graphics'));
-    setText('btn-save-global-settings', t('admin_btn_save_settings'));
-    
-    // Upload UI
-    setText('prod-upload-label', t('upload_label'));
-    setText('prod-image-dropzone-text', t('upload_hint'));
-    setText('prod-image-dropzone-sub', t('upload_formats'));
-    setText('prod-image-clear', t('upload_remove'));
-    
-    setText('blog-upload-label', t('upload_label'));
-    setText('blog-image-dropzone-text', t('upload_hint'));
-    setText('blog-image-dropzone-sub', t('upload_formats'));
-    setText('blog-image-clear', t('upload_remove'));
-
-    
+    updatePromoMarquee();
     updateFlagUI(normalized);
 
     // Normalize bilingual data (supports older saved data)
