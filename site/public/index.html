@@ -2679,6 +2679,82 @@ if (!response.ok) {
             updatePromoText();
         }
 
+        
+        // --- Shareable Product URLs (public visitors) ---
+        function vcParseProductIdFromUrl() {
+            try {
+                const u = new URL(window.location.href);
+                const sp = u.searchParams;
+                const raw = sp.get('id') || sp.get('product') || sp.get('pid') || '';
+                const n = parseInt(String(raw), 10);
+                if (!Number.isFinite(n) || n <= 0) return null;
+                return n;
+            } catch(e) { return null; }
+        }
+
+        function vcUpdateUrlForProduct(id, opts = {}) {
+            try {
+                if (isAdmin) return; // never touch admin URLs
+                const replace = !!opts.replace;
+                const u = new URL(window.location.href);
+                u.pathname = '/product';
+                u.searchParams.set('id', String(id));
+                u.searchParams.delete('product');
+                u.searchParams.delete('pid');
+                u.searchParams.delete('view');
+                u.hash = '';
+                const next = u.pathname + u.search + u.hash;
+                if (replace) window.history.replaceState({ vc: 'product', id }, '', next);
+                else window.history.pushState({ vc: 'product', id }, '', next);
+            } catch(e) {}
+        }
+
+        function vcSetUrlToCatalog(opts = {}) {
+            try {
+                if (isAdmin) return;
+                const replace = !!opts.replace;
+                const u = new URL(window.location.href);
+                u.pathname = '/';
+                u.searchParams.delete('id');
+                u.searchParams.delete('product');
+                u.searchParams.delete('pid');
+                u.searchParams.set('view', 'catalog');
+                u.hash = '';
+                const next = u.pathname + u.search + u.hash;
+                if (replace) window.history.replaceState({ vc: 'catalog' }, '', next);
+                else window.history.pushState({ vc: 'catalog' }, '', next);
+            } catch(e) {}
+        }
+
+        function vcApplyRouteOverrides() {
+            // Safe to call many times
+            try {
+                if (isMaintenance && !isAdmin) return;
+                const u = new URL(window.location.href);
+                const path = (u.pathname || '/').replace(/\/+$/, '') || '/';
+                const sp = u.searchParams;
+
+                const view = (sp.get('view') || '').toLowerCase();
+                const id = vcParseProductIdFromUrl();
+
+                // Product route wins
+                if (path === '/product' && id) {
+                    showCatalog(null);
+                    setTimeout(() => {
+                        try { openProductDetails(id); } catch(e) {}
+                    }, 50);
+                    return;
+                }
+
+                if (view === 'catalog') { showCatalog(null); return; }
+                if (view === 'blog') { showBlog(null); return; }
+            } catch(e) {}
+        }
+
+        window.addEventListener('popstate', () => {
+            try { vcApplyRouteOverrides(); } catch(e) {}
+        });
+
         function showCatalog(e) {
             if(e) e.preventDefault();
             if(isMaintenance && !isAdmin) return;
@@ -2688,6 +2764,16 @@ if (!response.ok) {
             trackView('catalog');
             window.scrollTo({ top: 0, behavior: 'smooth' });
             renderProducts(); 
+            // Public URL for catalog (unless we are on /product?id=...)
+            try {
+                if (!isAdmin) {
+                    const u = new URL(window.location.href);
+                    const path = (u.pathname || '/').replace(/\/+$/, '') || '/';
+                    const pid = vcParseProductIdFromUrl();
+                    if (!(path === '/product' && pid)) vcSetUrlToCatalog({ replace: true });
+                }
+            } catch(e) {}
+
         }
 
         function showBlog(e) {
@@ -2927,6 +3013,10 @@ if (!response.ok) {
             const box = document.getElementById('product-details-box');
             if (box) box.classList.add('hidden');
             window.__currentProductId = null;
+            try {
+                if (!isAdmin) vcSetUrlToCatalog({ replace: true });
+            } catch(e) {}
+
         }
 
         function openProductDetails(id) {
@@ -2937,6 +3027,18 @@ if (!response.ok) {
             if (!prod) return;
 
             window.__currentProductId = id;
+
+            // Shareable URL for public visitors: /product?id=123
+            try {
+                if (!isAdmin) {
+                    const u = new URL(window.location.href);
+                    const path = (u.pathname || '/').replace(/\/+$/, '') || '/';
+                    const cur = vcParseProductIdFromUrl();
+                    const replace = (path === '/product' && cur === id);
+                    vcUpdateUrlForProduct(id, { replace });
+                }
+            } catch(e) {}
+
 
             const lang = (window.VC_LANG && window.VC_LANG.get) ? window.VC_LANG.get() : 'el';
             const dict = (window.VC_I18N && (window.VC_I18N[lang] || window.VC_I18N.el)) || {};
@@ -2951,7 +3053,7 @@ if (!response.ok) {
                 if (code === 'in-stock') return dict.stock_in || 'Άμεσα Διαθέσιμο';
                 if (code === 'sold') return dict.stock_sold || 'Εξαντλήθηκε';
                 return dict.stock_made || 'Κατόπιν Παραγγελίας';
-            })(prod.stock);
+        })(prod.stock);
 
             // Price label (handles € strings)
             const rawPrice = String(prod.price ?? '').replace('€','').trim();
