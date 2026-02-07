@@ -1177,11 +1177,33 @@
         // ==========================================================
 
         async function callGeminiGenerate({ key, model, body }) {
+            // Preferred path: your own backend proxy (no API key exposure in browser)
             if (window.USE_SERVER_AI) {
-                // body should be the JSON payload you would send to Gemini
-                return await serverGenerateContent({ model, body });
+                try {
+                    const cleanModel = (model || 'gemini-2.5-flash').replace(/^models\//, '');
+                    return await serverGenerateContent({ model: cleanModel, body });
+                } catch (e) {
+                    // If the proxy endpoint isn't available or fails, we can fall back to direct mode (if a key exists).
+                    console.warn('Server AI proxy failed, falling back to direct Gemini:', e);
+                }
             }
-            const resp = await callGeminiGenerate({ key, model, body: body });
+
+            // Fallback: direct Google call (requires a key saved in Admin settings)
+            const fallbackKey = (key || (typeof geminiKey !== 'undefined' ? geminiKey : '') || localStorage.getItem('vitro_gemini_key') || '').trim();
+            if (!fallbackKey) {
+                throw new Error('Δεν υπάρχει Gemini API key. Βάλτο στις Ρυθμίσεις Admin (Gemini).');
+            }
+
+            // Accept both "gemini-2.5-flash" and "models/gemini-2.5-flash"
+            const modelPath = (model || (typeof geminiModel !== 'undefined' ? geminiModel : '') || 'gemini-2.5-flash').trim();
+            const fullModel = modelPath.startsWith('models/') ? modelPath : `models/${modelPath}`;
+
+            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/${fullModel}:generateContent?key=${encodeURIComponent(fallbackKey)}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+
             if (!resp.ok) {
                 const err = await resp.json().catch(() => ({}));
                 throw new Error(err?.error?.message || `Σφάλμα Google (generate): ${resp.status}`);
@@ -1245,7 +1267,7 @@
                 contents: [{ role: "user", parts: [{ text: prompt }] }],
                 generationConfig: { temperature: 0.2, topP: 0.95, maxOutputTokens }
             };
-            const resp = await serverGenerateContent({ model, body });
+            const resp = await callGeminiGenerate({ model, body });
             const text = _vcExtractGeminiText(resp);
             return _vcParseJsonLoose(text);
         }
