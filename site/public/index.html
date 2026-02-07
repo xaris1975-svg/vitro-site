@@ -2655,6 +2655,7 @@ if (!response.ok) {
         function navigateToSection(e, sectionId) {
             if(e) e.preventDefault();
             if(isMaintenance && !isAdmin) return; // Block nav in maintenance
+            try { if (!isAdmin) vcSetUrlToHome({ replace: true }); } catch(e) {}
             hideAllViews();
             document.getElementById('view-landing').classList.remove('hidden');
             saveViewState('view-landing');
@@ -2671,6 +2672,7 @@ if (!response.ok) {
 
         function showLanding(scrollToTop = true) {
             if(isMaintenance && !isAdmin) return;
+            try { if (!isAdmin) vcSetUrlToHome({ replace: true }); } catch(e) {}
             hideAllViews();
             document.getElementById('view-landing').classList.remove('hidden');
             saveViewState('view-landing');
@@ -2697,7 +2699,7 @@ if (!response.ok) {
                 if (isAdmin) return; // never touch admin URLs
                 const replace = !!opts.replace;
                 const u = new URL(window.location.href);
-                u.pathname = '/product';
+                u.pathname = '/';
                 u.searchParams.set('id', String(id));
                 u.searchParams.delete('product');
                 u.searchParams.delete('pid');
@@ -2709,7 +2711,25 @@ if (!response.ok) {
             } catch(e) {}
         }
 
-        function vcSetUrlToCatalog(opts = {}) {
+        
+        function vcSetUrlToHome(opts = {}) {
+            try {
+                if (isAdmin) return;
+                const replace = !!opts.replace;
+                const u = new URL(window.location.href);
+                u.pathname = '/';
+                u.searchParams.delete('id');
+                u.searchParams.delete('product');
+                u.searchParams.delete('pid');
+                u.searchParams.delete('view');
+                u.hash = '';
+                const next = u.pathname + u.search + u.hash;
+                if (replace) window.history.replaceState({ vc: 'home' }, '', next);
+                else window.history.pushState({ vc: 'home' }, '', next);
+            } catch(e) {}
+        }
+
+function vcSetUrlToCatalog(opts = {}) {
             try {
                 if (isAdmin) return;
                 const replace = !!opts.replace;
@@ -2730,6 +2750,7 @@ if (!response.ok) {
             // Safe to call many times
             try {
                 if (isMaintenance && !isAdmin) return;
+                if (isAdmin) return;
                 const u = new URL(window.location.href);
                 const path = (u.pathname || '/').replace(/\/+$/, '') || '/';
                 const sp = u.searchParams;
@@ -2738,7 +2759,7 @@ if (!response.ok) {
                 const id = vcParseProductIdFromUrl();
 
                 // Product route wins
-                if (path === '/product' && id) {
+                if (id) {
                     showCatalog(null);
                     setTimeout(() => {
                         try { openProductDetails(id); } catch(e) {}
@@ -2764,13 +2785,13 @@ if (!response.ok) {
             trackView('catalog');
             window.scrollTo({ top: 0, behavior: 'smooth' });
             renderProducts(); 
-            // Public URL for catalog (unless we are on /product?id=...)
+            // Public URL for catalog (unless we are deep-linked to a product id)
             try {
                 if (!isAdmin) {
                     const u = new URL(window.location.href);
                     const path = (u.pathname || '/').replace(/\/+$/, '') || '/';
                     const pid = vcParseProductIdFromUrl();
-                    if (!(path === '/product' && pid)) vcSetUrlToCatalog({ replace: true });
+                    if (!pid) vcSetUrlToCatalog({ replace: true });
                 }
             } catch(e) {}
 
@@ -3034,7 +3055,7 @@ if (!response.ok) {
                     const u = new URL(window.location.href);
                     const path = (u.pathname || '/').replace(/\/+$/, '') || '/';
                     const cur = vcParseProductIdFromUrl();
-                    const replace = (path === '/product' && cur === id);
+                    const replace = (cur === id);
                     vcUpdateUrlForProduct(id, { replace });
                 }
             } catch(e) {}
