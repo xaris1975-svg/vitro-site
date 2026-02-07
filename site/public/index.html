@@ -339,7 +339,7 @@
 <div class="col-span-1 md:col-span-2">
   <label class="block text-gray-400 text-xs uppercase font-bold mb-1">Ανέβασμα Εικόνας (Drag & Drop)</label>
   <div id="prod-image-drop" class="w-full bg-black/30 border border-amber/30 rounded-lg p-4 text-center cursor-pointer hover:bg-black/40 transition">
-    <input id="prod-image-file" type="file" accept="image/*" class="hidden">
+    <input id="prod-image-file" type="file" accept="image/jpeg,image/png,image/webp" class="hidden">
     <div class="text-gray-400 text-sm">Σύρε εδώ μια εικόνα ή κάνε click για επιλογή αρχείου</div>
     <img id="prod-image-preview" src="" alt="" class="hidden mt-4 w-full max-h-56 object-contain rounded-lg border border-white/10 bg-black/20">
   </div>
@@ -377,7 +377,7 @@
 <div class="col-span-1 md:col-span-2">
   <label class="block text-gray-400 text-xs uppercase font-bold mb-1">Ανέβασμα Εικόνας (Drag & Drop)</label>
   <div id="blog-image-drop" class="w-full bg-black/30 border border-emerald/30 rounded-lg p-4 text-center cursor-pointer hover:bg-black/40 transition">
-    <input id="blog-image-file" type="file" accept="image/*" class="hidden">
+    <input id="blog-image-file" type="file" accept="image/jpeg,image/png,image/webp" class="hidden">
     <div class="text-gray-400 text-sm">Σύρε εδώ μια εικόνα ή κάνε click για επιλογή αρχείου</div>
     <img id="blog-image-preview" src="" alt="" class="hidden mt-4 w-full max-h-56 object-contain rounded-lg border border-white/10 bg-black/20">
   </div>
@@ -1210,17 +1210,58 @@
             return await resp.json();
         }
 
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            const msgElement = document.getElementById('toast-message');
-            msgElement.textContent = message;
-            toast.classList.remove('hidden');
-            setTimeout(() => { toast.classList.remove('translate-y-20', 'opacity-0'); }, 10);
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-                setTimeout(() => { toast.classList.add('hidden'); }, 3000); // Wait 3s then hide
-            }, 3000);
-        }
+        function showToast(message, opts = {}) {
+    const toast = document.getElementById('toast');
+    const msgElement = document.getElementById('toast-message');
+    const iconEl = toast ? toast.querySelector('i') : null;
+
+    const {
+        sticky = false,
+        duration = 3000,
+        iconClass = 'fas fa-check-circle text-xl'
+    } = opts || {};
+
+    if (!toast || !msgElement) return;
+
+    msgElement.textContent = message;
+
+    if (iconEl) {
+        iconEl.className = iconClass;
+    }
+
+    // Show
+    toast.classList.remove('hidden');
+    setTimeout(() => { toast.classList.remove('translate-y-20', 'opacity-0'); }, 10);
+
+    // Auto-hide unless sticky
+    if (!sticky) {
+        setTimeout(() => hideToast(), duration);
+    }
+}
+
+function updateToast(message, opts = {}) {
+    const toast = document.getElementById('toast');
+    const msgElement = document.getElementById('toast-message');
+    const iconEl = toast ? toast.querySelector('i') : null;
+    if (!toast || !msgElement) return;
+
+    msgElement.textContent = message;
+
+    if (opts && opts.iconClass && iconEl) {
+        iconEl.className = opts.iconClass;
+    }
+
+    // Ensure visible
+    toast.classList.remove('hidden');
+    toast.classList.remove('translate-y-20', 'opacity-0');
+}
+
+function hideToast() {
+    const toast = document.getElementById('toast');
+    if (!toast) return;
+    toast.classList.add('translate-y-20', 'opacity-0');
+    setTimeout(() => { toast.classList.add('hidden'); }, 300);
+}
 
         // ===== Auto-translate (Gemini via server) =====
         function _vcExtractGeminiText(resp) {
@@ -1434,6 +1475,24 @@ const __IS_PUBLIC_HOST = __PUBLIC_HOSTS.has(__HOST);
 
 // Default: NOT admin. If it's not the public host, restore admin state from localStorage.
 let isAdmin = !__IS_PUBLIC_HOST && (localStorage.getItem('vitro_isAdmin') === 'true');
+// Public users: dropping files on the page should do absolutely nothing (and never navigate away).
+if (!isAdmin) {
+    const __vcBlockFiles = (e) => {
+        try {
+            const dt = e.dataTransfer;
+            const types = dt && dt.types ? Array.from(dt.types) : [];
+            if (types.includes('Files')) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        } catch(_) {}
+    };
+    document.addEventListener('dragenter', __vcBlockFiles, true);
+    document.addEventListener('dragover', __vcBlockFiles, true);
+    document.addEventListener('drop', __vcBlockFiles, true);
+}
+
+
         // (Fallback) will be overridden by server data if present.
         let isMaintenance = localStorage.getItem('vitro_maintenance') === 'true';
 
@@ -1536,7 +1595,76 @@ let isAdmin = !__IS_PUBLIC_HOST && (localStorage.getItem('vitro_isAdmin') === 't
         document.addEventListener('change', () => { if (isAdmin) scheduleServerSave(); }, true);
 
 
-        // --- MODAL IMAGE UPLOAD ZONES (Drag & Drop + Preview) ---
+        
+        // --- IMAGE UPLOAD HELPERS (validate + resize + progress) ---
+        const VC_ALLOWED_IMAGE_MIME = new Set(['image/jpeg', 'image/png', 'image/webp']);
+        const VC_ALLOWED_IMAGE_EXT = new Set(['.jpg', '.jpeg', '.png', '.webp']);
+
+        function vcValidateImageFile(file) {
+            if (!file) return { ok: false, message: 'Δεν βρέθηκε αρχείο.' };
+
+            const name = (file.name || '').toLowerCase().trim();
+            const ext = name.includes('.') ? name.slice(name.lastIndexOf('.')) : '';
+
+            const mimeOk = file.type && VC_ALLOWED_IMAGE_MIME.has(file.type);
+            const extOk = ext && VC_ALLOWED_IMAGE_EXT.has(ext);
+
+            // Accept if either mime or ext looks valid (some browsers are weird)
+            if (!(mimeOk || extOk)) {
+                return { ok: false, message: 'Μόνο εικόνες JPG / PNG / WebP.' };
+            }
+
+            // Don’t “resize” GIFs, HEIC, SVG, etc. (we block them above anyway)
+            return { ok: true, message: '' };
+        }
+
+        async function vcResizeImageFile(file, opts = {}) {
+            const { maxSide = 1800, quality = 0.86 } = opts || {};
+
+            // If browser can’t decode it, this will throw and we’ll show a friendly toast.
+            const img = await new Promise((resolve, reject) => {
+                const url = URL.createObjectURL(file);
+                const im = new Image();
+                im.onload = () => { try { URL.revokeObjectURL(url); } catch(_) {} resolve(im); };
+                im.onerror = () => { try { URL.revokeObjectURL(url); } catch(_) {} reject(new Error('Δεν μπορώ να ανοίξω αυτή την εικόνα.')); };
+                im.src = url;
+            });
+
+            const w = img.naturalWidth || img.width || 0;
+            const h = img.naturalHeight || img.height || 0;
+            if (!w || !h) throw new Error('Άγνωστες διαστάσεις εικόνας.');
+
+            const scale = Math.min(1, maxSide / Math.max(w, h));
+            const nw = Math.max(1, Math.round(w * scale));
+            const nh = Math.max(1, Math.round(h * scale));
+
+            // If no resize needed, still re-encode to normalize size/format
+            const canvas = document.createElement('canvas');
+            canvas.width = nw;
+            canvas.height = nh;
+
+            const ctx = canvas.getContext('2d', { alpha: true });
+            if (!ctx) throw new Error('Δεν μπορώ να κάνω resize σε αυτό το browser.');
+
+            // If we output JPEG, fill background to avoid black on transparency
+            const outType = (file.type === 'image/png') ? 'image/png' : 'image/jpeg';
+            if (outType === 'image/jpeg') {
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, nw, nh);
+            }
+
+            ctx.drawImage(img, 0, 0, nw, nh);
+
+            const blob = await new Promise((resolve, reject) => {
+                canvas.toBlob((b) => b ? resolve(b) : reject(new Error('Απέτυχε το resize.')), outType, quality);
+            });
+
+            const base = (file.name || 'image').replace(/\.[^.]+$/, '');
+            const newName = base + (outType === 'image/png' ? '.png' : '.jpg');
+            return new File([blob], newName, { type: outType });
+        }
+
+// --- MODAL IMAGE UPLOAD ZONES (Drag & Drop + Preview) ---
         function initModalUploadZones() {
             if (!isAdmin) return;
             setupModalDropZone({ dropId: 'prod-image-drop', fileInputId: 'prod-image-file', previewId: 'prod-image-preview', urlInputId: 'prod-image' });
@@ -1581,19 +1709,44 @@ let isAdmin = !__IS_PUBLIC_HOST && (localStorage.getItem('vitro_isAdmin') === 't
 
             const uploadAndSet = async (file) => {
                 if (!file) return;
-                if (!file.type || !file.type.startsWith('image/')) {
-                    showToast('Παρακαλώ επιλέξτε αρχείο εικόνας.');
+
+                const v = vcValidateImageFile(file);
+                if (!v.ok) {
+                    showToast(v.message, { iconClass: 'fas fa-exclamation-triangle text-xl' });
                     return;
                 }
+
                 try {
-                    showToast('Ανέβασμα εικόνας...');
-                    const url = await uploadImageToServer(file);
+                    // Local preview immediately (fast feedback)
+                    try {
+                        const tmpUrl = URL.createObjectURL(file);
+                        preview.src = tmpUrl;
+                        preview.classList.remove('hidden');
+                        setTimeout(() => { try { URL.revokeObjectURL(tmpUrl); } catch(_) {} }, 4000);
+                    } catch(_) {}
+
+                    showToast('Προετοιμασία εικόνας…', { sticky: true, iconClass: 'fas fa-sync-alt fa-spin text-xl' });
+                    const resized = await vcResizeImageFile(file, { maxSide: 1800, quality: 0.86 });
+
+                    let lastPct = -1;
+                    updateToast('Ανέβασμα εικόνας… 0%', { iconClass: 'fas fa-cloud-upload-alt text-xl' });
+
+                    const url = await uploadImageToServer(resized, (pct) => {
+                        // Throttle UI updates a bit
+                        if (typeof pct !== 'number') return;
+                        if (pct === lastPct) return;
+                        lastPct = pct;
+                        updateToast(`Ανέβασμα εικόνας… ${pct}%`, { iconClass: 'fas fa-cloud-upload-alt text-xl' });
+                    });
+
+                    hideToast();
                     urlInput.value = url;
                     showPreviewFromUrl(url);
-                    showToast('Η εικόνα ανέβηκε!');
+                    showToast('Η εικόνα ανέβηκε!', { iconClass: 'fas fa-check-circle text-xl' });
                 } catch (err) {
                     console.error(err);
-                    showToast('Σφάλμα στο ανέβασμα εικόνας.');
+                    hideToast();
+                    showToast('Σφάλμα στο ανέβασμα εικόνας.', { iconClass: 'fas fa-exclamation-triangle text-xl' });
                 }
             };
 
@@ -1613,13 +1766,40 @@ let isAdmin = !__IS_PUBLIC_HOST && (localStorage.getItem('vitro_isAdmin') === 't
         }
 
 
-        async function uploadImageToServer(file) {
+        function uploadImageToServer(file, onProgress) {
             const fd = new FormData();
-            fd.append('file', file);
-            const r = await fetch('/api/upload', { method: 'POST', body: fd, credentials: 'include' });
-            const j = await r.json().catch(() => ({}));
-            if (!r.ok || !j?.ok || !j?.url) throw new Error(j?.error || 'Upload failed');
-            return j.url;
+            // Preserve name so server stores sensible extension
+            fd.append('file', file, file && file.name ? file.name : 'upload.jpg');
+
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/upload', true);
+                xhr.withCredentials = true;
+
+                if (xhr.upload && typeof onProgress === 'function') {
+                    xhr.upload.onprogress = (e) => {
+                        try {
+                            if (e.lengthComputable) {
+                                const pct = Math.max(0, Math.min(100, Math.round((e.loaded / e.total) * 100)));
+                                onProgress(pct);
+                            }
+                        } catch(_) {}
+                    };
+                }
+
+                xhr.onload = () => {
+                    let j = {};
+                    try { j = JSON.parse(xhr.responseText || '{}'); } catch(_) {}
+                    if (xhr.status >= 200 && xhr.status < 300 && j && j.ok && j.url) {
+                        resolve(j.url);
+                    } else {
+                        reject(new Error((j && j.error) || 'Upload failed'));
+                    }
+                };
+
+                xhr.onerror = () => reject(new Error('Network error'));
+                xhr.send(fd);
+            });
         }
         
         // Init Analytics Counters
@@ -1711,7 +1891,7 @@ let isAdmin = !__IS_PUBLIC_HOST && (localStorage.getItem('vitro_isAdmin') === 't
                     this.classList.remove('drag-over');
                     return;
                 }
-                if (file.type.startsWith('image/')) {
+                if (vcValidateImageFile(file).ok) {
                     if (this.id === 'drop-zone-info') showToast('Σύρετε την εικόνα πάνω στο στοιχείο που θέλετε να αλλάξετε.');
                     else handleFileSelect(file, this);
                 } else {
@@ -1722,9 +1902,38 @@ let isAdmin = !__IS_PUBLIC_HOST && (localStorage.getItem('vitro_isAdmin') === 't
         }
 
         async function handleFileSelect(file, element) {
+            const v = vcValidateImageFile(file);
+            if (!v.ok) {
+                showToast(v.message, { iconClass: 'fas fa-exclamation-triangle text-xl' });
+                return;
+            }
+
             try {
+                // Quick local preview for <img> targets (optional)
+                try {
+                    if (element && element.tagName === 'IMG') {
+                        const tmpUrl = URL.createObjectURL(file);
+                        element.src = tmpUrl;
+                        setTimeout(() => { try { URL.revokeObjectURL(tmpUrl); } catch(_) {} }, 4000);
+                    }
+                } catch(_) {}
+
+                showToast('Προετοιμασία εικόνας…', { sticky: true, iconClass: 'fas fa-sync-alt fa-spin text-xl' });
+                const resized = await vcResizeImageFile(file, { maxSide: 1800, quality: 0.86 });
+
+                let lastPct = -1;
+                updateToast('Ανέβασμα εικόνας… 0%', { iconClass: 'fas fa-cloud-upload-alt text-xl' });
+
                 // Upload to server so EVERYONE sees it (not just your browser)
-                const url = await uploadImageToServer(file);
+                const url = await uploadImageToServer(resized, (pct) => {
+                    if (typeof pct !== 'number') return;
+                    if (pct === lastPct) return;
+                    lastPct = pct;
+                    updateToast(`Ανέβασμα εικόνας… ${pct}%`, { iconClass: 'fas fa-cloud-upload-alt text-xl' });
+                });
+
+                hideToast();
+
                 const id = element.id || element.dataset.id;
 
                 if (element.classList.contains('admin-editable-bg') || (id && id.endsWith('-bg'))) {
@@ -1740,7 +1949,7 @@ let isAdmin = !__IS_PUBLIC_HOST && (localStorage.getItem('vitro_isAdmin') === 't
                         staticImages[id] = url;
                         localStorage.setItem('vitro_static_images', JSON.stringify(staticImages));
                         scheduleServerSave();
-                        showToast('Η εικόνα αποθηκεύτηκε!');
+                        showToast('Η εικόνα αποθηκεύτηκε!', { iconClass: 'fas fa-check-circle text-xl' });
                         return;
                     }
                 }
@@ -1753,7 +1962,7 @@ let isAdmin = !__IS_PUBLIC_HOST && (localStorage.getItem('vitro_isAdmin') === 't
                         prod.image = url;
                         saveProducts();
                         renderProducts();
-                        showToast('Προϊόν ενημερώθηκε!');
+                        showToast('Προϊόν ενημερώθηκε!', { iconClass: 'fas fa-check-circle text-xl' });
                     }
                 } else if (element.dataset.type === 'blog') {
                     const postId = parseInt(element.dataset.id);
@@ -1762,12 +1971,15 @@ let isAdmin = !__IS_PUBLIC_HOST && (localStorage.getItem('vitro_isAdmin') === 't
                         post.image = url;
                         saveBlogPosts();
                         renderBlogList();
-                        showToast('Άρθρο ενημερώθηκε!');
+                        showToast('Άρθρο ενημερώθηκε!', { iconClass: 'fas fa-check-circle text-xl' });
                     }
+                } else {
+                    showToast('Η εικόνα ενημερώθηκε!', { iconClass: 'fas fa-check-circle text-xl' });
                 }
             } catch (e) {
                 console.error(e);
-                showToast('Σφάλμα upload εικόνας. Δοκιμάστε μικρότερο αρχείο.');
+                hideToast();
+                showToast('Σφάλμα στο upload εικόνας. Δοκιμάστε άλλη εικόνα.', { iconClass: 'fas fa-exclamation-triangle text-xl' });
             }
         }
 
