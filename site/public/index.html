@@ -1616,50 +1616,70 @@ document.addEventListener('drop', __vcGuardFileDrop, true);
         }
 
         async function vcResizeImageFile(file, opts = {}) {
-            const { maxSide = 1800, quality = 0.86 } = opts || {};
+    const {
+        maxSide = 1800,
+        quality = 0.86,
+        targetBytes = 2000000, // ~2MB στόχος για να μη χτυπάμε server limits
+        minSide = 900,
+        minQuality = 0.60
+    } = opts || {};
 
-            // If browser can’t decode it, this will throw and we’ll show a friendly toast.
-            const img = await new Promise((resolve, reject) => {
-                const url = URL.createObjectURL(file);
-                const im = new Image();
-                im.onload = () => { try { URL.revokeObjectURL(url); } catch(_) {} resolve(im); };
-                im.onerror = () => { try { URL.revokeObjectURL(url); } catch(_) {} reject(new Error('Δεν μπορώ να ανοίξω αυτή την εικόνα.')); };
-                im.src = url;
-            });
+    const img = await new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const im = new Image();
+        im.onload = () => { try { URL.revokeObjectURL(url); } catch(_) {} resolve(im); };
+        im.onerror = () => { try { URL.revokeObjectURL(url); } catch(_) {} reject(new Error('Δεν μπορώ να ανοίξω αυτή την εικόνα.')); };
+        im.src = url;
+    });
 
-            const w = img.naturalWidth || img.width || 0;
-            const h = img.naturalHeight || img.height || 0;
-            if (!w || !h) throw new Error('Άγνωστες διαστάσεις εικόνας.');
+    const w = img.naturalWidth || img.width || 0;
+    const h = img.naturalHeight || img.height || 0;
+    if (!w || !h) throw new Error('Άγνωστες διαστάσεις εικόνας.');
 
-            const scale = Math.min(1, maxSide / Math.max(w, h));
-            const nw = Math.max(1, Math.round(w * scale));
-            const nh = Math.max(1, Math.round(h * scale));
+    // Πάντα JPEG στο upload (μικρότερο και πιο συμβατό)
+    const outType = 'image/jpeg';
 
-            // If no resize needed, still re-encode to normalize size/format
-            const canvas = document.createElement('canvas');
-            canvas.width = nw;
-            canvas.height = nh;
+    let curMaxSide = maxSide;
+    let curQuality = quality;
+    let blob = null;
 
-            const ctx = canvas.getContext('2d', { alpha: true });
-            if (!ctx) throw new Error('Δεν μπορώ να κάνω resize σε αυτό το browser.');
+    for (let attempt = 0; attempt < 4; attempt++) {
+        const scale = Math.min(1, curMaxSide / Math.max(w, h));
+        const nw = Math.max(1, Math.round(w * scale));
+        const nh = Math.max(1, Math.round(h * scale));
 
-            // If we output JPEG, fill background to avoid black on transparency
-            const outType = (file.type === 'image/png') ? 'image/png' : 'image/jpeg';
-            if (outType === 'image/jpeg') {
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(0, 0, nw, nh);
-            }
+        const canvas = document.createElement('canvas');
+        canvas.width = nw;
+        canvas.height = nh;
 
-            ctx.drawImage(img, 0, 0, nw, nh);
+        const ctx = canvas.getContext('2d', { alpha: false });
+        if (!ctx) throw new Error('Δεν μπορώ να κάνω resize σε αυτό το browser.');
 
-            const blob = await new Promise((resolve, reject) => {
-                canvas.toBlob((b) => b ? resolve(b) : reject(new Error('Απέτυχε το resize.')), outType, quality);
-            });
+        // Λευκό φόντο (για διαφάνειες από PNG/WebP)
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, nw, nh);
+        ctx.drawImage(img, 0, 0, nw, nh);
 
-            const base = (file.name || 'image').replace(/\.[^.]+$/, '');
-            const newName = base + (outType === 'image/png' ? '.png' : '.jpg');
-            return new File([blob], newName, { type: outType });
+        blob = await new Promise((resolve, reject) => {
+            canvas.toBlob((b) => b ? resolve(b) : reject(new Error('Απέτυχε το resize.')), outType, curQuality);
+        });
+
+        if (blob && blob.size <= targetBytes) break;
+
+        // Σφίγγουμε λίγο ακόμη (ποιότητα + (αν χρειαστεί) ανάλυση)
+        if (curQuality > minQuality) curQuality = Math.max(minQuality, curQuality - 0.10);
+        if (blob && blob.size > targetBytes * 1.4 && curMaxSide > minSide) {
+            curMaxSide = Math.max(minSide, Math.round(curMaxSide * 0.90));
         }
+
+        if (curQuality <= minQuality && curMaxSide <= minSide) break;
+    }
+
+    const base = (file.name || 'image').replace(/\.[^.]+$/, '');
+    const safeBase = base.replace(/[^\w\-\.]+/g, '_').slice(0, 60) || 'image';
+    const newName = safeBase + '.jpg';
+    return new File([blob], newName, { type: outType });
+}
 
 // --- MODAL IMAGE UPLOAD ZONES (Drag & Drop + Preview) ---
         function initModalUploadZones() {
@@ -1728,13 +1748,27 @@ document.addEventListener('drop', __vcGuardFileDrop, true);
                     let lastPct = -1;
                     updateToast('Ανέβασμα εικόνας… 0%', { iconClass: 'fas fa-cloud-upload-alt text-xl' });
 
-                    const url = await uploadImageToServer(resized, (pct) => {
+                    const __progress = (pct) => {
                         // Throttle UI updates a bit
                         if (typeof pct !== 'number') return;
                         if (pct === lastPct) return;
                         lastPct = pct;
                         updateToast(`Ανέβασμα εικόνας… ${pct}%`, { iconClass: 'fas fa-cloud-upload-alt text-xl' });
-                    });
+                    };
+
+                    let url;
+                    try {
+                        url = await uploadImageToServer(resized, __progress);
+                    } catch (upErr) {
+                        if (upErr && (upErr.status === 413 || /payload/i.test(String(upErr.error || '')))) {
+                            updateToast('Πολύ μεγάλη εικόνα… κάνω extra συμπίεση', { iconClass: 'fas fa-sync-alt fa-spin text-xl' });
+                            const resized2 = await vcResizeImageFile(file, { maxSide: 1400, quality: 0.78, targetBytes: 1200000 });
+                            updateToast('Ανέβασμα εικόνας… 0%', { iconClass: 'fas fa-cloud-upload-alt text-xl' });
+                            url = await uploadImageToServer(resized2, __progress);
+                        } else {
+                            throw upErr;
+                        }
+                    }
 
                     hideToast();
                     urlInput.value = url;
@@ -1743,7 +1777,14 @@ document.addEventListener('drop', __vcGuardFileDrop, true);
                 } catch (err) {
                     console.error(err);
                     hideToast();
-                    showToast('Σφάλμα στο ανέβασμα εικόνας.', { iconClass: 'fas fa-exclamation-triangle text-xl' });
+                    const st = err && err.status;
+                    if (st === 401 || st === 403) {
+                        showToast('Η σύνδεση admin έληξε. Κάνε logout/login ξανά.', { iconClass: 'fas fa-exclamation-triangle text-xl' });
+                    } else if (st === 413) {
+                        showToast('Ο server έκοψε την εικόνα ως πολύ μεγάλη. Δοκίμασε ξανά (θα τη συμπιέσω περισσότερο).', { iconClass: 'fas fa-exclamation-triangle text-xl' });
+                    } else {
+                        showToast('Σφάλμα στο ανέβασμα εικόνας.', { iconClass: 'fas fa-exclamation-triangle text-xl' });
+                    }
                 }
             };
 
@@ -1764,42 +1805,48 @@ document.addEventListener('drop', __vcGuardFileDrop, true);
 
 
         function uploadImageToServer(file, onProgress) {
-            const fd = new FormData();
-            // Preserve name so server stores sensible extension
-            fd.append('file', file, file && file.name ? file.name : 'upload.jpg');
+    const fd = new FormData();
+    fd.append('file', file, file && file.name ? file.name : 'upload.jpg');
 
-            return new Promise((resolve, reject) => {
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', '/api/upload', true);
-                xhr.withCredentials = true;
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/upload', true);
+        xhr.withCredentials = true;
 
-                if (xhr.upload && typeof onProgress === 'function') {
-                    xhr.upload.onprogress = (e) => {
-                        try {
-                            if (e.lengthComputable) {
-                                const pct = Math.max(0, Math.min(100, Math.round((e.loaded / e.total) * 100)));
-                                onProgress(pct);
-                            }
-                        } catch(_) {}
-                    };
-                }
-
-                xhr.onload = () => {
-                    let j = {};
-                    try { j = JSON.parse(xhr.responseText || '{}'); } catch(_) {}
-                    if (xhr.status >= 200 && xhr.status < 300 && j && j.ok && j.url) {
-                        resolve(j.url);
-                    } else {
-                        reject(new Error((j && j.error) || 'Upload failed'));
+        if (xhr.upload && typeof onProgress === 'function') {
+            xhr.upload.onprogress = (e) => {
+                try {
+                    if (e.lengthComputable) {
+                        const pct = Math.max(0, Math.min(100, Math.round((e.loaded / e.total) * 100)));
+                        onProgress(pct);
                     }
-                };
-
-                xhr.onerror = () => reject(new Error('Network error'));
-                xhr.send(fd);
-            });
+                } catch(_) {}
+            };
         }
-        
-        // Init Analytics Counters
+
+        xhr.onload = () => {
+            let j = {};
+            const text = xhr.responseText || '';
+            try { j = JSON.parse(text || '{}'); } catch(_) {}
+
+            if (xhr.status >= 200 && xhr.status < 300 && j && j.ok && j.url) {
+                resolve(j.url);
+                return;
+            }
+
+            const err = {
+                status: xhr.status,
+                error: (j && j.error) ? j.error : (text ? String(text).slice(0, 200) : 'Upload failed')
+            };
+            reject(err);
+        };
+
+        xhr.onerror = () => reject({ status: 0, error: 'Network error' });
+        xhr.send(fd);
+    });
+}
+
+// Init Analytics Counters
         let analytics = JSON.parse(localStorage.getItem('vitro_analytics')) || {
             totalVisits: 0,
             pageViews: { home: 0, catalog: 0, blog: 0, workshops: 0 }
@@ -1922,12 +1969,26 @@ document.addEventListener('drop', __vcGuardFileDrop, true);
                 updateToast('Ανέβασμα εικόνας… 0%', { iconClass: 'fas fa-cloud-upload-alt text-xl' });
 
                 // Upload to server so EVERYONE sees it (not just your browser)
-                const url = await uploadImageToServer(resized, (pct) => {
+                const __progress = (pct) => {
                     if (typeof pct !== 'number') return;
                     if (pct === lastPct) return;
                     lastPct = pct;
                     updateToast(`Ανέβασμα εικόνας… ${pct}%`, { iconClass: 'fas fa-cloud-upload-alt text-xl' });
-                });
+                };
+
+                let url;
+                try {
+                    url = await uploadImageToServer(resized, __progress);
+                } catch (upErr) {
+                    if (upErr && (upErr.status === 413 || /payload/i.test(String(upErr.error || '')))) {
+                        updateToast('Πολύ μεγάλη εικόνα… κάνω extra συμπίεση', { iconClass: 'fas fa-sync-alt fa-spin text-xl' });
+                        const resized2 = await vcResizeImageFile(file, { maxSide: 1400, quality: 0.78, targetBytes: 1200000 });
+                        updateToast('Ανέβασμα εικόνας… 0%', { iconClass: 'fas fa-cloud-upload-alt text-xl' });
+                        url = await uploadImageToServer(resized2, __progress);
+                    } else {
+                        throw upErr;
+                    }
+                }
 
                 hideToast();
 
@@ -1976,7 +2037,14 @@ document.addEventListener('drop', __vcGuardFileDrop, true);
             } catch (e) {
                 console.error(e);
                 hideToast();
-                showToast('Σφάλμα στο upload εικόνας. Δοκιμάστε άλλη εικόνα.', { iconClass: 'fas fa-exclamation-triangle text-xl' });
+                const st = e && e.status;
+                 if (st === 401 || st === 403) {
+                     showToast('Η σύνδεση admin έληξε. Κάνε logout/login ξανά.', { iconClass: 'fas fa-exclamation-triangle text-xl' });
+                 } else if (st === 413) {
+                     showToast('Ο server έκοψε την εικόνα ως πολύ μεγάλη. Δοκίμασε ξανά (θα τη συμπιέσω περισσότερο).', { iconClass: 'fas fa-exclamation-triangle text-xl' });
+                 } else {
+                     showToast('Σφάλμα στο upload εικόνας. Δοκίμασε άλλη εικόνα.', { iconClass: 'fas fa-exclamation-triangle text-xl' });
+                 }
             }
         }
 
