@@ -1166,39 +1166,37 @@
             const resp = await fetch('/api/gemini/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                cache: 'no-store',
                 body: JSON.stringify(payload)
             });
             if (!resp.ok) {
-                const err = await resp.json().catch(() => ({}));
-                throw new Error(err?.error || `Σφάλμα server (generate): ${resp.status}`);
+                const errText = await resp.text().catch(() => '');
+                let err = {};
+                try { err = errText ? JSON.parse(errText) : {}; } catch {}
+                throw new Error(err?.error || err?.message || `Σφάλμα server (generate): ${resp.status}`);
             }
             return await resp.json();
-        }
-        // ==========================================================
+        }// ==========================================================
 
         async function callGeminiGenerate({ key, model, body }) {
-            // Preferred path: your own backend proxy (no API key exposure in browser)
+            // In production we use the server proxy so the API key stays on the server.
             if (window.USE_SERVER_AI) {
-                try {
-                    const cleanModel = (model || 'gemini-2.5-flash').replace(/^models\//, '');
-                    return await serverGenerateContent({ model: cleanModel, body });
-                } catch (e) {
-                    // If the proxy endpoint isn't available or fails, we can fall back to direct mode (if a key exists).
-                    console.warn('Server AI proxy failed, falling back to direct Gemini:', e);
-                }
+                // Keep model as plain name (e.g. "gemini-2.5-flash") for the proxy.
+                const cleanModel = (model || 'gemini-2.5-flash').replace(/^models\//, '');
+                return await serverGenerateContent({ model: cleanModel, body });
             }
 
-            // Fallback: direct Google call (requires a key saved in Admin settings)
-            const fallbackKey = (key || (typeof geminiKey !== 'undefined' ? geminiKey : '') || localStorage.getItem('vitro_gemini_key') || '').trim();
-            if (!fallbackKey) {
-                throw new Error('Δεν υπάρχει Gemini API key. Βάλτο στις Ρυθμίσεις Admin (Gemini).');
+            // Direct mode (only if you intentionally run without server proxy)
+            const directKey = (key || (typeof geminiKey !== 'undefined' ? geminiKey : '') || localStorage.getItem('vitro_gemini_key') || '').trim();
+            if (!directKey) {
+                throw new Error('Δεν υπάρχει Gemini API key. Βάλτο στις Ρυθμίσεις Admin (Gemini) ή ενεργοποίησε server proxy.');
             }
 
-            // Accept both "gemini-2.5-flash" and "models/gemini-2.5-flash"
             const modelPath = (model || (typeof geminiModel !== 'undefined' ? geminiModel : '') || 'gemini-2.5-flash').trim();
             const fullModel = modelPath.startsWith('models/') ? modelPath : `models/${modelPath}`;
 
-            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/${fullModel}:generateContent?key=${encodeURIComponent(fallbackKey)}`, {
+            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/${fullModel}:generateContent?key=${encodeURIComponent(directKey)}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
@@ -1209,9 +1207,7 @@
                 throw new Error(err?.error?.message || `Σφάλμα Google (generate): ${resp.status}`);
             }
             return await resp.json();
-        }
-
-        function showToast(message) {
+        }function showToast(message) {
             const toast = document.getElementById('toast');
             const msgElement = document.getElementById('toast-message');
             msgElement.textContent = message;
@@ -1262,14 +1258,74 @@
             }
         }
 
+
+        // --- AI helper: rate-limit / quota friendly handling ---
+        function _vcParseRetrySeconds(msg) {
+            const m = String(msg || '').match(/retry in\s+([0-9.]+)s/i);
+            if (m && m[1]) {
+                const v = parseFloat(m[1]);
+                return Number.isFinite(v) ? v : null;
+            }
+            return null;
+        }
+
+        function _vcSetBtnCooldown(btn, seconds) {
+            if (!btn) return;
+            const total = Math.max(1, Math.ceil(Number(seconds) || 1));
+            if (!btn.dataset._label) btn.dataset._label = btn.innerHTML;
+
+            // Clear any existing cooldown timer
+            if (btn.dataset._cooldownTimer) {
+                try { clearInterval(Number(btn.dataset._cooldownTimer)); } catch {}
+                delete btn.dataset._cooldownTimer;
+            }
+
+            btn.dataset._cooldown = '1';
+            btn.disabled = true;
+            btn.classList.add('opacity-60', 'cursor-not-allowed');
+
+            let remaining = total;
+            btn.innerHTML = `⏳ Περίμενε ${remaining}s`;
+
+            const timerId = setInterval(() => {
+                remaining -= 1;
+                if (remaining <= 0) {
+                    clearInterval(timerId);
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-60', 'cursor-not-allowed');
+                    if (btn.dataset._label) btn.innerHTML = btn.dataset._label;
+                    delete btn.dataset._cooldown;
+                    delete btn.dataset._cooldownTimer;
+                    return;
+                }
+                btn.innerHTML = `⏳ Περίμενε ${remaining}s`;
+            }, 1000);
+
+            btn.dataset._cooldownTimer = String(timerId);
+        }
         async function _vcGeminiJson(prompt, { model = 'gemini-2.5-flash', maxOutputTokens = 1024 } = {}) {
             const body = {
                 contents: [{ role: "user", parts: [{ text: prompt }] }],
                 generationConfig: { temperature: 0.2, topP: 0.95, maxOutputTokens }
             };
-            const resp = await callGeminiGenerate({ model, body });
-            const text = _vcExtractGeminiText(resp);
-            return _vcParseJsonLoose(text);
+
+            try {
+                const resp = await callGeminiGenerate({ model, body });
+                const text = _vcExtractGeminiText(resp);
+                return _vcParseJsonLoose(text);
+            } catch (e) {
+                const msg = String(e?.message || e || '');
+
+                // Quota / rate-limit handling (common on free tier)
+                if (/quota|resource exhausted|rate limit/i.test(msg)) {
+                    const retry = _vcParseRetrySeconds(msg);
+                    const seconds = Math.max(1, Math.ceil(Number(retry) || 60));
+                    const err = new Error(`Έφτασες το όριο αιτημάτων του Gemini (free tier). Περίμενε ${seconds}s και ξαναδοκίμασε ή βάλε billing για μεγαλύτερο όριο.`);
+                    err.retrySeconds = seconds;
+                    throw err;
+                }
+                throw e;
+            }
         }
 
         async function autoTranslateProductToEn() {
@@ -1291,9 +1347,10 @@ Greek product description: [[[${descEl}]]]`;
                 if (out?.desc_en) document.getElementById('prod-desc-en').value = String(out.desc_en).trim();
                 showToast('Έγινε μετάφραση στα Αγγλικά (Product).');
             } catch (e) {
+                if (e && e.retrySeconds) { _vcSetBtnCooldown(btn, e.retrySeconds); }
                 showToast('Σφάλμα μετάφρασης: ' + String(e?.message || e));
             } finally {
-                _vcSetBtnBusy(btn, false);
+                if (!(btn && btn.dataset._cooldown === '1')) { _vcSetBtnBusy(btn, false); }
             }
         }
 
@@ -1322,9 +1379,10 @@ Greek HTML content: [[[${contentEl}]]]`;
                 if (out?.content_en) document.getElementById('blog-content-en').value = String(out.content_en).trim();
                 showToast('Έγινε μετάφραση στα Αγγλικά (Blog).');
             } catch (e) {
+                if (e && e.retrySeconds) { _vcSetBtnCooldown(btn, e.retrySeconds); }
                 showToast('Σφάλμα μετάφρασης: ' + String(e?.message || e));
             } finally {
-                _vcSetBtnBusy(btn, false);
+                if (!(btn && btn.dataset._cooldown === '1')) { _vcSetBtnBusy(btn, false); }
             }
         }
         // ===============================================
