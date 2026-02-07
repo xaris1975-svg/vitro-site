@@ -374,79 +374,6 @@
         </div>
     </div>
 
-    <!-- PRODUCT DETAILS MODAL (Shop-like) -->
-    <div id="product-details-modal" class="fixed inset-0 z-[120] hidden flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeProductDetails()"></div>
-
-        <div class="relative w-full max-w-5xl bg-[#151515] border border-amber/20 rounded-2xl shadow-[0_0_60px_rgba(251,192,45,0.15)] overflow-hidden">
-            <div class="flex items-center justify-between px-5 py-4 border-b border-white/10">
-                <button id="pd-back-btn" onclick="closeProductDetails()" class="text-sm font-bold text-amber hover:text-white transition flex items-center gap-2">
-                    <i class="fas fa-arrow-left"></i>
-                    <span id="pd-back-text">Επιστροφή στα προϊόντα</span>
-                </button>
-                <button onclick="closeProductDetails()" class="text-gray-400 hover:text-amber transition text-2xl" aria-label="Close">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-
-            <div id="product-details-scroll" class="max-h-[85vh] overflow-y-auto">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-                    <!-- IMAGE -->
-                    <div class="md:sticky md:top-4">
-                        <div class="rounded-xl overflow-hidden border border-white/10 bg-black/30 group">
-                            <img id="product-details-image" src="" alt="" class="w-full h-[360px] md:h-[520px] object-cover transition-transform duration-300 ease-out group-hover:scale-110">
-                        </div>
-                        <p class="text-xs text-gray-500 mt-3" id="pd-zoom-hint">Περάστε τον κέρσορα πάνω στην εικόνα για ζουμ.</p>
-                    </div>
-
-                    <!-- DETAILS -->
-                    <div>
-                        <div class="flex items-start justify-between gap-4">
-                            <div>
-                                <h2 id="product-details-title" class="text-2xl md:text-3xl font-serif font-bold text-white leading-tight">—</h2>
-                                <p class="text-sm text-gray-400 mt-2" id="product-details-category-line">
-                                    <span class="font-bold text-gray-300" id="pd-label-category">Κατηγορία:</span>
-                                    <span id="product-details-category" class="text-gray-300">—</span>
-                                </p>
-                                <p class="text-sm mt-1" id="product-details-stock-line">
-                                    <span class="font-bold text-gray-300" id="pd-label-stock">Διαθεσιμότητα:</span>
-                                    <span id="product-details-stock" class="ml-1">—</span>
-                                </p>
-                            </div>
-
-                            <div class="text-right">
-                                <div id="product-details-price" class="text-amber font-serif font-bold text-2xl md:text-3xl">—</div>
-                                <div id="product-details-discount" class="mt-2 hidden">
-                                    <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-bold bg-ruby/20 text-ruby border border-ruby/30" id="product-details-discount-badge">-0%</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-6 border-t border-white/10 pt-6">
-                            <h3 class="text-sm font-bold uppercase tracking-wider text-gray-300" id="pd-label-desc">Περιγραφή</h3>
-                            <p id="product-details-desc" class="text-gray-300 mt-3 leading-relaxed whitespace-pre-line">—</p>
-                        </div>
-
-                        <div class="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                            <button id="pd-add-to-cart" disabled class="w-full sm:w-auto px-5 py-3 rounded-xl font-bold bg-white/5 text-gray-400 border border-white/10 cursor-not-allowed">
-                                <span id="pd-add-text">Προσθήκη στο καλάθι</span>
-                                <span class="text-xs ml-2 opacity-70" id="pd-soon-text">(σύντομα)</span>
-                            </button>
-                            <div class="text-xs text-gray-500 leading-relaxed">
-                                <span id="pd-note">Σύντομα θα προστεθούν κατηγορίες και καλάθι αγορών.</span>
-                            </div>
-                        </div>
-
-                        <div class="mt-6 text-xs text-gray-600">
-                            <span class="font-bold text-gray-500" id="pd-label-code">Κωδικός:</span>
-                            <span id="product-details-code">—</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- UNDER CONSTRUCTION VIEW -->
     <div id="view-maintenance" class="hidden fixed inset-0 z-[200] maintenance-bg flex flex-col justify-between text-center">
         <div class="flex-grow flex flex-col items-center justify-center px-4">
@@ -670,9 +597,9 @@
                         </svg>
                     </div>
                     <div>
-                        <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">Σχετικά με τη <span class="text-amber">Vitro Canvas</span></h2>
+                        <h2 id="about-title" class="text-3xl md:text-4xl font-bold text-white mb-6">Σχετικά με τη <span class="text-amber">Vitro Canvas</span></h2>
                         <div id="editable-about-text">
-                            <p class="text-gray-400 mb-6 leading-relaxed">
+                            <p id="about-p1" class="text-gray-400 mb-6 leading-relaxed">
                                 Το εργαστήριό μας στη Νέα Κερασιά συνδυάζει την παραδοσιακή δεξιότητα με τη σύγχρονη αισθητική. Ονομάζομαι <strong class="text-white">Χάρης Ελευθερίου</strong> και στόχος μου είναι η παροχή λύσεων γυαλιού υψηλής αισθητικής για ιδιώτες και επαγγελματίες.
                             </p>
                             <p class="text-gray-400 mb-8 leading-relaxed">
@@ -682,15 +609,15 @@
                         <div class="grid grid-cols-3 gap-4 text-center">
                             <div class="p-4 border border-white/10 rounded-lg">
                                 <i class="fas fa-hand-holding-heart text-ruby text-2xl mb-2"></i>
-                                <h4 class="font-bold text-sm">Χειροποίητο</h4>
+                                <h4 id="about-badge-1" class="font-bold text-sm">Χειροποίητο</h4>
                             </div>
                             <div class="p-4 border border-white/10 rounded-lg">
                                 <i class="fas fa-history text-royal text-2xl mb-2"></i>
-                                <h4 class="font-bold text-sm">Διαχρονικό</h4>
+                                <h4 id="about-badge-2" class="font-bold text-sm">Διαχρονικό</h4>
                             </div>
                             <div class="p-4 border border-white/10 rounded-lg">
                                 <i class="fas fa-tools text-emerald text-2xl mb-2"></i>
-                                <h4 class="font-bold text-sm">Custom</h4>
+                                <h4 id="about-badge-3" class="font-bold text-sm">Custom</h4>
                             </div>
                         </div>
                     </div>
@@ -837,6 +764,12 @@
     <div id="view-catalog" class="hidden pt-32 pb-20 min-h-screen bg-lead">
         <!-- ... existing catalog code ... -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Back to Home (Catalog) -->
+            <button type="button" onclick="showLanding(true)" class="mb-6 flex items-center text-amber hover:text-white transition font-bold" id="catalog-back-home">
+              <i class="fas fa-arrow-left mr-2"></i>
+              <span id="catalog-back-home-text">Επιστροφή στην Αρχική</span>
+            </button>
+
             <div class="flex justify-between items-center mb-10">
                 <div>
                     <h2 id="catalog-title" class="text-3xl md:text-4xl font-bold text-white">Κατάλογος Προϊόντων</h2>
@@ -856,6 +789,12 @@
     <div id="view-blog" class="hidden pt-32 pb-20 min-h-screen bg-lead">
         <!-- ... existing blog list code ... -->
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Back to Home (Blog list) -->
+            <button type="button" onclick="showLanding(true)" class="mb-6 flex items-center text-amber hover:text-white transition font-bold" id="blog-back-home">
+              <i class="fas fa-arrow-left mr-2"></i>
+              <span id="blog-back-home-text">Επιστροφή στην Αρχική</span>
+            </button>
+
             <div class="flex justify-between items-end mb-16">
                 <div class="text-center w-full relative">
                     <h2 id="blog-section-title" class="text-3xl md:text-4xl font-bold text-white mb-4">Το Blog μας</h2>
@@ -877,7 +816,7 @@
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Back Button -->
             <button onclick="showBlog(event)" class="mb-8 flex items-center text-amber hover:text-white transition font-bold">
-                <i class="fas fa-arrow-left mr-2"></i> Πίσω στο Blog
+                <i class="fas fa-arrow-left mr-2"></i> <span id="blog-back-text">Πίσω στο Blog</span>
             </button>
 
             <!-- Article Content (Populated by JS) -->
@@ -1587,7 +1526,13 @@ let isAdmin = !__IS_PUBLIC_HOST && (localStorage.getItem('vitro_isAdmin') === 't
 
         // --- DRAG AND DROP LOGIC ---
         function initDragAndDrop() {
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            // Prevent browsers (Safari especially) from navigating to file:// when dropping files anywhere
+            // Cancel default behavior early (capture phase) but DO NOT stop propagation, so drop handlers still work.
+            const __vcBlockFileNav = (e) => { try { e.preventDefault(); } catch(_) {} };
+            window.addEventListener("dragover", __vcBlockFileNav, true);
+            window.addEventListener("drop", __vcBlockFileNav, true);
+
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
                 document.body.addEventListener(eventName, preventDefaults, false);
             });
             function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
@@ -2524,7 +2469,7 @@ if (!response.ok) {
                 }
 
                 grid.innerHTML += `
-                    <div class="glass-card rounded-xl overflow-hidden group flex flex-col h-full relative cursor-pointer" role="button" tabindex="0" onclick="openProductDetails(${prod.id})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openProductDetails(${prod.id});}">
+                    <div class="glass-card rounded-xl overflow-hidden group flex flex-col h-full relative">
                         ${discountBadge}
                         <div class="h-64 overflow-hidden relative">
                             <img src="${prod.image}" alt="${(window.VC_LANG?window.VC_LANG.pick(prod.name):prod.name)}" onclick="handleImageClick(this, 'product', ${prod.id})" class="admin-editable-img w-full h-full object-cover group-hover:scale-110 transition duration-500" data-type="product" data-id="${prod.id}">
@@ -2537,7 +2482,7 @@ if (!response.ok) {
                                 ${priceDisplay}
                                 <div class="flex items-center">
                                     ${adminEditBtn}
-                                    <button onclick="event.stopPropagation(); openModal()" class="text-white hover:text-amber transition"><i class="fas fa-shopping-bag"></i></button>
+                                    <button onclick="openModal()" class="text-white hover:text-amber transition"><i class="fas fa-shopping-bag"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -2546,139 +2491,6 @@ if (!response.ok) {
             enableImageDropZones(); 
         }
 
-
-        // --- PRODUCT DETAILS MODAL (Shop-like) ---
-        function getCategoryLabel(category, lang) {
-            const c = (category || '').toString().toLowerCase();
-            const map = {
-                architectural: { el: 'Αρχιτεκτονικό Βιτρό', en: 'Architectural Stained Glass' },
-                jewelry:       { el: 'Κοσμήματα',           en: 'Jewelry' },
-                lighting:      { el: 'Φωτιστικά',           en: 'Lighting' },
-                decor:         { el: 'Διακόσμηση',          en: 'Decor' },
-                'stained-glass': { el: 'Βιτρό',             en: 'Stained Glass' }
-            };
-            const hit = map[c];
-            if (hit) return (lang === 'en' ? hit.en : hit.el);
-            // Fallback: show the raw value (future categories will still display)
-            return category || '';
-        }
-
-        function formatPriceParts(rawPrice) {
-            const s = (rawPrice ?? '').toString().trim();
-            // Try to parse number even if it has € or spaces
-            const clean = s.replace(/[€\s]/g, '').replace(',', '.');
-            const n = parseFloat(clean);
-            if (isNaN(n)) return { isNumber: false, text: s };
-            return { isNumber: true, value: n };
-        }
-
-        function productStockText(code, lang) {
-            const dict = (window.VC_I18N && (window.VC_I18N[lang] || window.VC_I18N.el)) || {};
-            if (code === 'in-stock') return dict.stock_in || (lang === 'en' ? 'In stock' : 'Άμεσα Διαθέσιμο');
-            if (code === 'sold') return dict.stock_sold || (lang === 'en' ? 'Sold out' : 'Εξαντλήθηκε');
-            return dict.stock_made || (lang === 'en' ? 'Made to order' : 'Κατόπιν Παραγγελίας');
-        }
-
-        function productStockClass(code) {
-            return code === 'in-stock' ? 'text-emerald' : (code === 'sold' ? 'text-ruby' : 'text-amber');
-        }
-
-        function updateProductDetailsModal() {
-            if (typeof window.__currentProductId === 'undefined') return;
-            const modal = document.getElementById('product-details-modal');
-            if (!modal || modal.classList.contains('hidden')) return;
-            openProductDetails(window.__currentProductId, { noShow: true });
-        }
-
-        function openProductDetails(productId, opts = {}) {
-            window.__currentProductId = productId;
-            const prod = (typeof products !== 'undefined') ? products.find(p => p.id === productId) : null;
-            if (!prod) return;
-
-            const lang = (window.VC_LANG && window.VC_LANG.get) ? window.VC_LANG.get() : 'el';
-            const dict = (window.VC_I18N && (window.VC_I18N[lang] || window.VC_I18N.el)) || {};
-
-            // Labels (localized)
-            const setTxt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-            setTxt('pd-back-text', dict.pd_back || (lang === 'en' ? 'Back to products' : 'Επιστροφή στα προϊόντα'));
-            setTxt('pd-zoom-hint', dict.pd_zoom_hint || (lang === 'en' ? 'Hover the image to zoom.' : 'Περάστε τον κέρσορα πάνω στην εικόνα για ζουμ.'));
-            setTxt('pd-label-category', dict.pd_category || (lang === 'en' ? 'Category:' : 'Κατηγορία:'));
-            setTxt('pd-label-stock', dict.pd_stock || (lang === 'en' ? 'Availability:' : 'Διαθεσιμότητα:'));
-            setTxt('pd-label-desc', dict.pd_desc || (lang === 'en' ? 'Description' : 'Περιγραφή'));
-            setTxt('pd-add-text', dict.pd_add || (lang === 'en' ? 'Add to cart' : 'Προσθήκη στο καλάθι'));
-            setTxt('pd-soon-text', dict.pd_soon || (lang === 'en' ? '(soon)' : '(σύντομα)'));
-            setTxt('pd-note', dict.pd_note || (lang === 'en' ? 'Categories and shopping cart are coming soon.' : 'Σύντομα θα προστεθούν κατηγορίες και καλάθι αγορών.'));
-            setTxt('pd-label-code', dict.pd_code || (lang === 'en' ? 'Code:' : 'Κωδικός:'));
-
-            // Dynamic product content (localized fields)
-            const pick = (v) => (window.VC_LANG && window.VC_LANG.pick) ? window.VC_LANG.pick(v) : (v ?? '');
-            const title = pick(prod.name);
-            const desc = pick(prod.desc);
-
-            const img = document.getElementById('product-details-image');
-            if (img) {
-                img.src = prod.image || '';
-                img.alt = title || 'Product';
-            }
-
-            setTxt('product-details-title', title || '');
-            setTxt('product-details-desc', desc || '');
-            setTxt('product-details-category', getCategoryLabel(prod.category, lang) || '');
-            setTxt('product-details-code', String(prod.id));
-
-            const stockEl = document.getElementById('product-details-stock');
-            if (stockEl) {
-                stockEl.textContent = productStockText(prod.stock, lang);
-                stockEl.className = 'ml-1 font-bold ' + productStockClass(prod.stock);
-            }
-
-            // Price + discount
-            const priceEl = document.getElementById('product-details-price');
-            const discWrap = document.getElementById('product-details-discount');
-            const discBadge = document.getElementById('product-details-discount-badge');
-
-            const parts = formatPriceParts(prod.price);
-            if (!parts.isNumber) {
-                if (priceEl) priceEl.textContent = parts.text || '';
-                if (discWrap) discWrap.classList.add('hidden');
-            } else {
-                const base = parts.value;
-                const discount = parseFloat(prod.discount || 0) || 0;
-                if (discount > 0) {
-                    const final = (base * (1 - discount / 100));
-                    if (priceEl) {
-                        priceEl.innerHTML = `
-                            <div class="flex flex-col items-end">
-                                <span class="text-xs text-gray-500 line-through decoration-red-500/50">€${base.toFixed(2)}</span>
-                                <span>€${final.toFixed(2)}</span>
-                            </div>
-                        `;
-                    }
-                    if (discBadge) discBadge.textContent = `-${discount}%`;
-                    if (discWrap) discWrap.classList.remove('hidden');
-                } else {
-                    if (priceEl) priceEl.textContent = `€${base.toFixed(2)}`;
-                    if (discWrap) discWrap.classList.add('hidden');
-                }
-            }
-
-            if (!opts.noShow) {
-                const modal = document.getElementById('product-details-modal');
-                if (modal) modal.classList.remove('hidden');
-                document.body.classList.add('overflow-hidden');
-            }
-        }
-
-        function closeProductDetails() {
-            const modal = document.getElementById('product-details-modal');
-            if (modal) modal.classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-        }
-
-        // Close on ESC
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') closeProductDetails();
-        });
         // PROMO TEXT LOGIC
         function updatePromoText() {
             const promo = document.getElementById('hero-promo-text');
@@ -3078,6 +2890,17 @@ async function submitContactForm(form, opts = {}) {
       nav_blog: 'Blog',
       nav_workshops: 'Workshops',
       nav_contact: 'Επικοινωνία',
+    hero_title_html: `Η Τέχνη του <span class="glowing-letter">Φ</span><span class="glowing-letter">ω</span><span class="glowing-letter">τ</span><span class="glowing-letter">ό</span><span class="glowing-letter">ς</span>`,
+    hero_desc: 'Χειροποίητα βιτρό, μοναδικά κοσμήματα και αρχιτεκτονικές λύσεις που μεταμορφώνουν τον χώρο σας.',
+    about_title_html: `Σχετικά με τη <span class="text-amber">Vitro Canvas</span>`,
+    about_p1: 'Το εργαστήριό μας στη Νέα Κερασιά συνδυάζει την παραδοσιακή δεξιότητα με τη σύγχρονη αισθητική. Ονομάζομαι Χάρης Ελευθερίου και στόχος μου είναι η παροχή λύσεων γυαλιού υψηλής αισθητικής για ιδιώτες και επαγγελματίες.',
+    about_p2: 'Από την κλασική τεχνική μολύβδου μέχρι τη λεπτεπίλεπτη μέθοδο Tiffany, κάθε έργο είναι μοναδικό, σχεδιασμένο για να παίζει με το φως και να δημιουργεί ατμόσφαιρα.',
+    about_badge_handmade: 'Χειροποίητο',
+    about_badge_timeless: 'Διαχρονικό',
+    about_badge_custom: 'Custom',
+    back_home: 'Επιστροφή στην Αρχική',
+    back_to_blog: 'Πίσω στο Blog',
+
 
       services_title: 'Δημιουργίες & Υπηρεσίες',
       service1_title: 'Αρχιτεκτονικό Βιτρό',
@@ -3149,6 +2972,17 @@ async function submitContactForm(form, opts = {}) {
       nav_blog: 'Blog',
       nav_workshops: 'Workshops',
       nav_contact: 'Contact',
+    hero_title_html: `The Art of <span class="glowing-letter">L</span><span class="glowing-letter">i</span><span class="glowing-letter">g</span><span class="glowing-letter">h</span><span class="glowing-letter">t</span>`,
+    hero_desc: 'Handmade stained glass, unique jewelry and architectural solutions that transform your space.',
+    about_title_html: `About <span class="text-amber">Vitro Canvas</span>`,
+    about_p1: 'Our studio in Nea Kerasia blends traditional craftsmanship with modern aesthetics. My name is Χάρης Ελευθερίου and my goal is to offer high-aesthetic glass solutions for individuals and professionals.',
+    about_p2: 'From classic lead came to the delicate Tiffany technique, every piece is unique, designed to play with light and create atmosphere.',
+    about_badge_handmade: 'Handcrafted',
+    about_badge_timeless: 'Timeless',
+    about_badge_custom: 'Custom',
+    back_home: 'Back to Home',
+    back_to_blog: 'Back to Blog',
+
 
       services_title: 'Creations & Services',
       service1_title: 'Architectural Stained Glass',
@@ -3370,14 +3204,6 @@ async function submitContactForm(form, opts = {}) {
       const single = document.getElementById('view-blog-single');
       if (single && !single.classList.contains('hidden') && typeof window.__currentBlogId !== 'undefined') {
         if (typeof openBlogPost === 'function') openBlogPost(window.__currentBlogId);
-      }
-    } catch(e) {}
-
-    // If product details modal is open, refresh it so it switches language too
-    try {
-      const pd = document.getElementById('product-details-modal');
-      if (pd && !pd.classList.contains('hidden') && typeof window.__currentProductId !== 'undefined') {
-        if (typeof updateProductDetailsModal === 'function') updateProductDetailsModal();
       }
     } catch(e) {}
   }
