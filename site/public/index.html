@@ -168,6 +168,11 @@
             transition: all 0.1s;
         }
 
+        /* Modal scroll (Safari-friendly) */
+        .modal-scroll {
+            -webkit-overflow-scrolling: touch;
+        }
+
         /* Statistics Bars */
         .stat-bar {
             transition: width 1s ease-out;
@@ -307,7 +312,7 @@
     <!-- ADD/EDIT PRODUCT MODAL -->
     <div id="add-product-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/90 backdrop-blur-md transition-opacity" onclick="closeAddProductModal()"></div>
-        <div class="relative bg-[#1a1a1a] border border-amber/30 p-8 rounded-2xl w-full max-w-2xl shadow-[0_0_50px_rgba(251,192,45,0.2)]">
+        <div class="relative bg-[#1a1a1a] border border-amber/30 p-8 rounded-2xl w-full max-w-2xl shadow-[0_0_50px_rgba(251,192,45,0.2)] modal-scroll max-h-[90vh] overflow-y-auto">
             <button onclick="closeAddProductModal()" class="absolute top-4 right-4 text-gray-400 hover:text-amber transition text-2xl"><i class="fas fa-times"></i></button>
             <div class="text-center mb-6">
                 <i class="fas fa-plus-circle text-amber text-4xl mb-3"></i>
@@ -330,6 +335,16 @@
                     <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Έκπτωση (%)</label><input id="prod-discount" type="number" min="0" max="100" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="0"></div>
                     
                     <div class="col-span-1 md:col-span-2"><label class="block text-gray-400 text-xs uppercase font-bold mb-1">URL Εικόνας</label><input id="prod-image" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition" placeholder="https://example.com/image.jpg"></div>
+
+<div class="col-span-1 md:col-span-2">
+  <label class="block text-gray-400 text-xs uppercase font-bold mb-1">Ανέβασμα Εικόνας (Drag & Drop)</label>
+  <div id="prod-image-drop" class="w-full bg-black/30 border border-amber/30 rounded-lg p-4 text-center cursor-pointer hover:bg-black/40 transition">
+    <input id="prod-image-file" type="file" accept="image/*" class="hidden">
+    <div class="text-gray-400 text-sm">Σύρε εδώ μια εικόνα ή κάνε click για επιλογή αρχείου</div>
+    <img id="prod-image-preview" src="" alt="" class="hidden mt-4 w-full max-h-56 object-contain rounded-lg border border-white/10 bg-black/20">
+  </div>
+</div>
+
                     <div class="col-span-1 md:col-span-2"><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Περιγραφή (EL)</label><textarea id="prod-desc" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition h-24"></textarea></div>
                     <div class="col-span-1 md:col-span-2"><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Description (EN)</label><textarea id="prod-desc-en" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-amber transition h-24" placeholder="English description"></textarea></div>
                 </div>
@@ -341,7 +356,7 @@
     <!-- ADD BLOG POST MODAL -->
     <div id="add-blog-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/90 backdrop-blur-md transition-opacity" onclick="closeAddBlogModal()"></div>
-        <div class="relative bg-[#1a1a1a] border border-emerald/30 p-8 rounded-2xl w-full max-w-3xl shadow-[0_0_50px_rgba(27,94,32,0.2)]">
+        <div class="relative bg-[#1a1a1a] border border-emerald/30 p-8 rounded-2xl w-full max-w-3xl shadow-[0_0_50px_rgba(27,94,32,0.2)] modal-scroll max-h-[90vh] overflow-y-auto">
             <button onclick="closeAddBlogModal()" class="absolute top-4 right-4 text-gray-400 hover:text-emerald transition text-2xl"><i class="fas fa-times"></i></button>
             <div class="text-center mb-6">
                 <i class="fas fa-pen-nib text-emerald text-4xl mb-3"></i>
@@ -358,6 +373,16 @@
                         <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Ημερομηνία (EL)</label><input id="blog-date" type="text" placeholder="π.χ. 25 Μαρ 2026" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition"></div>
                         <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">Date (EN)</label><input id="blog-date-en" type="text" placeholder="e.g. Mar 25, 2026" class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition"></div>
                         <div><label class="block text-gray-400 text-xs uppercase font-bold mb-1">URL Εικόνας</label><input id="blog-image" type="text" required class="w-full bg-black/40 border border-gray-700 rounded-lg py-2 px-4 text-white focus:outline-none focus:border-emerald transition" placeholder="https://..."></div>
+
+<div class="col-span-1 md:col-span-2">
+  <label class="block text-gray-400 text-xs uppercase font-bold mb-1">Ανέβασμα Εικόνας (Drag & Drop)</label>
+  <div id="blog-image-drop" class="w-full bg-black/30 border border-emerald/30 rounded-lg p-4 text-center cursor-pointer hover:bg-black/40 transition">
+    <input id="blog-image-file" type="file" accept="image/*" class="hidden">
+    <div class="text-gray-400 text-sm">Σύρε εδώ μια εικόνα ή κάνε click για επιλογή αρχείου</div>
+    <img id="blog-image-preview" src="" alt="" class="hidden mt-4 w-full max-h-56 object-contain rounded-lg border border-white/10 bg-black/20">
+  </div>
+</div>
+
                     </div>
                     <div class="flex items-center justify-end mt-1">
                         <button type="button" id="btn-blog-auto-en" onclick="autoTranslateBlogToEn()" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider px-3 py-2 rounded-full border border-emerald/40 bg-emerald/10 text-emerald hover:bg-emerald/20 transition">
@@ -602,7 +627,7 @@
                             <p id="about-p1" class="text-gray-400 mb-6 leading-relaxed">
                                 Το εργαστήριό μας στη Νέα Κερασιά συνδυάζει την παραδοσιακή δεξιότητα με τη σύγχρονη αισθητική. Ονομάζομαι <strong class="text-white">Χάρης Ελευθερίου</strong> και στόχος μου είναι η παροχή λύσεων γυαλιού υψηλής αισθητικής για ιδιώτες και επαγγελματίες.
                             </p>
-                            <p class="text-gray-400 mb-8 leading-relaxed">
+                            <p id="about-p2" class="text-gray-400 mb-8 leading-relaxed">
                                 Από την κλασική τεχνική μολύβδου μέχρι την λεπτεπίλεπτη μέθοδο Tiffany, κάθε έργο είναι μοναδικό, σχεδιασμένο για να παίζει με το φως και να δημιουργεί ατμόσφαιρα.
                             </p>
                         </div>
@@ -781,6 +806,43 @@
             <!-- Products Grid -->
             <div id="catalog-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 <!-- Initial Products will be rendered here by JS -->
+            </div>
+
+
+            <!-- Product Details Box (opens when a product is clicked) -->
+            <div id="product-details-box" class="hidden mt-10 glass-card rounded-2xl p-6 md:p-8 border border-amber/20">
+                <div class="flex items-start justify-between gap-4 mb-6">
+                    <div>
+                        <h3 id="pd-name" class="text-2xl md:text-3xl font-serif font-bold text-white"></h3>
+                        <div class="mt-3 flex flex-wrap items-center gap-3 text-sm">
+                            <span id="pd-price" class="text-amber font-bold"></span>
+                            <span id="pd-stock" class="px-3 py-1 rounded-full bg-black/40 border border-white/10 text-gray-200"></span>
+                            <span id="pd-category" class="px-3 py-1 rounded-full bg-black/40 border border-white/10 text-gray-400"></span>
+                        </div>
+                    </div>
+                    <button type="button" onclick="closeProductDetails()" class="text-gray-400 hover:text-amber transition text-2xl leading-none" title="Κλείσιμο">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <img id="pd-image" src="" alt="" class="w-full max-h-[420px] object-contain rounded-xl border border-white/10 bg-black/20">
+                    </div>
+                    <div class="flex flex-col">
+                        <h4 id="pd-desc-label" class="text-white font-bold mb-2">Περιγραφή</h4>
+                        <div id="pd-desc" class="text-gray-300 leading-relaxed text-sm md:text-base"></div>
+
+                        <div class="mt-6 pt-6 border-t border-white/10 flex flex-col gap-3">
+                            <button type="button" onclick="openQuoteForCurrentProduct()" class="w-full bg-amber text-lead font-bold py-3 rounded-lg hover:bg-white transition duration-300">
+                                <span id="pd-quote-btn-text">Request a Quote</span>
+                            </button>
+                            <button type="button" onclick="scrollToCatalogGrid()" class="w-full bg-black/40 text-white font-bold py-3 rounded-lg border border-white/10 hover:bg-white/5 transition duration-300">
+                                <span id="pd-back-btn-text">Επιστροφή στα Προϊόντα</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1263,6 +1325,7 @@ Greek HTML content: [[[${contentEl}]]]`;
             } finally {
                 _vcSetBtnBusy(btn, false);
             }
+            try { const __img = document.getElementById('blog-image'); if (__img) __img.dispatchEvent(new Event('input')); } catch(e) {}
         }
         // ===============================================
 
@@ -1472,6 +1535,84 @@ let isAdmin = !__IS_PUBLIC_HOST && (localStorage.getItem('vitro_isAdmin') === 't
         document.addEventListener('input', () => { if (isAdmin) scheduleServerSave(); }, true);
         document.addEventListener('change', () => { if (isAdmin) scheduleServerSave(); }, true);
 
+
+        // --- MODAL IMAGE UPLOAD ZONES (Drag & Drop + Preview) ---
+        function initModalUploadZones() {
+            if (!isAdmin) return;
+            setupModalDropZone({ dropId: 'prod-image-drop', fileInputId: 'prod-image-file', previewId: 'prod-image-preview', urlInputId: 'prod-image' });
+            setupModalDropZone({ dropId: 'blog-image-drop', fileInputId: 'blog-image-file', previewId: 'blog-image-preview', urlInputId: 'blog-image' });
+        }
+
+        function setupModalDropZone({ dropId, fileInputId, previewId, urlInputId }) {
+            const drop = document.getElementById(dropId);
+            const fileInput = document.getElementById(fileInputId);
+            const preview = document.getElementById(previewId);
+            const urlInput = document.getElementById(urlInputId);
+            if (!drop || !fileInput || !preview || !urlInput) return;
+
+            const showPreviewFromUrl = (u) => {
+                const url = (u || '').trim();
+                if (!url) {
+                    preview.classList.add('hidden');
+                    preview.removeAttribute('src');
+                    return;
+                }
+                preview.src = url;
+                preview.classList.remove('hidden');
+            };
+
+            // Keep preview in sync with URL field
+            urlInput.addEventListener('input', () => showPreviewFromUrl(urlInput.value));
+
+            // Clicking the zone opens file picker
+            drop.addEventListener('click', () => fileInput.click());
+
+            // Drag visuals
+            ['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                drop.classList.add('drag-over');
+            }));
+            ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                drop.classList.remove('drag-over');
+            }));
+
+            const uploadAndSet = async (file) => {
+                if (!file) return;
+                if (!file.type || !file.type.startsWith('image/')) {
+                    showToast('Παρακαλώ επιλέξτε αρχείο εικόνας.');
+                    return;
+                }
+                try {
+                    showToast('Ανέβασμα εικόνας...');
+                    const url = await uploadImageToServer(file);
+                    urlInput.value = url;
+                    showPreviewFromUrl(url);
+                    showToast('Η εικόνα ανέβηκε!');
+                } catch (err) {
+                    console.error(err);
+                    showToast('Σφάλμα στο ανέβασμα εικόνας.');
+                }
+            };
+
+            drop.addEventListener('drop', (e) => {
+                const file = e.dataTransfer && e.dataTransfer.files ? e.dataTransfer.files[0] : null;
+                uploadAndSet(file);
+            });
+
+            fileInput.addEventListener('change', () => {
+                const file = fileInput.files && fileInput.files[0] ? fileInput.files[0] : null;
+                uploadAndSet(file);
+                try { fileInput.value = ''; } catch(_) {}
+            });
+
+            // Initial preview if url already filled
+            showPreviewFromUrl(urlInput.value);
+        }
+
+
         async function uploadImageToServer(file) {
             const fd = new FormData();
             fd.append('file', file);
@@ -1556,10 +1697,11 @@ let isAdmin = !__IS_PUBLIC_HOST && (localStorage.getItem('vitro_isAdmin') === 't
             });
         }
 
-        function highlight(e) { this.classList.add('drag-over'); }
-        function unhighlight(e) { this.classList.remove('drag-over'); }
+        function highlight(e) { try { e.preventDefault(); } catch(_) {} this.classList.add('drag-over'); }
+        function unhighlight(e) { try { e.preventDefault(); } catch(_) {} this.classList.remove('drag-over'); }
 
         function handleDrop(e) {
+            try { e.preventDefault(); e.stopPropagation(); } catch(_) {}
             const dt = e.dataTransfer;
             const files = dt.files;
             if (files.length > 0) {
@@ -2026,6 +2168,7 @@ if (!response.ok) {
                 document.getElementById('mobile-nav-logout-link').classList.remove('hidden');
                 document.body.classList.add('admin-mode');
                 enableImageDropZones();
+                initModalUploadZones();
                 checkMaintenance(); // Refresh maintenance view
                 showToast('Καλωσήρθατε! Το Drag & Drop ενεργοποιήθηκε.');
                 closeAdminLogin();
@@ -2044,6 +2187,7 @@ if (!response.ok) {
             document.getElementById('mobile-nav-logout-link').classList.remove('hidden');
             document.body.classList.add('admin-mode');
             enableImageDropZones();
+            initModalUploadZones();
         }
 
         function adminLogout(e) {
@@ -2164,6 +2308,7 @@ if (!response.ok) {
             } else {
                 title.innerText = "Νέο Προϊόν";
             }
+            try { const __img = document.getElementById('prod-image'); if (__img) __img.dispatchEvent(new Event('input')); } catch(e) {}
             modal.classList.remove('hidden'); 
         }
         function closeAddProductModal() { document.getElementById('add-product-modal').classList.add('hidden'); }
@@ -2202,6 +2347,8 @@ if (!response.ok) {
                 if (contentEl) contentEl.value = (window.VC_LANG ? window.VC_LANG.pickLang(post.content, 'el') : post.content);
                 if (contentEnEl) contentEnEl.value = (window.VC_LANG ? window.VC_LANG.pickLang(post.content, 'en') : post.content);
             }
+            try { const __img = document.getElementById('blog-image'); if (__img) __img.dispatchEvent(new Event('input')); } catch(e) {}
+
         }
         function closeAddBlogModal() { document.getElementById('add-blog-modal').classList.add('hidden'); }
 
@@ -2355,7 +2502,7 @@ if (!response.ok) {
             products.forEach(p => {
                 prodTable.innerHTML += `
                     <tr class="border-b border-white/5 hover:bg-white/5 transition">
-                        <td class="p-3"><img src="${p.image}" class="w-10 h-10 object-cover rounded"></td>
+                        <td class="p-3"><img src="${p.image}" onclick="handleImageClick(this, 'product', ${p.id})" class="admin-editable-img w-10 h-10 object-cover rounded cursor-pointer" data-type="product" data-id="${p.id}" title="Drag & Drop ή click για αλλαγή"></td>
                         <td class="p-3 font-bold text-white">${(window.VC_LANG?window.VC_LANG.pick(p.name):p.name)}</td>
                         <td class="p-3">€${p.price}</td>
                         <td class="p-3 text-red-400 font-bold">${p.discount > 0 ? '-' + p.discount + '%' : '-'}</td>
@@ -2372,13 +2519,14 @@ if (!response.ok) {
             blogPosts.forEach(p => {
                 blogTable.innerHTML += `
                     <tr class="border-b border-white/5 hover:bg-white/5 transition">
-                        <td class="p-3"><img src="${p.image}" class="w-10 h-10 object-cover rounded"></td>
+                        <td class="p-3"><img src="${p.image}" onclick="handleImageClick(this, 'blog', ${p.id})" class="admin-editable-img w-10 h-10 object-cover rounded cursor-pointer" data-type="blog" data-id="${p.id}" title="Drag & Drop ή click για αλλαγή"></td>
                         <td class="p-3 font-bold text-white">${(window.VC_LANG?window.VC_LANG.pick(p.title):p.title)}</td>
                         <td class="p-3">${(window.VC_LANG?window.VC_LANG.pick(p.date):p.date)}</td>
                         <td class="p-3 text-right"><button onclick="openAddBlogModal(true, ${p.id})" class="text-emerald hover:text-emerald-300 mr-3" title="Edit"><i class="fas fa-pen"></i></button><button onclick="deleteBlogPost(${p.id})" class="text-ruby hover:text-red-400" title="Delete"><i class="fas fa-trash"></i></button></td>
                     </tr>
                 `;
             });
+            enableImageDropZones();
         }
 
         function deleteProduct(id) { if(confirm('Είστε σίγουρος;')) { products = products.filter(p => p.id !== id); saveProducts(); showToast('Το προϊόν διαγράφηκε.'); } }
@@ -2469,10 +2617,10 @@ if (!response.ok) {
                 }
 
                 grid.innerHTML += `
-                    <div class="glass-card rounded-xl overflow-hidden group flex flex-col h-full relative">
+                    <div class="glass-card rounded-xl overflow-hidden group flex flex-col h-full relative cursor-pointer" onclick="openProductDetails(${prod.id})">
                         ${discountBadge}
                         <div class="h-64 overflow-hidden relative">
-                            <img src="${prod.image}" alt="${(window.VC_LANG?window.VC_LANG.pick(prod.name):prod.name)}" onclick="handleImageClick(this, 'product', ${prod.id})" class="admin-editable-img w-full h-full object-cover group-hover:scale-110 transition duration-500" data-type="product" data-id="${prod.id}">
+                            <img src="${prod.image}" alt="${(window.VC_LANG?window.VC_LANG.pick(prod.name):prod.name)}" onclick="if(isAdmin){event.stopPropagation(); handleImageClick(this, 'product', ${prod.id});} else {openProductDetails(${prod.id});}" class="admin-editable-img w-full h-full object-cover group-hover:scale-110 transition duration-500" data-type="product" data-id="${prod.id}">
                             <div class="absolute top-2 right-2 bg-black/70 px-2 py-1 rounded text-xs font-bold ${stockColor} pointer-events-none">${stockText}</div>
                         </div>
                         <div class="p-5 flex-grow flex flex-col">
@@ -2482,13 +2630,107 @@ if (!response.ok) {
                                 ${priceDisplay}
                                 <div class="flex items-center">
                                     ${adminEditBtn}
-                                    <button onclick="openModal()" class="text-white hover:text-amber transition"><i class="fas fa-shopping-bag"></i></button>
+                                    <button onclick="event.stopPropagation(); openModal()" class="text-white hover:text-amber transition" title="Request a Quote"><i class="fas fa-shopping-bag"></i></button>
                                 </div>
                             </div>
                         </div>
                     </div>`;
             });
             enableImageDropZones(); 
+        }
+
+
+        // --- PRODUCT DETAILS BOX (Catalog View) ---
+        function scrollToCatalogGrid() {
+            const grid = document.getElementById('catalog-grid');
+            if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function closeProductDetails() {
+            const box = document.getElementById('product-details-box');
+            if (box) box.classList.add('hidden');
+            window.__currentProductId = null;
+        }
+
+        function openProductDetails(id) {
+            const box = document.getElementById('product-details-box');
+            if (!box) return;
+
+            const prod = products.find(p => p.id === id);
+            if (!prod) return;
+
+            window.__currentProductId = id;
+
+            const lang = (window.VC_LANG && window.VC_LANG.get) ? window.VC_LANG.get() : 'el';
+            const dict = (window.VC_I18N && (window.VC_I18N[lang] || window.VC_I18N.el)) || {};
+
+            const pick = (v) => (window.VC_LANG && window.VC_LANG.pick) ? window.VC_LANG.pick(v) : (v?.el || v);
+
+            const name = pick(prod.name);
+            const desc = pick(prod.desc);
+
+            // Stock label
+            const stockText = (function(code){
+                if (code === 'in-stock') return dict.stock_in || 'Άμεσα Διαθέσιμο';
+                if (code === 'sold') return dict.stock_sold || 'Εξαντλήθηκε';
+                return dict.stock_made || 'Κατόπιν Παραγγελίας';
+            })(prod.stock);
+
+            // Price label (handles € strings)
+            const rawPrice = String(prod.price ?? '').replace('€','').trim();
+            const numeric = parseFloat(rawPrice);
+            let priceLabel = '';
+            if (!isNaN(numeric)) {
+                if (prod.discount && prod.discount > 0) {
+                    const discounted = (numeric * (1 - (prod.discount / 100))).toFixed(2);
+                    priceLabel = `€${discounted}  ( -${prod.discount}% )`;
+                } else {
+                    priceLabel = `€${numeric.toFixed(2)}`;
+                }
+            } else {
+                priceLabel = String(prod.price ?? '');
+            }
+
+            const img = document.getElementById('pd-image');
+            const nameEl = document.getElementById('pd-name');
+            const priceEl = document.getElementById('pd-price');
+            const stockEl = document.getElementById('pd-stock');
+            const catEl = document.getElementById('pd-category');
+            const descEl = document.getElementById('pd-desc');
+
+            if (img) { img.src = prod.image || ''; img.alt = name || ''; }
+            if (nameEl) nameEl.textContent = name || '';
+            if (priceEl) priceEl.textContent = priceLabel;
+            if (stockEl) stockEl.textContent = stockText;
+            if (catEl) catEl.textContent = prod.category || '';
+            if (descEl) descEl.textContent = desc || '';
+
+            // Ensure labels match language
+            const dLabel = document.getElementById('pd-desc-label');
+            const qBtn = document.getElementById('pd-quote-btn-text');
+            const bBtn = document.getElementById('pd-back-btn-text');
+            if (dLabel) dLabel.textContent = dict.pd_desc_label || 'Περιγραφή';
+            if (qBtn) qBtn.textContent = dict.pd_quote_btn || 'Ζητήστε Προσφορά';
+            if (bBtn) bBtn.textContent = dict.pd_back_to_products || 'Επιστροφή στα Προϊόντα';
+
+            box.classList.remove('hidden');
+            box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function openQuoteForCurrentProduct() {
+            try {
+                const id = window.__currentProductId;
+                const prod = products.find(p => p.id === id);
+                if (prod) {
+                    const pick = (v) => (window.VC_LANG && window.VC_LANG.pick) ? window.VC_LANG.pick(v) : (v?.el || v);
+                    const name = pick(prod.name);
+                    const msgEl = document.getElementById('q-textarea-message');
+                    if (msgEl) {
+                        msgEl.value = `Θέλω προσφορά για: ${name}`;
+                    }
+                }
+            } catch(e) {}
+            openModal();
         }
 
         // PROMO TEXT LOGIC
@@ -2718,6 +2960,7 @@ if (!response.ok) {
             try { renderBlogList(); } catch(e) {}
             try { updateAdminTables(); } catch(e) {}
             initDragAndDrop();
+            initModalUploadZones();
             initEmptyLinks();
             
             // Check Maintenance First
@@ -2900,6 +3143,9 @@ async function submitContactForm(form, opts = {}) {
     about_badge_custom: 'Custom',
     back_home: 'Επιστροφή στην Αρχική',
     back_to_blog: 'Πίσω στο Blog',
+    pd_desc_label: 'Περιγραφή',
+    pd_quote_btn: 'Ζητήστε Προσφορά',
+    pd_back_to_products: 'Επιστροφή στα Προϊόντα',
 
 
       services_title: 'Δημιουργίες & Υπηρεσίες',
@@ -2982,6 +3228,9 @@ async function submitContactForm(form, opts = {}) {
     about_badge_custom: 'Custom',
     back_home: 'Back to Home',
     back_to_blog: 'Back to Blog',
+    pd_desc_label: 'Description',
+    pd_quote_btn: 'Request a Quote',
+    pd_back_to_products: 'Back to Products',
 
 
       services_title: 'Creations & Services',
@@ -3121,6 +3370,24 @@ async function submitContactForm(form, opts = {}) {
     // Hero buttons
     setText('hero-btn-collection', t('hero_collection'));
     setText('hero-btn-quote', t('hero_quote'));
+
+
+    // Hero text
+    setHTML('editable-hero-title', t('hero_title_html'));
+    setText('editable-hero-desc', t('hero_desc'));
+
+    // About section
+    setHTML('about-title', t('about_title_html'));
+    setHTML('about-p1', (t('about_p1') || '').replace('Χάρης Ελευθερίου', '<strong class="text-white">Χάρης Ελευθερίου</strong>'));
+    setText('about-p2', t('about_p2'));
+    setText('about-badge-1', t('about_badge_handmade'));
+    setText('about-badge-2', t('about_badge_timeless'));
+    setText('about-badge-3', t('about_badge_custom'));
+
+    // Product details labels (catalog view)
+    setText('pd-desc-label', t('pd_desc_label'));
+    setText('pd-quote-btn-text', t('pd_quote_btn'));
+    setText('pd-back-btn-text', t('pd_back_to_products'));
 
     // Headings
     setText('catalog-title', t('catalog_title'));
