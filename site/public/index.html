@@ -2790,31 +2790,19 @@ function vcSetUrlToCatalog(opts = {}) {
         });
 
 
-        // Handle product deep-links as early as possible (Safari may delay window.onload until images finish).
+        // Early boot for shareable URLs (Safari-friendly): load real server data and then apply routing
         document.addEventListener('DOMContentLoaded', () => {
             try {
                 if (isAdmin) return;
                 if (isMaintenance && !isAdmin) return;
+                const u = new URL(window.location.href);
+                const sp = u.searchParams;
                 const pid = vcParseProductIdFromUrl();
-                if (!pid) return;
-
-                // Switch to catalog view immediately.
-                try { showCatalog(null); } catch(e) {}
-
-                // Products may still be loading; keep trying until they exist.
-                (function() {
-                    let tries = 0;
-                    const tryOpen = () => {
-                        tries += 1;
-                        try {
-                            const box = document.getElementById('product-details-box');
-                            const prod = (Array.isArray(products) ? products : []).find(p => p.id === pid);
-                            if (box && prod) { openProductDetails(pid); return; }
-                        } catch(e) {}
-                        if (tries < 200) setTimeout(tryOpen, 100);
-                    };
-                    setTimeout(tryOpen, 0);
-                })();
+                const view = (sp.get('view') || '').toLowerCase();
+                if (pid || view === 'catalog' || view === 'blog') {
+                    // Do NOT wait for window.onload (Safari waits for images). Boot immediately.
+                    vcBootOnce();
+                }
             } catch(e) {}
         });
 
@@ -3388,7 +3376,10 @@ function vcSetUrlToCatalog(opts = {}) {
             }
         }
 
-        window.onload = async function() {
+                let __vcBootPromise = null;
+        async function vcBootOnce() {
+            if (__vcBootPromise) return __vcBootPromise;
+            __vcBootPromise = (async () => {
             // Load latest server data FIRST so the admin edits the real public site.
             await loadFromServer();
 
@@ -3445,7 +3436,13 @@ function vcSetUrlToCatalog(opts = {}) {
 
             checkWeeklyAI();
             updatePromoText(); // Initial check for promo text
-        };
+        
+            })();
+            return __vcBootPromise;
+        }
+
+        window.onload = function() { vcBootOnce(); };
+
     
 </script>
 
