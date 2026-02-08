@@ -2694,6 +2694,26 @@ if (!response.ok) {
             } catch(e) { return null; }
         }
 
+
+        function vcShowCatalogLoading(message) {
+            try {
+                if (isMaintenance && !isAdmin) return;
+                hideAllViews();
+                const v = document.getElementById('view-catalog');
+                if (v) v.classList.remove('hidden');
+                // Do NOT save view state here; the route will handle it after data loads.
+                try { trackView('catalog'); } catch(e) {}
+                const grid = document.getElementById('catalog-grid');
+                if (grid) {
+                    const msg = message || 'Φόρτωση προϊόντος...';
+                    grid.innerHTML = `<div class="col-span-full text-center text-gray-300 py-20">${msg}</div>`;
+                }
+                const box = document.getElementById('product-details-box');
+                if (box) box.classList.add('hidden');
+                window.scrollTo({ top: 0, behavior: 'auto' });
+            } catch(e) {}
+        }
+
         function vcUpdateUrlForProduct(id, opts = {}) {
             try {
                 if (isAdmin) return; // never touch admin URLs
@@ -2800,6 +2820,7 @@ function vcSetUrlToCatalog(opts = {}) {
                 const pid = vcParseProductIdFromUrl();
                 const view = (sp.get('view') || '').toLowerCase();
                 if (pid || view === 'catalog' || view === 'blog') {
+                    if (pid || view === 'catalog') vcShowCatalogLoading(pid ? 'Φόρτωση προϊόντος...' : 'Φόρτωση προϊόντων...');
                     // Do NOT wait for window.onload (Safari waits for images). Boot immediately.
                     vcBootOnce();
                 }
