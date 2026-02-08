@@ -1499,6 +1499,7 @@ document.addEventListener('drop', __vcGuardFileDrop, true);
 
         // Track whether we actually loaded real data from the server (important for private browsing / cold starts).
 let __vcServerLoadOk = false;
+let __vcServerLoadFailed = false;
 
 async function loadFromServer({ timeoutMs = 25000 } = {}) {
     __vcServerLoadOk = false;
@@ -1506,12 +1507,8 @@ async function loadFromServer({ timeoutMs = 25000 } = {}) {
     const t = setTimeout(() => { try { controller.abort(); } catch(e) {} }, timeoutMs);
 
     try {
-        const r = await fetch('/api/site', {
-            credentials: 'include',
-            signal: controller.signal,
-            cache: 'no-store',
-            headers: { 'Accept': 'application/json' }
-        });
+        const apiUrl = '/api/site?t=' + Date.now();
+        const r = await fetch(apiUrl, { signal: controller.signal, headers: { 'Accept': 'application/json' } });
 
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         const j = await r.json();
@@ -1569,31 +1566,34 @@ async function vcEnsureServerData() {
     const maxAttempts = hardBlock ? 8 : 2;
 
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-        const ok = await loadFromServer({ timeoutMs: 25000 });
-        if (ok) return true;
-
         if (hardBlock) {
-            try { vcShowCatalogLoading(`Φόρτωση δεδομένων... (${attempt}/${maxAttempts})`); } catch(e) {}
+            try { vcShowCatalogLoading(`Φόρτωση δεδομένων... (${attempt}/${maxAttempts})`); } catch (e) {}
         }
+
+        const ok = await Promise.race([
+            loadFromServer({ timeoutMs: 9000 }),
+            new Promise(res => setTimeout(() => res(false), 9500))
+        ]);
+
+        if (ok) return true;
 
         // tiny delay; Render cold-starts often need a second request
         await new Promise(res => setTimeout(res, Math.min(2000, 250 * attempt)));
     }
 
+    __vcServerLoadFailed = true;
     return false;
 }
+
 
         async function saveToServer() {
             const payload = { products, blogPosts, staticImages, globalTexts, globalGraphics, analytics, isMaintenance, lastAiDate };
             try {
                 updateSaveIndicator('saving');
-                const r = await fetch('/api/site', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ data: payload })
-                });
-                const j = await r.json().catch(() => ({}));
+                const apiUrl = '/api/site?t=' + Date.now();
+        const r = await fetch(apiUrl, { signal: controller.signal, headers: { 'Accept': 'application/json' } });
+
+        const j = await r.json().catch(() => ({}));
                 if (!r.ok || !j?.ok) {
                     console.warn('Server save failed:', j);
                     updateSaveIndicator('error');
