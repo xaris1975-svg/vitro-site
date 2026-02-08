@@ -2761,9 +2761,22 @@ function vcSetUrlToCatalog(opts = {}) {
                 // Product route wins
                 if (id) {
                     showCatalog(null);
-                    setTimeout(() => {
-                        try { openProductDetails(id); } catch(e) {}
-                    }, 50);
+
+                    // Products may load/render async; retry a few times so deep-links work reliably.
+                    (function() {
+                        let tries = 0;
+                        const tryOpen = () => {
+                            tries += 1;
+                            try {
+                                const box = document.getElementById('product-details-box');
+                                const prod = (Array.isArray(products) ? products : []).find(p => p.id === id);
+                                if (box && prod) { openProductDetails(id); return; }
+                            } catch(e) {}
+                            if (tries < 30) setTimeout(tryOpen, 100);
+                        };
+                        setTimeout(tryOpen, 0);
+                    })();
+
                     return;
                 }
 
@@ -3366,21 +3379,40 @@ function vcSetUrlToCatalog(opts = {}) {
             // Check Maintenance First
             checkMaintenance();
 
-            // Then check view state if maintenance is not blocking (or if admin)
-            const lastView = localStorage.getItem('vitro_active_view');
-            
-            // If in maintenance and not admin, force maintenance view regardless of stored view
-            if (isMaintenance && !isAdmin) {
-                // checkMaintenance already handles hiding views and showing maintenance
-            } else {
-                if (lastView) {
-                    if (lastView === 'view-admin-dashboard' && isAdmin) showAdminDashboard(null);
-                    else if (lastView === 'view-catalog') showCatalog(null);
-                    else if (lastView === 'view-blog') showBlog(null);
-                    else showLanding(false);
-                } else showLanding();
+            // Route overrides (shareable URLs) must win over stored last view
+            let __vcRouteHandled = false;
+            try {
+                if (!isMaintenance || isAdmin) {
+                    if (!isAdmin) {
+                        const u = new URL(window.location.href);
+                        const sp = u.searchParams;
+                        const pid = vcParseProductIdFromUrl();
+                        const view = (sp.get('view') || '').toLowerCase();
+                        if (pid || view === 'catalog' || view === 'blog') {
+                            __vcRouteHandled = true;
+                            vcApplyRouteOverrides();
+                        }
+                    }
+                }
+            } catch(e) {}
+
+            if (!__vcRouteHandled) {
+                // Then check view state if maintenance is not blocking (or if admin)
+                const lastView = localStorage.getItem('vitro_active_view');
+
+                // If in maintenance and not admin, force maintenance view regardless of stored view
+                if (isMaintenance && !isAdmin) {
+                    // checkMaintenance already handles hiding views and showing maintenance
+                } else {
+                    if (lastView) {
+                        if (lastView === 'view-admin-dashboard' && isAdmin) showAdminDashboard(null);
+                        else if (lastView === 'view-catalog') showCatalog(null);
+                        else if (lastView === 'view-blog') showBlog(null);
+                        else showLanding(false);
+                    } else showLanding();
+                }
             }
-            
+
             checkWeeklyAI();
             updatePromoText(); // Initial check for promo text
         };
