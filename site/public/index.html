@@ -2789,6 +2789,36 @@ function vcSetUrlToCatalog(opts = {}) {
             try { vcApplyRouteOverrides(); } catch(e) {}
         });
 
+
+        // Handle product deep-links as early as possible (Safari may delay window.onload until images finish).
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                if (isAdmin) return;
+                if (isMaintenance && !isAdmin) return;
+                const pid = vcParseProductIdFromUrl();
+                if (!pid) return;
+
+                // Switch to catalog view immediately.
+                try { showCatalog(null); } catch(e) {}
+
+                // Products may still be loading; keep trying until they exist.
+                (function() {
+                    let tries = 0;
+                    const tryOpen = () => {
+                        tries += 1;
+                        try {
+                            const box = document.getElementById('product-details-box');
+                            const prod = (Array.isArray(products) ? products : []).find(p => p.id === pid);
+                            if (box && prod) { openProductDetails(pid); return; }
+                        } catch(e) {}
+                        if (tries < 200) setTimeout(tryOpen, 100);
+                    };
+                    setTimeout(tryOpen, 0);
+                })();
+            } catch(e) {}
+        });
+
+
         function showCatalog(e) {
             if(e) e.preventDefault();
             if(isMaintenance && !isAdmin) return;
