@@ -1501,112 +1501,73 @@ document.addEventListener('drop', __vcGuardFileDrop, true);
 let __vcServerLoadOk = false;
 let __vcServerLoadFailed = false;
 
-async function loadFromServer({ timeoutMs = 25000 } = {}) {
-    __vcServerLoadOk = false;
-    const controller = new AbortController();
-    const t = setTimeout(() => { try { controller.abort(); } catch(e) {} }, timeoutMs);
+async function loadFromServer({ timeoutMs = 9000 } = {}) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => { try { controller.abort(); } catch {} }, timeoutMs);
 
+  try {
+    const r = await fetch('/api/site?t=' + Date.now(), { cache: 'no-store', signal: controller.signal });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+
+    const j = await r.json();
+    if (!j?.ok) throw new Error('Bad payload');
+
+    // Best-effort persistence (Safari Private μπορεί να μπλοκάρει το storage)
+    try { localStorage.setItem('vitro_site_data', JSON.stringify(j)); } catch (e) { console.warn('[VC] storage blocked (ok)', e); }
+
+    const sd = j.data || {};
+    products = window.VC_LANG.normalizeProducts(sd.products || []);
+    blogPosts = window.VC_LANG.normalizeBlogPosts(sd.blogPosts || []);
+    staticImages = sd.staticImages || {};
+    globalTexts = sd.globalTexts || {};
+    globalGraphics = sd.globalGraphics || globalGraphics;
+    isMaintenance = !!sd.isMaintenance;
+
+    __vcServerLoadOk = true;
+    __vcServerLoadFailed = false;
+
+    // Αν είμαστε ήδη σε Catalog/Blog, κάνε refresh τώρα
     try {
-        const apiUrl = '/api/site?t=' + Date.now();
-        const r = await fetch(apiUrl, { signal: controller.signal, headers: { 'Accept': 'application/json' } });
+      const pv = document.getElementById('productsView');
+      if (pv && !pv.classList.contains('hidden')) renderProducts('all');
+      const bv = document.getElementById('blogView');
+      if (bv && !bv.classList.contains('hidden')) renderBlogPosts();
+    } catch {}
 
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        const j = await r.json();
-
-        if (j?.ok && j?.data) {
-            const d = j.data;
-            if (Array.isArray(d.products)) products = d.products;
-            if (Array.isArray(d.blogPosts)) blogPosts = d.blogPosts;
-            if (d.staticImages && typeof d.staticImages === 'object') staticImages = d.staticImages;
-            if (d.globalTexts && typeof d.globalTexts === 'object') globalTexts = d.globalTexts;
-
-            // Normalize bilingual fields in case older data exists on disk.
-            try { products = window.VC_LANG.normalizeProducts(products); } catch(e) {}
-            try { blogPosts = window.VC_LANG.normalizeBlogPosts(blogPosts); } catch(e) {}
-            try { globalTexts = window.VC_LANG.normalizeGlobalTexts(globalTexts); } catch(e) {}
-
-            if (d.globalGraphics && typeof d.globalGraphics === 'object') globalGraphics = d.globalGraphics;
-            if (typeof d.isMaintenance === 'boolean') isMaintenance = d.isMaintenance;
-            if (typeof d.lastAiDate === 'number') lastAiDate = d.lastAiDate;
-
-            // Keep legacy localStorage in sync (harmless, helps transitions)
-            try {
-                localStorage.setItem('vitro_products', JSON.stringify(products));
-                localStorage.setItem('vitro_blog', JSON.stringify(blogPosts));
-                localStorage.setItem('vitro_static_images', JSON.stringify(staticImages));
-                localStorage.setItem('vitro_texts', JSON.stringify(globalTexts));
-                localStorage.setItem('vitro_graphics', JSON.stringify(globalGraphics));
-                localStorage.setItem('vitro_maintenance', isMaintenance ? 'true' : 'false');
-                localStorage.setItem('vitro_last_ai_date', String(lastAiDate || 0));
-            } catch(e) {}
-
-            __vcServerLoadOk = true;
-            return true;
-        }
-
-        return false;
-    } catch (e) {
-        console.warn('Server load failed:', e);
-        return false;
-    } finally {
-        clearTimeout(t);
-    }
-}
-
-// Ensure we have REAL data before rendering (avoids showing demo images on first/private load).
-async function vcEnsureServerData() {
-    const hasLocalData = () => {
-        try {
-            const p = localStorage.getItem('vitro_products');
-            return !!p && p !== 'null' && p !== '[]';
-        } catch (e) { return false; }
-    };
-
-    const hardBlock = !hasLocalData(); // private browsing / first visit → don't show demo placeholders
-    const maxAttempts = hardBlock ? 8 : 2;
-
-    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-        if (hardBlock) {
-            try { vcShowCatalogLoading(`Φόρτωση δεδομένων... (${attempt}/${maxAttempts})`); } catch (e) {}
-        }
-
-        const ok = await Promise.race([
-            loadFromServer({ timeoutMs: 9000 }),
-            new Promise(res => setTimeout(() => res(false), 9500))
-        ]);
-
-        if (ok) return true;
-
-        // tiny delay; Render cold-starts often need a second request
-        await new Promise(res => setTimeout(res, Math.min(2000, 250 * attempt)));
-    }
-
+    return true;
+  } catch (e) {
+    console.warn('[VC] loadFromServer failed', e);
     __vcServerLoadFailed = true;
     return false;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
+async function saveToServer(payload, { timeoutMs = 10000 } = {}) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => { try { controller.abort(); } catch {} }, timeoutMs);
 
-        async function saveToServer() {
-            const payload = { products, blogPosts, staticImages, globalTexts, globalGraphics, analytics, isMaintenance, lastAiDate };
-            try {
-                updateSaveIndicator('saving');
-                const apiUrl = '/api/site?t=' + Date.now();
-        const r = await fetch(apiUrl, { signal: controller.signal, headers: { 'Accept': 'application/json' } });
+  try {
+    const r = await fetch('/api/site', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
 
-        const j = await r.json().catch(() => ({}));
-                if (!r.ok || !j?.ok) {
-                    console.warn('Server save failed:', j);
-                    updateSaveIndicator('error');
-                    return false;
-                }
-                updateSaveIndicator('saved');
-                return true;
-            } catch (e) {
-                console.warn('Server save error:', e);
-                updateSaveIndicator('error');
-                return false;
-            }
-        }
+    const j = await r.json();
+    if (!j?.ok) throw new Error('Bad payload');
+
+    // Keep local copy in sync (best-effort)
+    try { localStorage.setItem('vitro_site_data', JSON.stringify(j)); } catch {}
+    return true;
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
         function scheduleServerSave() {
             clearTimeout(__serverSaveTimer);
@@ -3020,7 +2981,7 @@ function vcSetUrlToCatalog(opts = {}) {
         function deleteBlogPost(id) { if(confirm('Είστε σίγουρος;')) { blogPosts = blogPosts.filter(p => p.id !== id); saveBlogPosts(); showToast('Το άρθρο διαγράφηκε.'); } }
 
         // --- DATA INIT ---
-        let storedProducts = localStorage.getItem('vitro_products');
+        let storedProducts = localStorage.getItem('vitro_site_data');
         let products = storedProducts ? JSON.parse(storedProducts) : [
         {
             id: 1,
@@ -3065,7 +3026,7 @@ function vcSetUrlToCatalog(opts = {}) {
 
             // If real data hasn't loaded yet (private browsing / Render cold start), do NOT show demo items.
             try {
-                const hasLocal = !!localStorage.getItem('vitro_products');
+                const hasLocal = !!localStorage.getItem('vitro_site_data');
                 if (!__vcServerLoadOk && !hasLocal) { vcShowCatalogLoading('Φόρτωση προϊόντων...'); return; }
             } catch(e) {}
 
