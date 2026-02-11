@@ -1497,77 +1497,65 @@ document.addEventListener('drop', __vcGuardFileDrop, true);
         // Without this, edits live only in your browser and disappear for everyone else.
         let __serverSaveTimer = null;
 
-        // Track whether we actually loaded real data from the server (important for private browsing / cold starts).
-let __vcServerLoadOk = false;
-let __vcServerLoadFailed = false;
+        async function loadFromServer() {
+            try {
+                const r = await fetch('/api/site', { credentials: 'include' });
+                const j = await r.json();
+                if (j?.ok && j?.data) {
+                    const d = j.data;
+                    if (Array.isArray(d.products)) products = d.products;
+                    if (Array.isArray(d.blogPosts)) blogPosts = d.blogPosts;
+                    if (d.staticImages && typeof d.staticImages === 'object') staticImages = d.staticImages;
+                    if (d.globalTexts && typeof d.globalTexts === 'object') globalTexts = d.globalTexts;
 
-async function loadFromServer({ timeoutMs = 9000 } = {}) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => { try { controller.abort(); } catch {} }, timeoutMs);
+                    // Normalize bilingual fields in case older data exists on disk.
+                    try { products = window.VC_LANG.normalizeProducts(products); } catch(e) {}
+                    try { blogPosts = window.VC_LANG.normalizeBlogPosts(blogPosts); } catch(e) {}
+                    try { globalTexts = window.VC_LANG.normalizeGlobalTexts(globalTexts); } catch(e) {}
+                    if (d.globalGraphics && typeof d.globalGraphics === 'object') globalGraphics = d.globalGraphics;
+                    if (typeof d.isMaintenance === 'boolean') isMaintenance = d.isMaintenance;
+                    if (typeof d.lastAiDate === 'number') lastAiDate = d.lastAiDate;
 
-  try {
-    const r = await fetch('/api/site?t=' + Date.now(), { cache: 'no-store', signal: controller.signal });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
+                    // Keep legacy localStorage in sync (harmless, helps transitions)
+                    try {
+                        localStorage.setItem('vitro_products', JSON.stringify(products));
+                        localStorage.setItem('vitro_blog', JSON.stringify(blogPosts));
+                        localStorage.setItem('vitro_static_images', JSON.stringify(staticImages));
+                        localStorage.setItem('vitro_texts', JSON.stringify(globalTexts));
+                        localStorage.setItem('vitro_graphics', JSON.stringify(globalGraphics));
+                        localStorage.setItem('vitro_maintenance', isMaintenance ? 'true' : 'false');
+                        localStorage.setItem('vitro_last_ai_date', String(lastAiDate || 0));
+                    } catch(e) {}
+                }
+            } catch (e) {
+                console.warn('Server load failed:', e);
+            }
+        }
 
-    const j = await r.json();
-    if (!j?.ok) throw new Error('Bad payload');
-
-    // Best-effort persistence (Safari Private μπορεί να μπλοκάρει το storage)
-    try { localStorage.setItem('vitro_site_data', JSON.stringify(j)); } catch (e) { console.warn('[VC] storage blocked (ok)', e); }
-
-    const sd = j.data || {};
-    products = window.VC_LANG.normalizeProducts(sd.products || []);
-    blogPosts = window.VC_LANG.normalizeBlogPosts(sd.blogPosts || []);
-    staticImages = sd.staticImages || {};
-    globalTexts = sd.globalTexts || {};
-    globalGraphics = sd.globalGraphics || globalGraphics;
-    isMaintenance = !!sd.isMaintenance;
-
-    __vcServerLoadOk = true;
-    __vcServerLoadFailed = false;
-
-    // Αν είμαστε ήδη σε Catalog/Blog, κάνε refresh τώρα
-    try {
-      const pv = document.getElementById('productsView');
-      if (pv && !pv.classList.contains('hidden')) renderProducts('all');
-      const bv = document.getElementById('blogView');
-      if (bv && !bv.classList.contains('hidden')) renderBlogPosts();
-    } catch {}
-
-    return true;
-  } catch (e) {
-    console.warn('[VC] loadFromServer failed', e);
-    __vcServerLoadFailed = true;
-    return false;
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
-async function saveToServer(payload, { timeoutMs = 10000 } = {}) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => { try { controller.abort(); } catch {} }, timeoutMs);
-
-  try {
-    const r = await fetch('/api/site', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify(payload),
-      signal: controller.signal,
-    });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-
-    const j = await r.json();
-    if (!j?.ok) throw new Error('Bad payload');
-
-    // Keep local copy in sync (best-effort)
-    try { localStorage.setItem('vitro_site_data', JSON.stringify(j)); } catch {}
-    return true;
-  } finally {
-    clearTimeout(timer);
-  }
-}
+        async function saveToServer() {
+            const payload = { products, blogPosts, staticImages, globalTexts, globalGraphics, analytics, isMaintenance, lastAiDate };
+            try {
+                updateSaveIndicator('saving');
+                const r = await fetch('/api/site', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ data: payload })
+                });
+                const j = await r.json().catch(() => ({}));
+                if (!r.ok || !j?.ok) {
+                    console.warn('Server save failed:', j);
+                    updateSaveIndicator('error');
+                    return false;
+                }
+                updateSaveIndicator('saved');
+                return true;
+            } catch (e) {
+                console.warn('Server save error:', e);
+                updateSaveIndicator('error');
+                return false;
+            }
+        }
 
         function scheduleServerSave() {
             clearTimeout(__serverSaveTimer);
@@ -2667,7 +2655,6 @@ if (!response.ok) {
         function navigateToSection(e, sectionId) {
             if(e) e.preventDefault();
             if(isMaintenance && !isAdmin) return; // Block nav in maintenance
-            try { if (!isAdmin) vcSetUrlToHome({ replace: true }); } catch(e) {}
             hideAllViews();
             document.getElementById('view-landing').classList.remove('hidden');
             saveViewState('view-landing');
@@ -2684,7 +2671,6 @@ if (!response.ok) {
 
         function showLanding(scrollToTop = true) {
             if(isMaintenance && !isAdmin) return;
-            try { if (!isAdmin) vcSetUrlToHome({ replace: true }); } catch(e) {}
             hideAllViews();
             document.getElementById('view-landing').classList.remove('hidden');
             saveViewState('view-landing');
@@ -2692,153 +2678,6 @@ if (!response.ok) {
             if(scrollToTop) window.scrollTo({ top: 0, behavior: 'smooth' });
             updatePromoText();
         }
-
-        
-        // --- Shareable Product URLs (public visitors) ---
-        function vcParseProductIdFromUrl() {
-            try {
-                const u = new URL(window.location.href);
-                const sp = u.searchParams;
-                const raw = sp.get('id') || sp.get('product') || sp.get('pid') || '';
-                const n = parseInt(String(raw), 10);
-                if (!Number.isFinite(n) || n <= 0) return null;
-                return n;
-            } catch(e) { return null; }
-        }
-
-
-        function vcShowCatalogLoading(message) {
-            try {
-                if (isMaintenance && !isAdmin) return;
-                hideAllViews();
-                const v = document.getElementById('view-catalog');
-                if (v) v.classList.remove('hidden');
-                // Do NOT save view state here; the route will handle it after data loads.
-                try { trackView('catalog'); } catch(e) {}
-                const grid = document.getElementById('catalog-grid');
-                if (grid) {
-                    const msg = message || 'Φόρτωση προϊόντος...';
-                    grid.innerHTML = `<div class="col-span-full text-center text-gray-300 py-20">${msg}</div>`;
-                }
-                const box = document.getElementById('product-details-box');
-                if (box) box.classList.add('hidden');
-                window.scrollTo({ top: 0, behavior: 'auto' });
-            } catch(e) {}
-        }
-
-        function vcUpdateUrlForProduct(id, opts = {}) {
-            try {
-                if (isAdmin) return; // never touch admin URLs
-                const replace = !!opts.replace;
-                const u = new URL(window.location.href);
-                u.pathname = '/';
-                u.searchParams.set('id', String(id));
-                u.searchParams.delete('product');
-                u.searchParams.delete('pid');
-                u.searchParams.delete('view');
-                u.hash = '';
-                const next = u.pathname + u.search + u.hash;
-                if (replace) window.history.replaceState({ vc: 'product', id }, '', next);
-                else window.history.pushState({ vc: 'product', id }, '', next);
-            } catch(e) {}
-        }
-
-        
-        function vcSetUrlToHome(opts = {}) {
-            try {
-                if (isAdmin) return;
-                const replace = !!opts.replace;
-                const u = new URL(window.location.href);
-                u.pathname = '/';
-                u.searchParams.delete('id');
-                u.searchParams.delete('product');
-                u.searchParams.delete('pid');
-                u.searchParams.delete('view');
-                u.hash = '';
-                const next = u.pathname + u.search + u.hash;
-                if (replace) window.history.replaceState({ vc: 'home' }, '', next);
-                else window.history.pushState({ vc: 'home' }, '', next);
-            } catch(e) {}
-        }
-
-function vcSetUrlToCatalog(opts = {}) {
-            try {
-                if (isAdmin) return;
-                const replace = !!opts.replace;
-                const u = new URL(window.location.href);
-                u.pathname = '/';
-                u.searchParams.delete('id');
-                u.searchParams.delete('product');
-                u.searchParams.delete('pid');
-                u.searchParams.set('view', 'catalog');
-                u.hash = '';
-                const next = u.pathname + u.search + u.hash;
-                if (replace) window.history.replaceState({ vc: 'catalog' }, '', next);
-                else window.history.pushState({ vc: 'catalog' }, '', next);
-            } catch(e) {}
-        }
-
-        function vcApplyRouteOverrides() {
-            // Safe to call many times
-            try {
-                if (isMaintenance && !isAdmin) return;
-                if (isAdmin) return;
-                const u = new URL(window.location.href);
-                const path = (u.pathname || '/').replace(/\/+$/, '') || '/';
-                const sp = u.searchParams;
-
-                const view = (sp.get('view') || '').toLowerCase();
-                const id = vcParseProductIdFromUrl();
-
-                // Product route wins
-                if (id) {
-                    showCatalog(null);
-
-                    // Products may load/render async; retry a few times so deep-links work reliably.
-                    (function() {
-                        let tries = 0;
-                        const tryOpen = () => {
-                            tries += 1;
-                            try {
-                                const box = document.getElementById('product-details-box');
-                                const prod = (Array.isArray(products) ? products : []).find(p => p.id === id);
-                                if (box && prod) { openProductDetails(id); return; }
-                            } catch(e) {}
-                            if (tries < 30) setTimeout(tryOpen, 100);
-                        };
-                        setTimeout(tryOpen, 0);
-                    })();
-
-                    return;
-                }
-
-                if (view === 'catalog') { showCatalog(null); return; }
-                if (view === 'blog') { showBlog(null); return; }
-            } catch(e) {}
-        }
-
-        window.addEventListener('popstate', () => {
-            try { vcApplyRouteOverrides(); } catch(e) {}
-        });
-
-
-        // Early boot for shareable URLs (Safari-friendly): load real server data and then apply routing
-        document.addEventListener('DOMContentLoaded', () => {
-            try {
-                if (isAdmin) return;
-                if (isMaintenance && !isAdmin) return;
-                const u = new URL(window.location.href);
-                const sp = u.searchParams;
-                const pid = vcParseProductIdFromUrl();
-                const view = (sp.get('view') || '').toLowerCase();
-                if (pid || view === 'catalog' || view === 'blog') {
-                    if (pid || view === 'catalog') vcShowCatalogLoading(pid ? 'Φόρτωση προϊόντος...' : 'Φόρτωση προϊόντων...');
-                    // Do NOT wait for window.onload (Safari waits for images). Boot immediately.
-                    vcBootOnce();
-                }
-            } catch(e) {}
-        });
-
 
         function showCatalog(e) {
             if(e) e.preventDefault();
@@ -2849,16 +2688,6 @@ function vcSetUrlToCatalog(opts = {}) {
             trackView('catalog');
             window.scrollTo({ top: 0, behavior: 'smooth' });
             renderProducts(); 
-            // Public URL for catalog (unless we are deep-linked to a product id)
-            try {
-                if (!isAdmin) {
-                    const u = new URL(window.location.href);
-                    const path = (u.pathname || '/').replace(/\/+$/, '') || '/';
-                    const pid = vcParseProductIdFromUrl();
-                    if (!pid) vcSetUrlToCatalog({ replace: true });
-                }
-            } catch(e) {}
-
         }
 
         function showBlog(e) {
@@ -2981,7 +2810,7 @@ function vcSetUrlToCatalog(opts = {}) {
         function deleteBlogPost(id) { if(confirm('Είστε σίγουρος;')) { blogPosts = blogPosts.filter(p => p.id !== id); saveBlogPosts(); showToast('Το άρθρο διαγράφηκε.'); } }
 
         // --- DATA INIT ---
-        let storedProducts = localStorage.getItem('vitro_site_data');
+        let storedProducts = localStorage.getItem('vitro_products');
         let products = storedProducts ? JSON.parse(storedProducts) : [
         {
             id: 1,
@@ -3023,13 +2852,6 @@ function vcSetUrlToCatalog(opts = {}) {
         function renderProducts() {
             const grid = document.getElementById('catalog-grid');
             if(!grid) return;
-
-            // If real data hasn't loaded yet (private browsing / Render cold start), do NOT show demo items.
-            try {
-                const hasLocal = !!localStorage.getItem('vitro_site_data');
-                if (!__vcServerLoadOk && !hasLocal) { vcShowCatalogLoading('Φόρτωση προϊόντων...'); return; }
-            } catch(e) {}
-
             grid.innerHTML = ''; 
             products.forEach(prod => {
                 let stockColor = prod.stock === 'in-stock' ? 'text-emerald' : (prod.stock === 'sold' ? 'text-ruby' : 'text-amber');
@@ -3105,10 +2927,6 @@ function vcSetUrlToCatalog(opts = {}) {
             const box = document.getElementById('product-details-box');
             if (box) box.classList.add('hidden');
             window.__currentProductId = null;
-            try {
-                if (!isAdmin) vcSetUrlToCatalog({ replace: true });
-            } catch(e) {}
-
         }
 
         function openProductDetails(id) {
@@ -3119,18 +2937,6 @@ function vcSetUrlToCatalog(opts = {}) {
             if (!prod) return;
 
             window.__currentProductId = id;
-
-            // Shareable URL for public visitors: /product?id=123
-            try {
-                if (!isAdmin) {
-                    const u = new URL(window.location.href);
-                    const path = (u.pathname || '/').replace(/\/+$/, '') || '/';
-                    const cur = vcParseProductIdFromUrl();
-                    const replace = (cur === id);
-                    vcUpdateUrlForProduct(id, { replace });
-                }
-            } catch(e) {}
-
 
             const lang = (window.VC_LANG && window.VC_LANG.get) ? window.VC_LANG.get() : 'el';
             const dict = (window.VC_I18N && (window.VC_I18N[lang] || window.VC_I18N.el)) || {};
@@ -3145,7 +2951,7 @@ function vcSetUrlToCatalog(opts = {}) {
                 if (code === 'in-stock') return dict.stock_in || 'Άμεσα Διαθέσιμο';
                 if (code === 'sold') return dict.stock_sold || 'Εξαντλήθηκε';
                 return dict.stock_made || 'Κατόπιν Παραγγελίας';
-        })(prod.stock);
+            })(prod.stock);
 
             // Price label (handles € strings)
             const rawPrice = String(prod.price ?? '').replace('€','').trim();
@@ -3416,12 +3222,9 @@ function vcSetUrlToCatalog(opts = {}) {
             }
         }
 
-                let __vcBootPromise = null;
-        async function vcBootOnce() {
-            if (__vcBootPromise) return __vcBootPromise;
-            __vcBootPromise = (async () => {
+        window.onload = async function() {
             // Load latest server data FIRST so the admin edits the real public site.
-            await vcEnsureServerData();
+            await loadFromServer();
 
             // Normalize bilingual fields (products/blog/global texts) so language switching works everywhere.
             try { products = window.VC_LANG.normalizeProducts(products); } catch(e) {}
@@ -3440,49 +3243,24 @@ function vcSetUrlToCatalog(opts = {}) {
             // Check Maintenance First
             checkMaintenance();
 
-            // Route overrides (shareable URLs) must win over stored last view
-            let __vcRouteHandled = false;
-            try {
-                if (!isMaintenance || isAdmin) {
-                    if (!isAdmin) {
-                        const u = new URL(window.location.href);
-                        const sp = u.searchParams;
-                        const pid = vcParseProductIdFromUrl();
-                        const view = (sp.get('view') || '').toLowerCase();
-                        if (pid || view === 'catalog' || view === 'blog') {
-                            __vcRouteHandled = true;
-                            vcApplyRouteOverrides();
-                        }
-                    }
-                }
-            } catch(e) {}
-
-            if (!__vcRouteHandled) {
-                // Then check view state if maintenance is not blocking (or if admin)
-                const lastView = localStorage.getItem('vitro_active_view');
-
-                // If in maintenance and not admin, force maintenance view regardless of stored view
-                if (isMaintenance && !isAdmin) {
-                    // checkMaintenance already handles hiding views and showing maintenance
-                } else {
-                    if (lastView) {
-                        if (lastView === 'view-admin-dashboard' && isAdmin) showAdminDashboard(null);
-                        else if (lastView === 'view-catalog') showCatalog(null);
-                        else if (lastView === 'view-blog') showBlog(null);
-                        else showLanding(false);
-                    } else showLanding();
-                }
+            // Then check view state if maintenance is not blocking (or if admin)
+            const lastView = localStorage.getItem('vitro_active_view');
+            
+            // If in maintenance and not admin, force maintenance view regardless of stored view
+            if (isMaintenance && !isAdmin) {
+                // checkMaintenance already handles hiding views and showing maintenance
+            } else {
+                if (lastView) {
+                    if (lastView === 'view-admin-dashboard' && isAdmin) showAdminDashboard(null);
+                    else if (lastView === 'view-catalog') showCatalog(null);
+                    else if (lastView === 'view-blog') showBlog(null);
+                    else showLanding(false);
+                } else showLanding();
             }
-
+            
             checkWeeklyAI();
             updatePromoText(); // Initial check for promo text
-        
-            })();
-            return __vcBootPromise;
-        }
-
-        window.onload = function() { vcBootOnce(); };
-
+        };
     
 </script>
 
