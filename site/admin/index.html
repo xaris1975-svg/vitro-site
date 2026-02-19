@@ -1,56 +1,908 @@
 <!DOCTYPE html>
-<html lang="el">
+<html lang="el" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin | Vitro Canvas</title>
+  <title>VITRO CANVAS | Stained Glass Studio</title>
+  <meta name="description" content="Χειροποίητες δημιουργίες βιτρό: κοσμήματα, φωτιστικά Tiffany, διακοσμητικά και custom κατασκευές." />
+
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            lead: '#1a1a1a',
+            ruby: '#b71c1c',
+            royal: '#0d47a1',
+            amber: '#fbc02d',
+            emerald: '#1b5e20',
+            glass: 'rgba(255, 255, 255, 0.08)',
+          },
+          fontFamily: {
+            serif: ['Cinzel', 'serif'],
+            sans: ['Montserrat', 'sans-serif'],
+          },
+          boxShadow: {
+            soft: '0 18px 60px rgba(0,0,0,.35)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* Index v17 */
+    :root { color-scheme: dark; }
+    body { background: radial-gradient(1000px 600px at 10% 10%, rgba(13,71,161,.22), transparent 60%),
+                    radial-gradient(900px 500px at 90% 20%, rgba(183,28,28,.18), transparent 55%),
+                    radial-gradient(800px 500px at 60% 90%, rgba(251,192,45,.14), transparent 55%),
+                    #070707; }
+    .glass {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      backdrop-filter: blur(10px);
+    }
+    .focus-ring:focus { outline: 2px solid rgba(251,192,45,.6); outline-offset: 2px; }
+    .hide-scrollbar::-webkit-scrollbar { width: 10px; }
+    .hide-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 999px; }
+    .hide-scrollbar { scrollbar-color: rgba(255,255,255,.12) transparent; scrollbar-width: thin; }
+
+    @keyframes blink { 0%,100% { opacity: .2; transform: scale(.92);} 50% { opacity: 1; transform: scale(1);} }
+    .blink { animation: blink 1.1s ease-in-out infinite; }
+
+    @keyframes pulseBadge { 0%,100% { opacity:.6; } 50% { opacity:1; } }
+    .badge-blink { animation: pulseBadge .9s ease-in-out infinite; }
+
+    .dot {
+      width: 11px; height: 11px;
+      border-radius: 999px;
+      box-shadow: 0 0 18px rgba(255,255,255,.35);
+    }
+    .dot-green { background: #2ecc71; box-shadow: 0 0 18px rgba(46,204,113,.55); }
+    .dot-red { background: #ff4d4d; box-shadow: 0 0 18px rgba(255,77,77,.55); }
+
+    .line-clamp-3{
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
 </head>
-<body class="min-h-screen bg-zinc-950 text-zinc-100 flex items-center justify-center p-6">
-  <div class="w-full max-w-lg bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6 shadow-xl">
-    <h1 class="text-2xl font-semibold mb-2">Admin ✅</h1>
-    <p class="text-sm text-zinc-300 mb-6">
-      Από εδώ ελέγχεις ότι το login/session δουλεύει και κάνεις αποσύνδεση.
-    </p>
 
-    <div class="grid gap-3">
-      <a href="/" class="inline-flex items-center justify-center rounded-xl bg-white text-black px-4 py-3 font-medium hover:opacity-90">
-        Άνοιξε το site
-      </a>
+<body class="text-white font-sans hide-scrollbar">
+  <!-- Top bar -->
+  <header class="sticky top-0 z-50">
+    <div class="glass">
+      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+        <a href="#top" class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center shadow-soft">
+            <span class="font-serif font-bold tracking-wide">VC</span>
+          </div>
+          <div class="leading-tight">
+            <div class="font-serif text-lg tracking-wide">VITRO CANVAS</div>
+            <div class="text-xs text-white/70" data-i18n="tagline">Stained Glass Studio</div>
+          </div>
+        </a>
 
-      <button id="check" class="inline-flex items-center justify-center rounded-xl border border-zinc-700 px-4 py-3 font-medium hover:bg-zinc-800">
-        Έλεγχος /api/site
-      </button>
+        <nav class="hidden md:flex items-center gap-5 text-sm text-white/80">
+          <a class="hover:text-white transition" href="#products" data-i18n="nav_products">Προϊόντα</a>
+          <a class="hover:text-white transition" href="#blog" data-i18n="nav_blog">Blog</a>
+          <a class="hover:text-white transition" href="#about" data-i18n="nav_about">Σχετικά</a>
+          <a class="hover:text-white transition" href="#contact" data-i18n="nav_contact">Επικοινωνία</a>
+        </nav>
 
-      <button id="logout" class="inline-flex items-center justify-center rounded-xl border border-red-700 text-red-200 px-4 py-3 font-medium hover:bg-red-950/40">
-        Αποσύνδεση
-      </button>
+        <div class="flex items-center gap-2">
+          <button id="lang-el" class="focus-ring px-3 py-1.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-sm transition" aria-label="Ελληνικά">EL</button>
+          <button id="lang-en" class="focus-ring px-3 py-1.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-sm transition" aria-label="English">EN</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section id="top" class="max-w-6xl mx-auto px-4 pt-10 pb-6">
+    <div class="glass rounded-3xl p-6 md:p-10 shadow-soft relative overflow-hidden">
+      <div class="absolute inset-0 pointer-events-none opacity-60"
+           style="background: radial-gradient(600px 300px at 20% 15%, rgba(251,192,45,.22), transparent 60%),
+                          radial-gradient(600px 300px at 85% 40%, rgba(13,71,161,.18), transparent 60%);"></div>
+
+      <div class="relative grid md:grid-cols-2 gap-8 items-center">
+        <div>
+          <h1 class="font-serif text-3xl md:text-5xl tracking-wide leading-tight">
+            <span data-i18n="hero_title_1">Τέχνη βιτρό</span>
+            <span class="text-amber font-bold" data-i18n="hero_title_2">στο φως</span>
+          </h1>
+          <p class="mt-4 text-white/80 leading-relaxed" data-i18n="hero_sub">
+            Χειροποίητα Tiffany φωτιστικά, κοσμήματα, διακοσμητικά και custom κατασκευές με σεβασμό στα υλικά και
+            εμμονή στη λεπτομέρεια.
+          </p>
+
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="#products" class="focus-ring inline-flex items-center justify-center px-5 py-3 rounded-2xl bg-amber text-black font-semibold hover:opacity-95 transition shadow-soft" data-i18n="cta_products">
+              Δες προϊόντα
+            </a>
+            <a href="#contact" class="focus-ring inline-flex items-center justify-center px-5 py-3 rounded-2xl border border-white/15 bg-white/5 hover:bg-white/10 transition" data-i18n="cta_contact">
+              Ζήτα προσφορά
+            </a>
+          </div>
+
+          <div class="mt-6 text-xs text-white/60">
+            <span class="inline-flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald blink"></span>
+              <span data-i18n="live_data">Ζωντανά δεδομένα από</span>
+              <code class="px-2 py-1 rounded-lg bg-black/40 border border-white/10">/api/site</code>
+            </span>
+          </div>
+        </div>
+
+        <div class="relative">
+          <div class="glass rounded-3xl p-5">
+            <div class="text-sm text-white/70" data-i18n="hero_panel_title">Highlights</div>
+            <ul class="mt-3 space-y-3 text-sm">
+              <li class="flex gap-3">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber mt-1"></span>
+                <span data-i18n="hero_b1">Αυτόματη φόρτωση προϊόντων & blog από το CMS</span>
+              </li>
+              <li class="flex gap-3">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber mt-1"></span>
+                <span data-i18n="hero_b2">EL/EN γλώσσα με αποθήκευση</span>
+              </li>
+              <li class="flex gap-3">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber mt-1"></span>
+                <span data-i18n="hero_b3">Φόρμα επικοινωνίας που στέλνει email</span>
+              </li>
+              <li class="flex gap-3">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber mt-1"></span>
+                <span data-i18n="hero_b4">Καθαρό, γρήγορο, χωρίς frameworks πανικού</span>
+              </li>
+            </ul>
+
+            <div class="mt-5 grid grid-cols-3 gap-3 text-center text-xs">
+              <div class="glass rounded-2xl p-3">
+                <div class="font-semibold" id="stat-products">—</div>
+                <div class="text-white/60" data-i18n="stat_products">Προϊόντα</div>
+              </div>
+              <div class="glass rounded-2xl p-3">
+                <div class="font-semibold" id="stat-posts">—</div>
+                <div class="text-white/60" data-i18n="stat_posts">Άρθρα</div>
+              </div>
+              <div class="glass rounded-2xl p-3">
+                <div class="font-semibold" id="stat-categories">—</div>
+                <div class="text-white/60" data-i18n="stat_categories">Κατηγορίες</div>
+              </div>
+            </div>
+
+            <div id="api-status" class="mt-4 text-xs text-white/70"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products -->
+  <section id="products" class="max-w-6xl mx-auto px-4 py-10">
+    <div class="flex items-end justify-between gap-4">
+      <div>
+        <h2 class="font-serif text-2xl md:text-3xl tracking-wide" data-i18n="products_title">Προϊόντα</h2>
+        <p class="text-white/70 mt-2 text-sm" data-i18n="products_sub">Επιλεγμένες δημιουργίες. Οι τιμές και διαθεσιμότητα έρχονται από το CMS.</p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <label class="text-xs text-white/60" for="category-filter" data-i18n="filter_label">Φίλτρο</label>
+        <select id="category-filter" class="focus-ring text-sm rounded-xl bg-black/40 border border-white/10 px-3 py-2">
+          <option value="all" data-i18n="filter_all">Όλα</option>
+        </select>
+      </div>
     </div>
 
-    <pre id="out" class="mt-4 text-xs bg-black/40 border border-zinc-800 rounded-xl p-3 whitespace-pre-wrap"></pre>
-  </div>
+    <div id="products-grid" class="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
 
-<script>
-  const out = document.getElementById('out');
-  document.getElementById('check').addEventListener('click', async () => {
-    out.textContent = 'Ελέγχω...';
-    try {
-      const r = await fetch('/api/site', { cache: 'no-store' });
-      const j = await r.json().catch(()=> ({}));
-      out.textContent = r.ok
-        ? 'OK: /api/site απαντάει\n\n' + JSON.stringify(j, null, 2)
-        : 'Σφάλμα: ' + r.status + '\n' + JSON.stringify(j, null, 2);
-    } catch (e) {
-      out.textContent = 'Σφάλμα: ' + (e && e.message ? e.message : String(e));
-    }
-  });
+    <div id="products-empty" class="hidden mt-6 glass rounded-2xl p-6 text-white/75 text-sm">
+      <span data-i18n="products_empty">Δεν βρέθηκαν προϊόντα. Αν αυτό σου φαίνεται περίεργο, έλεγξε ότι το</span>
+      <code class="px-2 py-1 rounded-lg bg-black/40 border border-white/10">/api/site</code>
+      <span data-i18n="products_empty_2">επιστρέφει προϊόντα.</span>
+    </div>
+  </section>
 
-  document.getElementById('logout').addEventListener('click', async () => {
-    out.textContent = 'Αποσύνδεση...';
-    try { await fetch('/api/logout', { method: 'POST' }); } finally {
-      window.location.href = '/admin/login.html';
+  <!-- Blog -->
+  <section id="blog" class="max-w-6xl mx-auto px-4 py-10">
+    <div>
+      <h2 class="font-serif text-2xl md:text-3xl tracking-wide" data-i18n="blog_title">Blog</h2>
+      <p class="text-white/70 mt-2 text-sm" data-i18n="blog_sub">Νέα, ιδέες και μικρές ιστορίες πίσω από το γυαλί.</p>
+    </div>
+
+    <div id="blog-grid" class="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+
+    <div id="blog-empty" class="hidden mt-6 glass rounded-2xl p-6 text-white/75 text-sm" data-i18n="blog_empty">
+      Δεν βρέθηκαν άρθρα. (Ναι, γίνεται. Μερικές φορές το CMS είναι άδειο.)
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="max-w-6xl mx-auto px-4 py-10">
+    <div class="glass rounded-3xl p-6 md:p-10 shadow-soft">
+      <h2 class="font-serif text-2xl md:text-3xl tracking-wide" data-i18n="about_title">Σχετικά</h2>
+      <div class="mt-4 grid md:grid-cols-3 gap-6 text-sm text-white/80 leading-relaxed">
+        <div class="md:col-span-2">
+          <p data-i18n="about_p1">
+            Το βιτρό δεν είναι “απλά γυαλί”. Είναι κοπή, καμπύλες, soldering, πατίνα, δοκιμές στο φως και ξανά απ’ την αρχή.
+            Εδώ θα βρεις δουλειές Tiffany και custom κατασκευές για χώρο ή δώρο.
+          </p>
+          <p class="mt-3" data-i18n="about_p2">
+            Ό,τι βλέπεις στη σελίδα ενημερώνεται από το admin panel. Αν αλλάξεις προϊόντα/άρθρα εκεί, θα τα δεις εδώ χωρίς να “πειράξεις” τον κώδικα.
+          </p>
+        </div>
+
+        <div class="glass rounded-2xl p-5">
+          <div class="text-white/70 text-xs" data-i18n="about_box_title">Γρήγορα</div>
+          <ul class="mt-3 space-y-2 text-sm">
+            <li class="flex items-center justify-between gap-3">
+              <span class="text-white/70" data-i18n="about_box_1">Παραγγελίες</span>
+              <span class="text-white font-semibold" data-i18n="about_box_1v">Custom</span>
+            </li>
+            <li class="flex items-center justify-between gap-3">
+              <span class="text-white/70" data-i18n="about_box_2">Υλικά</span>
+              <span class="text-white font-semibold" data-i18n="about_box_2v">Glass + Copper foil</span>
+            </li>
+            <li class="flex items-center justify-between gap-3">
+              <span class="text-white/70" data-i18n="about_box_3">Αποστολές</span>
+              <span class="text-white font-semibold" data-i18n="about_box_3v">Ελλάδα/Εξωτερικό</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="max-w-6xl mx-auto px-4 py-10">
+    <div class="grid md:grid-cols-2 gap-6 items-start">
+      <div class="glass rounded-3xl p-6 md:p-10 shadow-soft">
+        <h2 class="font-serif text-2xl md:text-3xl tracking-wide" data-i18n="contact_title">Επικοινωνία</h2>
+        <p class="text-white/70 mt-2 text-sm" data-i18n="contact_sub">
+          Στείλε μήνυμα και θα απαντήσουμε σύντομα. Η φόρμα κάνει POST στο <code class="px-2 py-0.5 rounded bg-black/40 border border-white/10">/api/contact</code>.
+        </p>
+
+        <form id="contact-form" class="mt-6 space-y-4">
+          <div>
+            <label class="text-xs text-white/70" for="c-name" data-i18n="contact_name">Ονοματεπώνυμο</label>
+            <input id="c-name" name="name" type="text" required
+                   class="focus-ring mt-2 w-full rounded-2xl bg-black/35 border border-white/10 px-4 py-3 text-sm"
+                   placeholder="π.χ. Χάρης" />
+          </div>
+
+          <div>
+            <label class="text-xs text-white/70" for="c-email" data-i18n="contact_email">Email</label>
+            <input id="c-email" name="email" type="email" required
+                   class="focus-ring mt-2 w-full rounded-2xl bg-black/35 border border-white/10 px-4 py-3 text-sm"
+                   placeholder="name@example.com" />
+          </div>
+
+          <div>
+            <label class="text-xs text-white/70" for="c-message" data-i18n="contact_message">Μήνυμα</label>
+            <textarea id="c-message" name="message" rows="5" required
+                      class="focus-ring mt-2 w-full rounded-2xl bg-black/35 border border-white/10 px-4 py-3 text-sm"
+                      placeholder="Πες μου τι θες να φτιάξουμε..."></textarea>
+          </div>
+
+          <button type="submit"
+                  class="focus-ring w-full rounded-2xl bg-royal hover:opacity-95 transition px-5 py-3 font-semibold shadow-soft"
+                  data-i18n="contact_send">
+            Αποστολή
+          </button>
+
+          <div id="contact-status" class="text-sm text-white/80"></div>
+        </form>
+      </div>
+
+      <div class="glass rounded-3xl p-6 md:p-10 shadow-soft">
+        <div class="text-white/70 text-xs" data-i18n="tips_title">Tips (για να μη σε παιδέψει)</div>
+        <ul class="mt-4 space-y-3 text-sm text-white/80 leading-relaxed">
+          <li data-i18n="tip_1">Αν δεν εμφανίζονται προϊόντα/άρθρα, έλεγξε ότι το /api/site απαντάει 200 και έχει data.</li>
+          <li data-i18n="tip_2">Αν οι εικόνες βγάζουν 404, συνήθως φταίει λάθος path ή uploads που δεν υπάρχουν στο Render Disk.</li>
+          <li data-i18n="tip_3">Η γλώσσα αποθηκεύεται τοπικά. Σε private browsing ξεκινάει από default.</li>
+        </ul>
+
+        <div class="mt-6 glass rounded-2xl p-5">
+          <div class="text-xs text-white/60" data-i18n="debug_title">Debug</div>
+          <div class="mt-2 text-sm">
+            <button id="btn-reload" class="focus-ring px-4 py-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition" data-i18n="btn_reload">
+              Refresh data
+            </button>
+            <span class="ml-3 text-xs text-white/60" id="last-load">—</span>
+          </div>
+          <pre id="debug-box" class="mt-4 text-xs text-white/70 bg-black/35 border border-white/10 rounded-2xl p-4 overflow-auto max-h-56"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="max-w-6xl mx-auto px-4 pt-2 pb-10">
+    <div class="text-center text-xs text-white/55">
+      <div class="mt-2">© <span id="year"></span> VITRO CANVAS</div>
+      <div class="mt-2">
+        <span class="px-3 py-1 rounded-full border border-white/10 bg-black/30">
+          Index v17
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <template id="product-card-template">
+    <article class="glass rounded-3xl overflow-hidden shadow-soft group">
+      <div class="relative">
+        <img class="w-full h-52 object-cover" alt="" />
+        <div class="absolute top-3 left-3 flex items-center gap-2">
+          <span class="dot blink"></span>
+          <span class="text-[11px] px-2 py-1 rounded-full bg-black/40 border border-white/10 text-white/80" data-slot="stockLabel"></span>
+        </div>
+        <div class="absolute top-3 right-3">
+          <span class="hidden text-[11px] px-2 py-1 rounded-full bg-ruby/80 border border-white/10 badge-blink" data-slot="discountBadge"></span>
+        </div>
+      </div>
+
+      <div class="p-5">
+        <div class="flex items-start justify-between gap-4">
+          <h3 class="font-semibold leading-snug" data-slot="name"></h3>
+          <div class="text-right">
+            <div class="text-sm font-semibold" data-slot="price"></div>
+            <div class="text-xs text-white/60" data-slot="category"></div>
+          </div>
+        </div>
+        <p class="mt-3 text-sm text-white/75 line-clamp-3" data-slot="desc"></p>
+
+        <div class="mt-4 flex items-center justify-between gap-3">
+          <button class="focus-ring px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition text-sm" data-slot="detailsBtn">
+            Details
+          </button>
+          <a class="focus-ring px-4 py-2 rounded-xl bg-amber text-black font-semibold hover:opacity-95 transition text-sm hidden" data-slot="buyLink" href="#">
+            Buy
+          </a>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <template id="blog-card-template">
+    <article class="glass rounded-3xl overflow-hidden shadow-soft group">
+      <div class="relative">
+        <img class="w-full h-44 object-cover" alt="" />
+        <div class="absolute top-3 left-3 flex items-center gap-2">
+          <span class="dot blink dot-green"></span>
+          <span class="text-[11px] px-2 py-1 rounded-full bg-black/40 border border-white/10 text-white/80" data-slot="meta"></span>
+        </div>
+      </div>
+      <div class="p-5">
+        <h3 class="font-semibold leading-snug" data-slot="title"></h3>
+        <p class="mt-3 text-sm text-white/75 line-clamp-3" data-slot="excerpt"></p>
+        <div class="mt-4">
+          <a class="focus-ring inline-flex items-center justify-center px-4 py-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition text-sm" data-slot="readMore" href="#">
+            Read more
+          </a>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script>
+    // --------- i18n ----------
+    const STR = {
+      el: {
+        tagline: "Stained Glass Studio",
+        nav_products: "Προϊόντα",
+        nav_blog: "Blog",
+        nav_about: "Σχετικά",
+        nav_contact: "Επικοινωνία",
+        hero_title_1: "Τέχνη βιτρό",
+        hero_title_2: "στο φως",
+        hero_sub: "Χειροποίητα Tiffany φωτιστικά, κοσμήματα, διακοσμητικά και custom κατασκευές με σεβασμό στα υλικά και εμμονή στη λεπτομέρεια.",
+        cta_products: "Δες προϊόντα",
+        cta_contact: "Ζήτα προσφορά",
+        live_data: "Ζωντανά δεδομένα από",
+        hero_panel_title: "Highlights",
+        hero_b1: "Αυτόματη φόρτωση προϊόντων & blog από το CMS",
+        hero_b2: "EL/EN γλώσσα με αποθήκευση",
+        hero_b3: "Φόρμα επικοινωνίας που στέλνει email",
+        hero_b4: "Καθαρό, γρήγορο, χωρίς frameworks πανικού",
+        stat_products: "Προϊόντα",
+        stat_posts: "Άρθρα",
+        stat_categories: "Κατηγορίες",
+        products_title: "Προϊόντα",
+        products_sub: "Επιλεγμένες δημιουργίες. Οι τιμές και διαθεσιμότητα έρχονται από το CMS.",
+        filter_label: "Φίλτρο",
+        filter_all: "Όλα",
+        products_empty: "Δεν βρέθηκαν προϊόντα. Αν αυτό σου φαίνεται περίεργο, έλεγξε ότι το",
+        products_empty_2: "επιστρέφει προϊόντα.",
+        blog_title: "Blog",
+        blog_sub: "Νέα, ιδέες και μικρές ιστορίες πίσω από το γυαλί.",
+        blog_empty: "Δεν βρέθηκαν άρθρα. (Ναι, γίνεται. Μερικές φορές το CMS είναι άδειο.)",
+        about_title: "Σχετικά",
+        about_p1: "Το βιτρό δεν είναι “απλά γυαλί”. Είναι κοπή, καμπύλες, soldering, πατίνα, δοκιμές στο φως και ξανά απ’ την αρχή. Εδώ θα βρεις δουλειές Tiffany και custom κατασκευές για χώρο ή δώρο.",
+        about_p2: "Ό,τι βλέπεις στη σελίδα ενημερώνεται από το admin panel. Αν αλλάξεις προϊόντα/άρθρα εκεί, θα τα δεις εδώ χωρίς να “πειράξεις” τον κώδικα.",
+        about_box_title: "Γρήγορα",
+        about_box_1: "Παραγγελίες",
+        about_box_1v: "Custom",
+        about_box_2: "Υλικά",
+        about_box_2v: "Glass + Copper foil",
+        about_box_3: "Αποστολές",
+        about_box_3v: "Ελλάδα/Εξωτερικό",
+        contact_title: "Επικοινωνία",
+        contact_sub: "Στείλε μήνυμα και θα απαντήσουμε σύντομα. Η φόρμα κάνει POST στο /api/contact.",
+        contact_name: "Ονοματεπώνυμο",
+        contact_email: "Email",
+        contact_message: "Μήνυμα",
+        contact_send: "Αποστολή",
+        tips_title: "Tips (για να μη σε παιδέψει)",
+        tip_1: "Αν δεν εμφανίζονται προϊόντα/άρθρα, έλεγξε ότι το /api/site απαντάει 200 και έχει data.",
+        tip_2: "Αν οι εικόνες βγάζουν 404, συνήθως φταίει λάθος path ή uploads που δεν υπάρχουν στο Render Disk.",
+        tip_3: "Η γλώσσα αποθηκεύεται τοπικά. Σε private browsing ξεκινάει από default.",
+        debug_title: "Debug",
+        btn_reload: "Refresh data",
+        btn_details: "Λεπτομέρειες",
+        btn_readmore: "Διάβασε",
+        stock_in: "Διαθέσιμο",
+        stock_out: "Εξαντλημένο",
+        stock_unknown: "Κατάσταση",
+        price_na: "—",
+        category_na: "Κατηγορία",
+        sent_ok: "Το μήνυμα στάλθηκε ✅",
+        sent_fail: "Αποτυχία αποστολής. Έλεγξε το /api/contact στα logs.",
+        sending: "Αποστολή…",
+      },
+      en: {
+        tagline: "Stained Glass Studio",
+        nav_products: "Products",
+        nav_blog: "Blog",
+        nav_about: "About",
+        nav_contact: "Contact",
+        hero_title_1: "Stained glass",
+        hero_title_2: "in light",
+        hero_sub: "Handmade Tiffany lamps, jewelry, decor and custom builds. Materials respected. Details obsessed over.",
+        cta_products: "View products",
+        cta_contact: "Request a quote",
+        live_data: "Live data from",
+        hero_panel_title: "Highlights",
+        hero_b1: "Auto-load products & blog from the CMS",
+        hero_b2: "EL/EN language with persistence",
+        hero_b3: "Contact form that sends email",
+        hero_b4: "Clean, fast, no framework drama",
+        stat_products: "Products",
+        stat_posts: "Posts",
+        stat_categories: "Categories",
+        products_title: "Products",
+        products_sub: "Curated creations. Prices and availability come from the CMS.",
+        filter_label: "Filter",
+        filter_all: "All",
+        products_empty: "No products found. If that feels wrong, check that",
+        products_empty_2: "returns products.",
+        blog_title: "Blog",
+        blog_sub: "News, ideas, and little stories behind the glass.",
+        blog_empty: "No posts found. (Yes, it happens. Sometimes the CMS is empty.)",
+        about_title: "About",
+        about_p1: "Stained glass is not “just glass”. It’s cutting, curves, soldering, patina, testing in light, then doing it again. Here you’ll find Tiffany work and custom builds for space or gifting.",
+        about_p2: "Everything you see is updated from the admin panel. Change products/posts there and they show up here without touching code.",
+        about_box_title: "Quick",
+        about_box_1: "Orders",
+        about_box_1v: "Custom",
+        about_box_2: "Materials",
+        about_box_2v: "Glass + Copper foil",
+        about_box_3: "Shipping",
+        about_box_3v: "Greece / Worldwide",
+        contact_title: "Contact",
+        contact_sub: "Send a message and we’ll reply soon. The form POSTs to /api/contact.",
+        contact_name: "Full name",
+        contact_email: "Email",
+        contact_message: "Message",
+        contact_send: "Send",
+        tips_title: "Tips (so it doesn’t annoy you)",
+        tip_1: "If products/posts don’t show, confirm /api/site returns 200 with data.",
+        tip_2: "If images 404, it’s usually a wrong path or missing uploads on the Render Disk.",
+        tip_3: "Language is saved locally. Private browsing starts at default.",
+        debug_title: "Debug",
+        btn_reload: "Refresh data",
+        btn_details: "Details",
+        btn_readmore: "Read",
+        stock_in: "In stock",
+        stock_out: "Sold out",
+        stock_unknown: "Status",
+        price_na: "—",
+        category_na: "Category",
+        sent_ok: "Message sent ✅",
+        sent_fail: "Send failed. Check /api/contact logs.",
+        sending: "Sending…",
+      }
+    };
+
+    const LS_LANG = "vc_lang";
+    let lang = localStorage.getItem(LS_LANG) || "el";
+
+    const $ = (q) => document.querySelector(q);
+    const $$ = (q) => Array.from(document.querySelectorAll(q));
+
+    function t(key){
+      return (STR[lang] && STR[lang][key]) || key;
     }
-  });
-</script>
+
+    function applyI18n(){
+      $$("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        el.textContent = t(key);
+      });
+      $("#lang-el").classList.toggle("ring-2", lang === "el");
+      $("#lang-el").classList.toggle("ring-amber", lang === "el");
+      $("#lang-en").classList.toggle("ring-2", lang === "en");
+      $("#lang-en").classList.toggle("ring-amber", lang === "en");
+    }
+
+    $("#lang-el").addEventListener("click", () => { lang="el"; localStorage.setItem(LS_LANG, lang); applyI18n(); renderAll(); });
+    $("#lang-en").addEventListener("click", () => { lang="en"; localStorage.setItem(LS_LANG, lang); applyI18n(); renderAll(); });
+
+    // --------- Data & Rendering ----------
+    let siteData = { products: [], posts: [] };
+    let currentProducts = [];
+    let currentPosts = [];
+
+    function normalizeSiteData(raw){
+      // Accept multiple shapes:
+      // { ok:true, data:{products:[], posts:[]}} OR {products:[], blog:[]} etc.
+      const data = raw && (raw.data || raw) || {};
+      const products = Array.isArray(data.products) ? data.products : (Array.isArray(data.items) ? data.items : []);
+      const posts = Array.isArray(data.posts) ? data.posts : (Array.isArray(data.blog) ? data.blog : (Array.isArray(data.articles) ? data.articles : []));
+      return { products, posts, settings: data.settings || {} };
+    }
+
+    function categoryLabel(cat){
+      if(!cat) return t("category_na");
+      const map = {
+        "stained-glass": { el:"Βιτρό", en:"Stained glass" },
+        "tiffany": { el:"Tiffany", en:"Tiffany" },
+        "decor": { el:"Διακοσμητικά", en:"Decor" },
+        "jewelry": { el:"Κοσμήματα", en:"Jewelry" },
+        "lamps": { el:"Φωτιστικά", en:"Lamps" },
+        "custom": { el:"Custom", en:"Custom" }
+      };
+      if(map[cat]) return map[cat][lang] || cat;
+      return String(cat).replace(/-/g," ");
+    }
+
+    function stockInfo(p){
+      const s = (p && (p.stock || p.status)) || "";
+      const ss = String(s).toLowerCase();
+      if(ss.includes("in") || ss.includes("available") || ss.includes("stock")) return { label: t("stock_in"), dotClass: "dot-green" };
+      if(ss.includes("sold") || ss.includes("out") || ss.includes("0")) return { label: t("stock_out"), dotClass: "dot-red" };
+      return { label: t("stock_unknown"), dotClass: "dot-green" };
+    }
+
+    function safeImg(src){
+      if(!src) return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(
+        `<svg xmlns='http://www.w3.org/2000/svg' width='800' height='500'>
+          <rect width='100%' height='100%' fill='#111'/>
+          <text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='#888' font-family='Arial' font-size='22'>No image</text>
+        </svg>`
+      );
+      // Keep absolute URLs; otherwise ensure it starts with /
+      if(/^https?:\/\//i.test(src)) return src;
+      return src.startsWith("/") ? src : ("/" + src);
+    }
+
+    function priceText(p){
+      const price = p && (p.price ?? p.priceText);
+      if(price === undefined || price === null || price === "") return t("price_na");
+      const num = Number(price);
+      if(Number.isFinite(num)) {
+        try {
+          return new Intl.NumberFormat(lang === "el" ? "el-GR" : "en-US", { style: "currency", currency: "EUR" }).format(num);
+        } catch(e) {
+          return String(price) + " €";
+        }
+      }
+      return String(price);
+    }
+
+    function renderProducts(){
+      const grid = $("#products-grid");
+      grid.innerHTML = "";
+      const empty = $("#products-empty");
+
+      const filter = $("#category-filter").value || "all";
+      const list = (currentProducts || []).filter(p => filter === "all" ? true : String(p.category || "").toLowerCase() === filter);
+
+      empty.classList.toggle("hidden", list.length > 0);
+
+      const tpl = $("#product-card-template");
+
+      list.forEach(p => {
+        const node = tpl.content.cloneNode(true);
+        const img = node.querySelector("img");
+        const name = node.querySelector("[data-slot=name]");
+        const desc = node.querySelector("[data-slot=desc]");
+        const price = node.querySelector("[data-slot=price]");
+        const category = node.querySelector("[data-slot=category]");
+        const dot = node.querySelector(".dot");
+        const stockLabel = node.querySelector("[data-slot=stockLabel]");
+        const discountBadge = node.querySelector("[data-slot=discountBadge]");
+        const detailsBtn = node.querySelector("[data-slot=detailsBtn]");
+        const buyLink = node.querySelector("[data-slot=buyLink]");
+
+        const si = stockInfo(p);
+
+        img.src = safeImg(p.image || p.img || p.cover);
+        img.alt = p.name || p.title || "product";
+
+        name.textContent = p.name || p.title || "—";
+        desc.textContent = p.desc || p.description || "";
+        price.textContent = priceText(p);
+        category.textContent = categoryLabel(p.category);
+
+        dot.classList.add(si.dotClass);
+        stockLabel.textContent = si.label;
+
+        const discount = Number(p.discount || p.sale || 0);
+        if(Number.isFinite(discount) && discount > 0){
+          discountBadge.classList.remove("hidden");
+          discountBadge.textContent = `-${discount}%`;
+        }
+
+        detailsBtn.textContent = t("btn_details");
+        detailsBtn.addEventListener("click", () => openProductModal(p));
+
+        const link = p.link || p.url || "";
+        if(link){
+          buyLink.classList.remove("hidden");
+          buyLink.href = link;
+          buyLink.target = "_blank";
+          buyLink.rel = "noopener";
+          buyLink.textContent = lang === "el" ? "Αγόρασε" : "Buy";
+        }
+
+        grid.appendChild(node);
+      });
+    }
+
+    function renderBlog(){
+      const grid = $("#blog-grid");
+      grid.innerHTML = "";
+      const empty = $("#blog-empty");
+      empty.classList.toggle("hidden", (currentPosts || []).length > 0);
+
+      const tpl = $("#blog-card-template");
+      (currentPosts || []).forEach(post => {
+        const node = tpl.content.cloneNode(true);
+        const img = node.querySelector("img");
+        const title = node.querySelector("[data-slot=title]");
+        const excerpt = node.querySelector("[data-slot=excerpt]");
+        const meta = node.querySelector("[data-slot=meta]");
+        const readMore = node.querySelector("[data-slot=readMore]");
+
+        img.src = safeImg(post.image || post.cover || post.img);
+        img.alt = post.title || "post";
+        title.textContent = post.title || "—";
+        excerpt.textContent = post.excerpt || post.summary || post.text || "";
+        const d = post.date || post.createdAt || "";
+        meta.textContent = d ? String(d) : (lang === "el" ? "Άρθρο" : "Post");
+
+        readMore.textContent = t("btn_readmore");
+        readMore.href = post.link || post.url || "#";
+        if(readMore.href !== "#"){
+          readMore.target = "_blank";
+          readMore.rel = "noopener";
+        } else {
+          readMore.addEventListener("click", (e) => { e.preventDefault(); openPostModal(post); });
+        }
+
+        grid.appendChild(node);
+      });
+    }
+
+    function renderStats(){
+      const p = currentProducts || [];
+      const posts = currentPosts || [];
+      const cats = new Set(p.map(x => (x.category || "").toLowerCase()).filter(Boolean));
+      $("#stat-products").textContent = p.length;
+      $("#stat-posts").textContent = posts.length;
+      $("#stat-categories").textContent = cats.size;
+    }
+
+    function fillCategoryFilter(){
+      const sel = $("#category-filter");
+      const existing = new Set(Array.from(sel.options).map(o => o.value));
+      const cats = new Set((currentProducts || []).map(p => String(p.category || "").toLowerCase()).filter(Boolean));
+      cats.forEach(cat => {
+        if(existing.has(cat)) return;
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = categoryLabel(cat);
+        sel.appendChild(opt);
+      });
+    }
+
+    $("#category-filter").addEventListener("change", renderProducts);
+
+    // --------- Modals ----------
+    function ensureModal(){
+      let m = $("#vc-modal");
+      if(m) return m;
+      m = document.createElement("div");
+      m.id = "vc-modal";
+      m.className = "fixed inset-0 z-[999] hidden items-center justify-center p-4";
+      m.innerHTML = `
+        <div class="absolute inset-0 bg-black/70"></div>
+        <div class="relative max-w-3xl w-full glass rounded-3xl shadow-soft overflow-hidden">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-white/10">
+            <div class="font-semibold" id="vc-modal-title">—</div>
+            <button class="focus-ring px-3 py-1.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition text-sm" id="vc-modal-close">Close</button>
+          </div>
+          <div class="p-5 md:p-6 max-h-[75vh] overflow-auto hide-scrollbar" id="vc-modal-body"></div>
+        </div>
+      `;
+      document.body.appendChild(m);
+      m.addEventListener("click", (e) => { if(e.target === m || e.target.classList.contains("bg-black/70")) closeModal(); });
+      m.querySelector("#vc-modal-close").addEventListener("click", closeModal);
+      document.addEventListener("keydown", (e) => { if(e.key === "Escape") closeModal(); });
+      return m;
+    }
+
+    function openModal(title, bodyHtml){
+      const m = ensureModal();
+      m.querySelector("#vc-modal-title").textContent = title || "—";
+      m.querySelector("#vc-modal-body").innerHTML = bodyHtml || "";
+      m.classList.remove("hidden");
+      m.classList.add("flex");
+    }
+
+    function closeModal(){
+      const m = $("#vc-modal");
+      if(!m) return;
+      m.classList.add("hidden");
+      m.classList.remove("flex");
+    }
+
+    function openProductModal(p){
+      const title = p.name || p.title || "—";
+      const img = safeImg(p.image || p.img || p.cover);
+      const disc = Number(p.discount || 0);
+      const si = stockInfo(p);
+
+      openModal(title, `
+        <div class="grid md:grid-cols-2 gap-5">
+          <div class="glass rounded-2xl overflow-hidden">
+            <img src="${img}" alt="${title}" class="w-full h-72 object-cover" />
+          </div>
+          <div>
+            <div class="text-white/70 text-sm">${categoryLabel(p.category)}</div>
+            <div class="mt-2 text-xl font-semibold">${priceText(p)}</div>
+            <div class="mt-2 text-sm">
+              <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/40 border border-white/10">
+                <span class="dot ${si.dotClass} blink"></span>
+                <span>${si.label}</span>
+              </span>
+              ${disc > 0 ? `<span class="ml-2 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ruby/80 border border-white/10 badge-blink">-${disc}%</span>` : ``}
+            </div>
+            <p class="mt-4 text-sm text-white/80 leading-relaxed">${(p.desc || p.description || "").replaceAll("<","&lt;")}</p>
+
+            ${p.link || p.url ? `<a class="mt-5 inline-flex items-center justify-center px-4 py-2 rounded-xl bg-amber text-black font-semibold hover:opacity-95 transition" href="${p.link || p.url}" target="_blank" rel="noopener">${lang==="el"?"Αγόρασε":"Buy"}</a>` : ``}
+          </div>
+        </div>
+      `);
+    }
+
+    function openPostModal(post){
+      const title = post.title || "—";
+      const img = safeImg(post.image || post.cover || post.img);
+      const text = (post.content || post.text || post.body || post.excerpt || "").toString();
+
+      openModal(title, `
+        <div class="glass rounded-2xl overflow-hidden">
+          <img src="${img}" alt="${title}" class="w-full h-72 object-cover" />
+        </div>
+        <div class="mt-5 text-sm text-white/80 leading-relaxed whitespace-pre-wrap">${text.replaceAll("<","&lt;")}</div>
+      `);
+    }
+
+    // --------- API ----------
+    async function loadSiteData(){
+      const status = $("#api-status");
+      const debug = $("#debug-box");
+      const lastLoad = $("#last-load");
+
+      try {
+        status.textContent = "Loading /api/site …";
+        const res = await fetch("/api/site", { cache: "no-store" });
+        const txt = await res.text();
+        let json = null;
+        try { json = JSON.parse(txt); } catch(e){}
+
+        if(!res.ok){
+          status.textContent = `API error: ${res.status} ${res.statusText}`;
+          debug.textContent = txt.slice(0, 4000);
+          siteData = { products: [], posts: [] };
+          currentProducts = [];
+          currentPosts = [];
+          return;
+        }
+
+        const normalized = normalizeSiteData(json ?? {});
+        siteData = normalized;
+        currentProducts = normalized.products || [];
+        currentPosts = normalized.posts || [];
+
+        status.textContent = "OK: /api/site loaded ✅";
+        debug.textContent = JSON.stringify(json ?? {}, null, 2).slice(0, 4000);
+        lastLoad.textContent = new Date().toLocaleString(lang === "el" ? "el-GR" : "en-US");
+      } catch (err) {
+        status.textContent = "Network error loading /api/site";
+        debug.textContent = String(err);
+        siteData = { products: [], posts: [] };
+        currentProducts = [];
+        currentPosts = [];
+      }
+    }
+
+    function renderAll(){
+      fillCategoryFilter();
+      renderStats();
+      renderProducts();
+      renderBlog();
+    }
+
+    $("#btn-reload").addEventListener("click", async () => {
+      await loadSiteData();
+      renderAll();
+    });
+
+    // --------- Contact form ----------
+    $("#contact-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const status = $("#contact-status");
+      const btn = e.target.querySelector("button[type=submit]");
+      const form = e.target;
+
+      status.textContent = t("sending");
+      btn.disabled = true;
+      btn.classList.add("opacity-70");
+
+      const payload = {
+        name: form.name.value.trim(),
+        email: form.email.value.trim(),
+        message: form.message.value.trim(),
+      };
+
+      try {
+        const res = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if(res.ok){
+          status.textContent = t("sent_ok");
+          form.reset();
+        } else {
+          status.textContent = t("sent_fail");
+        }
+      } catch (err) {
+        status.textContent = t("sent_fail");
+      } finally {
+        btn.disabled = false;
+        btn.classList.remove("opacity-70");
+      }
+    });
+
+    // init
+    document.getElementById("year").textContent = new Date().getFullYear();
+    applyI18n();
+
+    // Load data then render
+    (async () => {
+      await loadSiteData();
+      renderAll();
+    })();
+  </script>
 </body>
 </html>
